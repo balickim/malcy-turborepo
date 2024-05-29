@@ -1,10 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import "../wdyr";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+import React from "react";
+import { createRoot } from "react-dom/client";
+
+import App from "./App";
+
+const container = document.getElementById("root");
+const root = createRoot(container!);
+root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-)
+);
