@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
 
 import RecruitmentsApi from "~/api/recruitments";
 import { IPrivateSettlementDto } from "~/api/settlements/dtos";

@@ -10,7 +10,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import React, { RefObject, useState } from "react";
+import { RefObject, useState } from "react";
 
 import { fetchWrapper } from "~/api/fetch";
 

@@ -1,6 +1,6 @@
 import { isPlatform } from "@ionic/react";
 import L, { LatLngTuple } from "leaflet";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";

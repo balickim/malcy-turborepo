@@ -1,5 +1,3 @@
-import React from "react";
-
 import { TArmy, UnitType } from "~/types/army";
 
 interface IArmy {

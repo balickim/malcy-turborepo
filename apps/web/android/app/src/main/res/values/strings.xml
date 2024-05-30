@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Malcy</string>
+    <string name="title_activity_main">Malcy</string>
+    <string name="package_name">malcy.game</string>
+    <string name="custom_url_scheme">malcy.game</string>
+</resources>

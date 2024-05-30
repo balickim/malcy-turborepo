@@ -9,7 +9,7 @@ import {
 } from "@ionic/react";
 import { useQuery } from "@tanstack/react-query";
 import { Formik } from "formik";
-import React, { memo, useEffect } from "react";
+import { memo } from "react";
 
 import CombatsApi from "~/api/combats/routes";
 import { ISettlementDto } from "~/api/settlements/dtos";
@@ -73,7 +73,7 @@ const LookUpSiegeModal = memo(
               [UnitType.LUCHADOR]: 0,
               [UnitType.ARCHMAGE]: 0,
             }}
-            onSubmit={async (values, formikHelpers) => {
+            onSubmit={async (_values, formikHelpers) => {
               // await startSiege(values);
               formikHelpers.resetForm();
               await user.refetch();

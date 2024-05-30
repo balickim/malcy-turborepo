@@ -1,5 +1,3 @@
-import React from "react";
-
 import { ResourceTypeEnum } from "~/api/config/dtos";
 
 interface IResources {

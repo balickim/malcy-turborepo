@@ -1,7 +1,7 @@
 import { IonButton, IonIcon, isPlatform } from "@ionic/react";
 import { motion } from "framer-motion";
 import { newspaper } from "ionicons/icons";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import Chat from "~/components/Chat/index";
 
@@ -16,6 +16,7 @@ const ChatWindowOnMap = () => {
     setIsVisible((prev) => !prev);
   };
 
+  // @ts-expect-error blah
   useEffect(() => {
     if (!isVisible && isAnimating) {
       const timer = setTimeout(() => {

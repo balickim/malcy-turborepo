@@ -9,7 +9,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { useQuery } from "@tanstack/react-query";
-import React, { memo } from "react";
+import { memo } from "react";
 
 import SettlementsApi from "~/api/settlements";
 import { SettlementTypesEnum } from "~/api/settlements/dtos";

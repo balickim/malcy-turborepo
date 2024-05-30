@@ -1,5 +1,4 @@
 import L from "leaflet";
-import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { ISettlementDto } from "~/api/settlements/dtos";

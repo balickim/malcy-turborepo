@@ -9,7 +9,7 @@ import {
 } from "@ionic/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Formik } from "formik";
-import React, { memo } from "react";
+import { memo } from "react";
 
 import CombatsApi from "~/api/combats/routes";
 import FogOfWarApi from "~/api/fog-of-war/routes";

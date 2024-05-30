@@ -1,7 +1,6 @@
 import { IonButton, IonIcon, IonPopover, IonProgressBar } from "@ionic/react";
 import { useMutation } from "@tanstack/react-query";
 import { trashOutline } from "ionicons/icons";
-import React from "react";
 import { toast } from "react-hot-toast";
 
 import RecruitmentsApi from "~/api/recruitments";

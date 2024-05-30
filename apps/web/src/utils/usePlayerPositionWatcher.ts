@@ -15,6 +15,7 @@ export function usePlayerPositionWatcher() {
     null,
   );
 
+  // @ts-expect-error blah
   useEffect(() => {
     let watchId: number | null = null;
 

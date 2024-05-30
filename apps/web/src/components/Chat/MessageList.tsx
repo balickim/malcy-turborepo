@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import React from "react";
 
 import { IMessageDto } from "~/api/chat/dtos";
 

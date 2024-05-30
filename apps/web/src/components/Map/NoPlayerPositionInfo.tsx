@@ -1,5 +1,4 @@
 import { IonSpinner } from "@ionic/react";
-import React from "react";
 
 export function NoPlayerPositionInfo() {
   return (

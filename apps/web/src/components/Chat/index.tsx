@@ -1,6 +1,6 @@
 import { IonSpinner } from "@ionic/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import { IMessageDto } from "~/api/chat/dtos";

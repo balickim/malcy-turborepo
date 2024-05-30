@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import L from "leaflet";
-import React, { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { Marker, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 

@@ -9,7 +9,7 @@ import {
 } from "@ionic/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Formik } from "formik";
-import React, { memo } from "react";
+import { memo } from "react";
 
 import SettlementsApi from "~/api/settlements";
 import { UnitSlider } from "~/components/Settlements/UnitSlider";
@@ -88,7 +88,7 @@ const PickUpOrPutDownArmyModal = memo(
                     const max =
                       type === "put_down"
                         ? userStore.user.army[unitType]
-                        : settlementData.army![unitType];
+                        : settlementData.army[unitType];
                     return (
                       <div key={unitType} className={"flex items-center mx-20"}>
                         <UnitSlider

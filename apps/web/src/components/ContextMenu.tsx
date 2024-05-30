@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 interface IContextMenuItem {
   icon: string;

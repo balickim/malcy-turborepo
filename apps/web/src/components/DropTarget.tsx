@@ -11,7 +11,7 @@ const DropTarget: React.FC<IDropTargetProps> = ({ onDrop }) => {
 
   const [, drop] = useDrop(() => ({
     accept: "SETTLER",
-    drop: (item, monitor) => {
+    drop: (_item, monitor) => {
       const offset = monitor.getClientOffset();
       if (offset) {
         const point = map.containerPointToLatLng([offset.x, offset.y]);

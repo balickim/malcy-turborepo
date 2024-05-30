@@ -1,5 +1,5 @@
 import { LatLngTuple } from "leaflet";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Pane, Polygon } from "react-leaflet";
 
 import { websocketUserLocation } from "~/store/websocketStore";
