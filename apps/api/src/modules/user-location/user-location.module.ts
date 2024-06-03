@@ -8,6 +8,7 @@ import { ConfigService } from '~/modules/config/config.service';
 import { EventLogEntity } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { FogOfWarModule } from '~/modules/fog-of-war/fog-of-war.module';
+import { HabitableZonesModule } from '~/modules/habitable-zones/habitable-zones.module';
 import { SettlementsModule } from '~/modules/settlements/settlements.module';
 import { UserLocationGateway } from '~/modules/user-location/user-location.gateway';
 import { UserLocationService } from '~/modules/user-location/user-location.service';
@@ -22,6 +23,7 @@ import { CacheRedisProviderModule } from '~/providers/cache/redis/provider.modul
     UsersModule,
     forwardRef(() => FogOfWarModule),
     forwardRef(() => SettlementsModule),
+    HabitableZonesModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

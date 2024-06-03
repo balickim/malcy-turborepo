@@ -11,6 +11,7 @@ import DropTarget from "~/components/DropTarget";
 import ArmyInfoOnMap from "~/components/Map/ArmyInfoOnMap";
 import Buttons from "~/components/Map/Buttons";
 import FogOfWar from "~/components/Map/FogOfWar";
+import HabitableZones from "~/components/Map/HabitableZones.tsx";
 import { LocationFinderDummy } from "~/components/Map/LocationFinderDummy";
 import { NoPlayerPositionInfo } from "~/components/Map/NoPlayerPositionInfo";
 import { OtherPlayersLocationMarker } from "~/components/Map/OtherPlayersLocationsMarkers";
@@ -93,6 +94,7 @@ const Map = () => {
           />
 
           <FogOfWar cityBounds={cityBounds} />
+          <HabitableZones />
 
           <UserLocationMarker location={playerLocation} />
           <OtherPlayersLocationMarker locations={otherPlayersPositions} />

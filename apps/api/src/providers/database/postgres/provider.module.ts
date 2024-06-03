@@ -15,6 +15,8 @@ import { DiscoveredAreaEntity } from '~/modules/fog-of-war/entities/discovered-a
 import { DiscoveredSettlementsEntity } from '~/modules/fog-of-war/entities/discovered-settlements.entity';
 import { VisibleAreaEntity } from '~/modules/fog-of-war/entities/visible-area.entity';
 import { FogOfWarModule } from '~/modules/fog-of-war/fog-of-war.module';
+import { DiscoveredHabitableZonesEntity } from '~/modules/habitable-zones/entities/discovered-habitable-zones.entity';
+import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';
 import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 import { SettlementsModule } from '~/modules/settlements/settlements.module';
 import { UserLocationModule } from '~/modules/user-location/user-location.module';
@@ -56,6 +58,8 @@ import { UsersModule } from '~/modules/users/users.module';
             DiscoveredAreaEntity,
             VisibleAreaEntity,
             DiscoveredSettlementsEntity,
+            HabitableZonesEntity,
+            DiscoveredHabitableZonesEntity,
           ],
           subscribers: [EventLogSubscriber],
         };

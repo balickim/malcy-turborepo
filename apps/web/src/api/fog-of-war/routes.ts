@@ -1,4 +1,5 @@
 import { LatLngTuple } from "leaflet";
+import { IDTOResponseFindHabitableZonesInBounds } from "shared-types";
 
 import { fetchWrapper } from "~/api/fetch";
 import { IDiscoveredSettlement } from "~/api/fog-of-war/dtos";
@@ -22,7 +23,14 @@ export default class FogOfWarApi {
     bounds: IBounds,
   ): Promise<IApiResponse<ISettlementDto>> => {
     const data = new URLSearchParams(convertBoundsToSearchParams(bounds));
-    return fetchWrapper(`${this.basePath}/bounds?${data}`);
+    return fetchWrapper(`${this.basePath}/settlements-in-bounds?${data}`);
+  };
+
+  getHabitableZones = async (
+    bounds: IBounds,
+  ): Promise<IApiResponse<IDTOResponseFindHabitableZonesInBounds[]>> => {
+    const data = new URLSearchParams(convertBoundsToSearchParams(bounds));
+    return fetchWrapper(`${this.basePath}/habitable-zones-in-bounds?${data}`);
   };
 
   getDiscoveredSettlementById = async (

@@ -1,15 +1,18 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { HabitableZonesTypesEnum, UnitType } from 'shared-types';
+import { IDTOResponseFindHabitableZonesInBounds } from 'shared-types';
 import { Repository } from 'typeorm';
 
 import { CombatsService } from '~/modules/combats/combats.service';
 import { DiscoveredAreaEntity } from '~/modules/fog-of-war/entities/discovered-area.entity';
 import { DiscoveredSettlementsEntity } from '~/modules/fog-of-war/entities/discovered-settlements.entity';
 import { VisibleAreaEntity } from '~/modules/fog-of-war/entities/visible-area.entity';
+import { DiscoveredHabitableZonesEntity } from '~/modules/habitable-zones/entities/discovered-habitable-zones.entity';
+import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';
 import { PublicSettlementDtoWithConvertedLocation } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 import { IJwtUser } from '~/modules/users/dtos/users.dto';
-import { UnitType } from 'shared-types';
 
 @Injectable()
 export class FogOfWarService {
@@ -22,6 +25,8 @@ export class FogOfWarService {
     private visibleAreaEntityRepository: Repository<VisibleAreaEntity>,
     @InjectRepository(DiscoveredSettlementsEntity)
     private discoveredSettlementsEntityRepository: Repository<DiscoveredSettlementsEntity>,
+    @InjectRepository(DiscoveredHabitableZonesEntity)
+    private discoveredHabitableZonesEntityRepository: Repository<DiscoveredHabitableZonesEntity>,
     @Inject(forwardRef(() => CombatsService))
     private combatsService: CombatsService,
   ) {}
@@ -157,6 +162,24 @@ export class FogOfWarService {
     });
   }
 
+  public async discoverHabitableZone(
+    discoveredByUserId: string,
+    habitableZone: HabitableZonesEntity,
+  ) {
+    const recordToUpsert: Partial<DiscoveredHabitableZonesEntity> = {
+      discoveredByUserId,
+      type: habitableZone.type,
+      habitableZoneId: habitableZone.id,
+    };
+
+    return this.discoveredHabitableZonesEntityRepository.upsert(
+      recordToUpsert,
+      {
+        conflictPaths: ['habitableZoneId'],
+      },
+    );
+  }
+
   async findSettlementsInBounds(
     discoveredByUserId: string,
     southWest: { lat: number; lng: number },
@@ -226,6 +249,66 @@ export class FogOfWarService {
       this.logger.error(
         `FINDING SETTLEMENTS IN BOUNDS southWest.lat:${southWest.lat}, southWest.lng:${southWest.lng}, northEast.lat:${northEast.lat}, northEast.lng:${northEast.lng} FAILED: ${e}`,
       );
+    }
+  }
+
+  async findHabitableZonesInBounds(
+    discoveredByUserId: string,
+    southWest: { lat: number; lng: number },
+    northEast: { lat: number; lng: number },
+  ): Promise<IDTOResponseFindHabitableZonesInBounds[]> {
+    try {
+      const query = this.discoveredHabitableZonesEntityRepository
+        .createQueryBuilder('dhz')
+        .select([
+          'dhz.habitableZoneId AS id',
+          'dhz.type AS type',
+          'ST_AsGeoJSON((ST_Dump(hz.area)).geom)::json AS area',
+        ])
+        .leftJoin('dhz.habitableZone', 'hz')
+        .where('dhz.discoveredByUserId = :discoveredByUserId', {
+          discoveredByUserId,
+        })
+        .andWhere(
+          `ST_Intersects(hz.area, ST_MakeEnvelope(:southWestLng, :southWestLat, :northEastLng, :northEastLat, 4326))`,
+          {
+            southWestLng: southWest.lng,
+            southWestLat: southWest.lat,
+            northEastLng: northEast.lng,
+            northEastLat: northEast.lat,
+          },
+        );
+
+      const rawResults = await query.getRawMany();
+
+      const results = rawResults.map((result) => {
+        const geoJson = result.area;
+
+        if (geoJson.type === 'Polygon') {
+          const convertedCoordinates = geoJson.coordinates[0].map(
+            ([lng, lat]) => [lat, lng],
+          );
+          return {
+            id: result.id as string,
+            type: result.type as HabitableZonesTypesEnum,
+            area: convertedCoordinates as number[],
+          };
+        } else {
+          this.logger.warn('Unexpected GeoJSON type:', geoJson.type);
+          return {
+            id: result.id,
+            type: result.type,
+            area: [],
+          };
+        }
+      });
+
+      return results;
+    } catch (e) {
+      this.logger.error(
+        `FINDING HABITABLE ZONES IN BOUNDS southWest.lat:${southWest.lat}, southWest.lng:${southWest.lng}, northEast.lat:${northEast.lat}, northEast.lng:${northEast.lng} FAILED: ${e}`,
+      );
+      throw e; // Ensure the error is propagated
     }
   }
 

@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
 import * as bcrypt from 'bcrypt';
+import { UnitType } from 'shared-types';
 import { DataSource, Repository } from 'typeorm';
 
 import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
 import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 import { UsersEntity } from '~/modules/users/entities/users.entity';
-import { UnitType } from 'shared-types';
 
 async function createUser(usersRepository: Repository<UsersEntity>) {
   const hashedPassword = await bcrypt.hash('password', 10);
@@ -63,7 +63,7 @@ async function createArmy(
   await armyEntityRepository.save(newArmy);
 }
 
-export async function seedData(dataSource: DataSource): Promise<void> {
+export async function seedSettlements(dataSource: DataSource): Promise<void> {
   process.env.PROCESS_ENV = 'seeding'; // turn off "afterInsert" in EventSubscribers
 
   const settlementsEntityRepository =

@@ -25,7 +25,7 @@ export class FogOfWarController {
     return this.fogOfWarService.findAllVisibleByUser(req.user.id);
   }
 
-  @Get('/bounds')
+  @Get('/settlements-in-bounds')
   @ResponseMessage('Fetched Settlements Succesfully')
   async findInBounds(
     @Query('southWestLat') southWestLat: string,
@@ -44,6 +44,30 @@ export class FogOfWarController {
     };
 
     return this.fogOfWarService.findSettlementsInBounds(
+      req.user.id,
+      southWest,
+      northEast,
+    );
+  }
+
+  @Get('/habitable-zones-in-bounds')
+  async findHabitableZonesInBounds(
+    @Query('southWestLat') southWestLat: string,
+    @Query('southWestLng') southWestLng: string,
+    @Query('northEastLat') northEastLat: string,
+    @Query('northEastLng') northEastLng: string,
+    @Request() req: IExpressRequestWithUser<IJwtUser>,
+  ) {
+    const southWest = {
+      lat: parseFloat(southWestLat),
+      lng: parseFloat(southWestLng),
+    };
+    const northEast = {
+      lat: parseFloat(northEastLat),
+      lng: parseFloat(northEastLng),
+    };
+
+    return this.fogOfWarService.findHabitableZonesInBounds(
       req.user.id,
       southWest,
       northEast,

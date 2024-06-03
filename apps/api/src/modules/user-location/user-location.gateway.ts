@@ -11,6 +11,7 @@ import { Server, Socket } from 'socket.io';
 import { WsJwtGuard } from '~/modules/chat/guards/ws-jwt.guard';
 import { ConfigService } from '~/modules/config/config.service';
 import { FogOfWarService } from '~/modules/fog-of-war/fog-of-war.service';
+import { HabitableZonesService } from '~/modules/habitable-zones/habitable-zones.service';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
 import {
   IUpdateLocationParams,
@@ -40,6 +41,7 @@ export class UserLocationGateway {
   constructor(
     private userLocationService: UserLocationService,
     private settlementsService: SettlementsService,
+    private habitableZonesService: HabitableZonesService,
     private configService: ConfigService,
     private fogOfWarService: FogOfWarService,
     private wsJwtGuard: WsJwtGuard,
@@ -50,55 +52,94 @@ export class UserLocationGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: IUpdateLocationParams,
   ) {
-    if (
-      !this.wsJwtGuard.canActivate({
-        switchToWs: () => ({ getClient: () => client }),
-      } as any)
-    ) {
+    if (!this.canActivateClient(client)) {
       client.disconnect();
       return;
     }
 
     try {
-      await this.userLocationService.updateLocation(payload);
-      this.logger.debug(`LOCATION UPDATED FOR USER: ${payload.userId}`);
-
-      const nearbyUsers = await this.userLocationService.getOnlineUsersInRadius(
-        payload.location.lng,
-        payload.location.lat,
-        this.configService.gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
-        'm',
-        [payload.userId],
-      );
-
-      client.emit('otherPlayersPositions', nearbyUsers);
-
-      const nearbySettlements =
-        await this.settlementsService.findSettlementsInRadius(
-          payload.location,
-          this.configService.gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
-        );
-
-      for (const settlement of nearbySettlements) {
-        await this.fogOfWarService.discoverSettlement(
-          payload.userId,
-          settlement,
-        );
-      }
-
-      client.emit(
-        'allDiscoveredByUser',
-        await this.fogOfWarService.findAllDiscoveredByUser(payload.userId),
-      );
-      client.emit(
-        'allVisibleByUser',
-        await this.fogOfWarService.findAllVisibleByUser(payload.userId),
-      );
-    } catch (e) {
-      this.logger.error(
-        `ERROR UPDATING LOCATION FOR USER: ${payload.userId} --- ${e}`,
-      );
-      client.emit('location:error', e);
+      await this.processPlayerPosition(client, payload);
+    } catch (error) {
+      this.handleError(client, payload.userId, error);
     }
+  }
+
+  private canActivateClient(client: Socket): boolean {
+    return this.wsJwtGuard.canActivate({
+      switchToWs: () => ({ getClient: () => client }),
+    } as any);
+  }
+
+  private async processPlayerPosition(
+    client: Socket,
+    payload: IUpdateLocationParams,
+  ) {
+    await this.updatePlayerLocation(payload);
+
+    const nearbyUsers = await this.getNearbyUsers(payload);
+    client.emit('otherPlayersPositions', nearbyUsers);
+
+    const nearbySettlements = await this.getNearbySettlements(payload);
+    await this.discoverSettlements(payload.userId, nearbySettlements);
+
+    const nearbyHabitableZones = await this.getNearbyHabitableZones(payload);
+    await this.discoverHabitableZones(payload.userId, nearbyHabitableZones);
+
+    client.emit(
+      'allDiscoveredByUser',
+      await this.fogOfWarService.findAllDiscoveredByUser(payload.userId),
+    );
+    client.emit(
+      'allVisibleByUser',
+      await this.fogOfWarService.findAllVisibleByUser(payload.userId),
+    );
+  }
+
+  private async updatePlayerLocation(payload: IUpdateLocationParams) {
+    await this.userLocationService.updateLocation(payload);
+    this.logger.debug(`LOCATION UPDATED FOR USER: ${payload.userId}`);
+  }
+
+  private async getNearbyUsers(payload: IUpdateLocationParams) {
+    return this.userLocationService.getOnlineUsersInRadius(
+      payload.location.lng,
+      payload.location.lat,
+      this.configService.gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
+      'm',
+      [payload.userId],
+    );
+  }
+
+  private async getNearbySettlements(payload: IUpdateLocationParams) {
+    return this.settlementsService.findSettlementsInRadius(
+      payload.location,
+      this.configService.gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
+    );
+  }
+
+  private async discoverSettlements(userId: string, settlements: any[]) {
+    for (const settlement of settlements) {
+      await this.fogOfWarService.discoverSettlement(userId, settlement);
+    }
+  }
+
+  private async getNearbyHabitableZones(payload: IUpdateLocationParams) {
+    return this.habitableZonesService.findHabitableZonesInRadius(
+      payload.location,
+      this.configService.gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
+    );
+  }
+
+  private async discoverHabitableZones(userId: string, zones: any[]) {
+    for (const zone of zones) {
+      await this.fogOfWarService.discoverHabitableZone(userId, zone);
+    }
+  }
+
+  private handleError(client: Socket, userId: string, error: any) {
+    this.logger.error(
+      `ERROR UPDATING LOCATION FOR USER: ${userId} --- ${error}`,
+    );
+    client.emit('location:error', error);
   }
 }
