@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "game-web",
   "private": true,
   "version": "0.2.29",
   "type": "module",
