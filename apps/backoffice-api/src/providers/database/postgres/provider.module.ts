@@ -7,6 +7,7 @@ import { EventLogEntity } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogModule } from '~/modules/event-log/event-log.module';
 import { EventLogSubscriber } from '~/modules/event-log/event-log.subscriber';
 import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';
+import { WorldsConfigEntity } from '~/modules/worlds-config/entities/worlds-config.entity';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitab
           migrations: [],
           migrationsTableName: 'typeorm_migrations',
           synchronize: configService.appConfig.DB_SYNCHRONIZE,
-          entities: [EventLogEntity, HabitableZonesEntity],
+          entities: [EventLogEntity, HabitableZonesEntity, WorldsConfigEntity],
           subscribers: [EventLogSubscriber],
         };
       },

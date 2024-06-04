@@ -1,5 +1,4 @@
-import { IResource } from '~/modules/config/game.config';
-import { UnitType } from 'shared-types';
+import { IResource, UnitType } from 'shared-types';
 
 export class RequestRecruitmentDto {
   settlementId: string;
