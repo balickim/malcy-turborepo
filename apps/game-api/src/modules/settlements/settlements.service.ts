@@ -7,7 +7,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IResource, ResourceTypeEnum, UnitType } from 'shared-types';
+import {
+  IResource,
+  ResourceTypeEnum,
+  SettlementTypesEnum,
+  UnitType,
+} from 'shared-types';
 import { Repository } from 'typeorm';
 
 import { include, includeAll } from '~/common/utils';
@@ -23,10 +28,7 @@ import {
   PublicSettlementDto,
 } from '~/modules/settlements/dtos/settlements.dto';
 import TransferArmyDto from '~/modules/settlements/dtos/transferArmyDto';
-import {
-  SettlementsEntity,
-  SettlementTypesEnum,
-} from '~/modules/settlements/entities/settlements.entity';
+import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 import { UserLocationService } from '~/modules/user-location/user-location.service';
 import { IJwtUser } from '~/modules/users/dtos/users.dto';
 

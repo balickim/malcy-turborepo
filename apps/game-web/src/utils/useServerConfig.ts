@@ -1,13 +1,13 @@
 import { UndefinedInitialDataOptions, useQuery } from "@tanstack/react-query";
+import { WorldConfig } from "shared-types";
 
 import ConfigApi from "~/api/config";
-import { IGameConfigDto } from "~/api/config/dtos";
 import store from "~/store";
 import { IApiResponse } from "~/types/common";
 
 export function useServerConfig(
   options?: Omit<
-    UndefinedInitialDataOptions<IApiResponse<IGameConfigDto>>,
+    UndefinedInitialDataOptions<IApiResponse<WorldConfig>>,
     "queryKey" | "queryFn"
   >,
 ) {

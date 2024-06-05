@@ -3,7 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import Redis, { RedisKey } from 'ioredis';
 import { catchError, firstValueFrom } from 'rxjs';
-import { GameConfig } from 'shared-types';
+import { WorldConfig } from 'shared-types';
 
 import { AppConfig } from '~/modules/config/appConfig';
 
@@ -25,10 +25,10 @@ export class ConfigService implements OnModuleInit {
     await this.setConfig(gameConfig);
   }
 
-  private async retrieveGameConfig(): Promise<GameConfig> {
+  private async retrieveGameConfig(): Promise<WorldConfig> {
     const { data } = await firstValueFrom(
       this.httpService
-        .get<GameConfig>(
+        .get<WorldConfig>(
           this.appConfig.get().BACKOFFICE_HOST +
             '/config/' +
             this.appConfig.get().WORLD_NAME,
@@ -43,11 +43,11 @@ export class ConfigService implements OnModuleInit {
     return data;
   }
 
-  private async setConfig(gameConfig: GameConfig) {
-    return this.redis.set(this.WORLD_CONFIG_KEY, JSON.stringify(gameConfig));
+  private async setConfig(worldConfig: WorldConfig) {
+    return this.redis.set(this.WORLD_CONFIG_KEY, JSON.stringify(worldConfig));
   }
 
-  public async gameConfig(): Promise<GameConfig> {
+  public async gameConfig(): Promise<WorldConfig> {
     return JSON.parse(await this.redis.get(this.WORLD_CONFIG_KEY));
   }
 }

@@ -1,14 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GameConfig, ResourceTypeEnum } from 'shared-types';
+import {
+  WorldConfig,
+  ResourceTypeEnum,
+  SettlementTypesEnum,
+} from 'shared-types';
 import { Repository } from 'typeorm';
 
 import { ConfigService } from '~/modules/config/config.service';
-import {
-  SettlementsEntity,
-  SettlementTypesEnum,
-} from '~/modules/settlements/entities/settlements.entity';
+import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 
 @Injectable()
 export class ResourcesService {
@@ -23,9 +24,9 @@ export class ResourcesService {
   getBaseValue(
     settlementType: SettlementTypesEnum,
     resourceType: ResourceTypeEnum,
-    gameConfig: GameConfig,
+    worldConfig: WorldConfig,
   ) {
-    return gameConfig.SETTLEMENT[settlementType].RESOURCE_GENERATION_BASE[
+    return worldConfig.SETTLEMENT[settlementType].RESOURCE_GENERATION_BASE[
       resourceType
     ];
   }

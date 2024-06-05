@@ -1,5 +1,5 @@
 import { isPlatform } from "@ionic/react";
-import L, { LatLngTuple } from "leaflet";
+import L from "leaflet";
 import { useRef, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -40,13 +40,6 @@ const Map = () => {
     lng: number;
   } | null>(null);
 
-  const cityBounds: LatLngTuple[] = [
-    [53.391874, 14.424565], // south-west
-    [53.516425, 14.424565], // north-west
-    [53.516425, 14.653759], // north-east
-    [53.391874, 14.653759], // south-east
-  ];
-
   const handleDrop = (coords: { lat: number; lng: number }) => {
     if (modalAddSettlementRef.current) {
       setDropCoords(coords);
@@ -62,6 +55,7 @@ const Map = () => {
     );
   }
 
+  const cityBounds = serverConfig.data!.data.WORLD_BOUNDS!;
   return (
     <PageContainer ionContentProps={{ scrollY: false }}>
       <ArmyInfoOnMap />

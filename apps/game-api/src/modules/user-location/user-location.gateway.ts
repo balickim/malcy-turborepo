@@ -6,7 +6,6 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { GameConfig } from 'shared-types';
 import { Server, Socket } from 'socket.io';
 
 import { WsJwtGuard } from '~/modules/chat/guards/ws-jwt.guard';
@@ -36,7 +35,6 @@ import {
 })
 export class UserLocationGateway {
   private readonly logger = new Logger(UserLocationGateway.name);
-  private readonly gameConfig: GameConfig;
   @WebSocketServer()
   server: Server;
 

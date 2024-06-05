@@ -1,15 +1,14 @@
 import { makeAutoObservable } from "mobx";
-
-import { IGameConfigDto } from "~/api/config/dtos";
+import { WorldConfig } from "shared-types";
 
 class ServerConfigStore {
-  config: IGameConfigDto | null = null;
+  config: WorldConfig | null = null;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  setConfig(config: IGameConfigDto) {
+  setConfig(config: WorldConfig) {
     this.config = config;
   }
 }

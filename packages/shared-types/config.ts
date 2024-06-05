@@ -1,4 +1,5 @@
 import { UnitType } from './armies';
+import { SettlementTypesEnum } from './settlements';
 
 export const enum ResourceTypeEnum {
   wood = 'wood',
@@ -44,12 +45,13 @@ interface SettlementConfig {
   RESOURCE_GENERATION_BASE: IResource;
 }
 
-export interface GameConfig {
+export interface WorldConfig {
+  WORLD_BOUNDS: [number, number][];
   DEFAULT_MAX_RADIUS_TO_TAKE_ACTION_METERS: number;
   PLAYER_DISCOVER_RADIUS_METERS: number;
   DEFAULT_MAX_USER_SPEED_METERS_PER_SECOND: number;
   USER_IS_ONLINE_SECONDS: number;
-  DEFAULT_RESOURCE_DISPOSITION_RATE: CronExpression;
+  DEFAULT_RESOURCE_DISPOSITION_RATE: number;
   COMBAT: { UNITS: UnitCombat; SIEGE: { TIME_TICK_MS: number } };
   SETTLEMENT: {
     [SettlementTypesEnum.MINING_TOWN]: SettlementConfig;

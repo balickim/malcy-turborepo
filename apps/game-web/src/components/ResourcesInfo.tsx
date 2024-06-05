@@ -1,4 +1,4 @@
-import { ResourceTypeEnum } from "~/api/config/dtos";
+import { ResourceTypeEnum } from "shared-types";
 
 interface IResources {
   gold?: number;

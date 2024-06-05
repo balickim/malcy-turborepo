@@ -1,4 +1,4 @@
-import { GameConfig } from 'shared-types';
+import { WorldConfig } from 'shared-types';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 import { AuditableBaseEntity } from '~/modules/event-log/entities/auditable-base.entity';
@@ -12,5 +12,5 @@ export class WorldsConfigEntity extends AuditableBaseEntity {
   name: string;
 
   @Column({ type: 'jsonb' })
-  config: GameConfig;
+  config: WorldConfig;
 }
