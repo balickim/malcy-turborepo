@@ -13,7 +13,11 @@
         "!.next/cache/**"
       ]
     },
-    "lint": {},
+    "lint": {
+      "dependsOn": [
+        "^lint"
+      ]
+    },
     "dev": {
       "cache": false,
       "persistent": true

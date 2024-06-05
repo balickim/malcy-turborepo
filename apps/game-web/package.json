@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "ui": "workspace:*",
+    "shared-types": "workspace:*",
     "@capacitor/android": "^5.7.0",
     "@capacitor/app": "5.0.7",
     "@capacitor/core": "5.7.0",
