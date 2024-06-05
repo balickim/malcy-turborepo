@@ -1,42 +1,53 @@
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
-import { Injectable, Logger } from '@nestjs/common';
-import { config } from 'dotenv';
-import { bool, cleanEnv, num, port, str } from 'envalid';
-import Redis from 'ioredis';
+import { HttpService } from '@nestjs/axios';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import Redis, { RedisKey } from 'ioredis';
+import { catchError, firstValueFrom } from 'rxjs';
+import { GameConfig } from 'shared-types';
 
-import { gameConfig } from './game.config';
-
-config();
+import { AppConfig } from '~/modules/config/appConfig';
 
 @Injectable()
-export class ConfigService {
+export class ConfigService implements OnModuleInit {
   private readonly logger = new Logger(ConfigService.name);
+  public readonly WORLD_CONFIG_KEY: RedisKey;
 
-  constructor(@InjectRedis() private readonly redis: Redis) {}
-
-  private readonly _appConfig = cleanEnv(process.env, {
-    WORLD_NAME: str(),
-    FE_APP_HOST: str({ devDefault: 'http://localhost:5173' }),
-    PORT: port({ devDefault: 8090 }),
-    JWT_SECRET: str({ devDefault: 'secret' }),
-    JWT_ACCESS_TOKEN_EXPIRES_IN: str({ devDefault: '1h' }),
-    JWT_REFRESH_TOKEN_EXPIRES_IN: str({ devDefault: '31d' }),
-    DB_HOST: str(),
-    DB_PORT: num(),
-    DB_DATABASE: str(),
-    DB_USERNAME: str(),
-    DB_PASSWORD: str(),
-    DB_SYNCHRONIZE: bool({ default: false, devDefault: true }),
-    REDIS_HOST: str(),
-    REDIS_PORT: num(),
-    REDIS_PASSWORD: str({ default: 'password' }),
-  });
-
-  get appConfig() {
-    return this._appConfig;
+  constructor(
+    @InjectRedis() private readonly redis: Redis,
+    private appConfig: AppConfig,
+    private readonly httpService: HttpService,
+  ) {
+    this.WORLD_CONFIG_KEY = `world_config_${this.appConfig.appConfig.WORLD_NAME}`;
   }
 
-  get gameConfig() {
-    return gameConfig();
+  async onModuleInit() {
+    const gameConfig = await this.retrieveGameConfig();
+    await this.setConfig(gameConfig);
+  }
+
+  private async retrieveGameConfig(): Promise<GameConfig> {
+    const { data } = await firstValueFrom(
+      this.httpService
+        .get<GameConfig>(
+          this.appConfig.appConfig.BACKOFFICE_HOST +
+            '/config/' +
+            this.appConfig.appConfig.WORLD_NAME,
+        )
+        .pipe(
+          catchError((error) => {
+            this.logger.error(error.response.data);
+            throw 'An error happened!';
+          }),
+        ),
+    );
+    return data;
+  }
+
+  private async setConfig(gameConfig: GameConfig) {
+    return this.redis.set(this.WORLD_CONFIG_KEY, JSON.stringify(gameConfig));
+  }
+
+  public async gameConfig(): Promise<GameConfig> {
+    return JSON.parse(await this.redis.get(this.WORLD_CONFIG_KEY));
   }
 }

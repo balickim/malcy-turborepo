@@ -2,7 +2,7 @@ import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
 
-import { ConfigService } from '~/modules/config/config.service';
+import { AppConfig } from '~/modules/config/appConfig';
 import { ActionType } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { FogOfWarService } from '~/modules/fog-of-war/fog-of-war.service';
@@ -26,7 +26,7 @@ export class UserLocationService {
 
   constructor(
     @InjectRedis() private readonly redis: Redis,
-    private configService: ConfigService,
+    private configService: AppConfig,
     private eventLogService: EventLogService,
     private readonly usersService: UsersService,
     @Inject(forwardRef(() => FogOfWarService))

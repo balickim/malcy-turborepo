@@ -14,7 +14,7 @@ import { include, includeAll } from '~/common/utils';
 import { convertGeoJSONToPoint } from '~/common/utils/postgis';
 import { ArmiesService } from '~/modules/armies/armies.service';
 import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
-import { ConfigService } from '~/modules/config/config.service';
+import { AppConfig } from '~/modules/config/appConfig';
 import { ActionType } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { CreateSettlementDto } from '~/modules/settlements/dtos/createSettlementDto';
@@ -42,7 +42,7 @@ export class SettlementsService {
     private armyEntityRepository: Repository<ArmyEntity>,
     private userLocationService: UserLocationService,
     private eventLogService: EventLogService,
-    private configService: ConfigService,
+    private configService: AppConfig,
     @Inject(forwardRef(() => ArmiesService))
     private armiesService: ArmiesService,
   ) {}

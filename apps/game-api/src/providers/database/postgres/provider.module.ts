@@ -6,8 +6,8 @@ import { ConversationsEntity } from '~/modules/chat/entities/conversations.entit
 import { GroupsMembersEntity } from '~/modules/chat/entities/groups-members.entity';
 import { GroupsEntity } from '~/modules/chat/entities/groups.entity';
 import { MessagesEntity } from '~/modules/chat/entities/messages.entity';
+import { AppConfig } from '~/modules/config/appConfig';
 import { ConfigModule } from '~/modules/config/config.module';
-import { ConfigService } from '~/modules/config/config.service';
 import { EventLogEntity } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogModule } from '~/modules/event-log/event-log.module';
 import { EventLogSubscriber } from '~/modules/event-log/event-log.subscriber';
@@ -34,8 +34,8 @@ import { UsersModule } from '~/modules/users/users.module';
         EventLogModule,
         FogOfWarModule,
       ],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
+      inject: [AppConfig],
+      useFactory: (configService: AppConfig) => {
         return {
           type: 'postgres',
           host: configService.appConfig.DB_HOST,

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 
+import { AppConfig } from '~/modules/config/appConfig';
 import { ConfigModule } from '~/modules/config/config.module';
-import { ConfigService } from '~/modules/config/config.service';
 import { EventLogEntity } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogModule } from '~/modules/event-log/event-log.module';
 import { EventLogSubscriber } from '~/modules/event-log/event-log.subscriber';
@@ -13,8 +13,8 @@ import { WorldsConfigEntity } from '~/modules/worlds-config/entities/worlds-conf
   imports: [
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule, EventLogModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
+      inject: [AppConfig],
+      useFactory: (configService: AppConfig) => {
         return {
           type: 'postgres',
           host: configService.appConfig.DB_HOST,

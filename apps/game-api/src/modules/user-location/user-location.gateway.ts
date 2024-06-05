@@ -9,7 +9,7 @@ import {
 import { Server, Socket } from 'socket.io';
 
 import { WsJwtGuard } from '~/modules/chat/guards/ws-jwt.guard';
-import { ConfigService } from '~/modules/config/config.service';
+import { AppConfig } from '~/modules/config/appConfig';
 import { FogOfWarService } from '~/modules/fog-of-war/fog-of-war.service';
 import { HabitableZonesService } from '~/modules/habitable-zones/habitable-zones.service';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
@@ -42,7 +42,7 @@ export class UserLocationGateway {
     private userLocationService: UserLocationService,
     private settlementsService: SettlementsService,
     private habitableZonesService: HabitableZonesService,
-    private configService: ConfigService,
+    private configService: AppConfig,
     private fogOfWarService: FogOfWarService,
     private wsJwtGuard: WsJwtGuard,
   ) {}

@@ -5,14 +5,14 @@ import cookieParser from 'cookie-parser';
 import { AppModule } from '~/app.module';
 import { TransformInterceptor } from '~/common/interceptors/response.interceptor';
 import { JwtGuard } from '~/modules/auth/guards/jwt.guard';
-import { ConfigService } from '~/modules/config/config.service';
+import { AppConfig } from '~/modules/config/appConfig';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cors = require('cors');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
+  const configService = app.get(AppConfig);
 
   const allowedOrigins = [
     configService.appConfig.FE_APP_HOST,

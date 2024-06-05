@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 
 import { RegisterRequestDto } from '~/modules/auth/dtos/register-request.dto';
 import { Tokens } from '~/modules/auth/types/Tokens';
-import { ConfigService } from '~/modules/config/config.service';
+import { AppConfig } from '~/modules/config/appConfig';
 import { ActionType } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { UsersEntity } from '~/modules/users/entities/users.entity';
@@ -17,7 +17,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private configService: ConfigService,
+    private configService: AppConfig,
     private eventLogService: EventLogService,
   ) {}
 

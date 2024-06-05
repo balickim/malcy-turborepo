@@ -11,11 +11,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
+import { UnitType } from 'shared-types';
 import { Repository } from 'typeorm';
 
 import { sleep } from '~/common/utils';
 import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
-import { ConfigService } from '~/modules/config/config.service';
+import { AppConfig } from '~/modules/config/appConfig';
 import {
   RequestRecruitmentDto,
   ResponseRecruitmentDto,
@@ -24,7 +25,6 @@ import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto
 import { ResourceTypeEnum } from '~/modules/settlements/entities/settlements.entity';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
 import { IJwtUser } from '~/modules/users/dtos/users.dto';
-import { UnitType } from 'shared-types';
 
 const bullSettlementRecruitmentQueueName = (settlementId: string) =>
   `recruitment:settlement_${settlementId}`;
@@ -44,7 +44,7 @@ export class RecruitmentsService implements OnModuleInit {
     private armyRepository: Repository<ArmyEntity>,
     @Inject(forwardRef(() => SettlementsService))
     private settlementsService: SettlementsService,
-    private configService: ConfigService,
+    private configService: AppConfig,
   ) {}
 
   // Assigns processors to all active or waiting jobs after server restart

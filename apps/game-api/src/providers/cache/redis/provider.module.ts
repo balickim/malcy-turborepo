@@ -1,16 +1,16 @@
 import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 import { Module } from '@nestjs/common';
 
+import { AppConfig } from '~/modules/config/appConfig';
 import { ConfigModule } from '~/modules/config/config.module';
-import { ConfigService } from '~/modules/config/config.service';
 
 @Module({
   imports: [
     RedisModule.forRootAsync({
       imports: [ConfigModule],
-      inject: [ConfigService],
+      inject: [AppConfig],
       useFactory: async (
-        configService: ConfigService,
+        configService: AppConfig,
       ): Promise<RedisModuleOptions> => {
         return {
           config: {

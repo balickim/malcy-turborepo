@@ -3,7 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { ConfigService } from '~/modules/config/config.service';
+import { AppConfig } from '~/modules/config/appConfig';
 import {
   ResourceTypeEnum,
   SettlementsEntity,
@@ -17,7 +17,7 @@ export class ResourcesService {
   constructor(
     @InjectRepository(SettlementsEntity)
     private settlementsEntityRepository: Repository<SettlementsEntity>,
-    private configService: ConfigService,
+    private configService: AppConfig,
   ) {}
 
   getBaseValue(

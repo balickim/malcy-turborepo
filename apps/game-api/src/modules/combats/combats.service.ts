@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { Job, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
+import { UnitType } from 'shared-types';
 
 import { IBattleOutcome } from '~/common/types/combats.types';
 import { sleep } from '~/common/utils';
@@ -16,10 +17,9 @@ import { ArmyRepository } from '~/modules/armies/armies.repository';
 import { ArmiesService } from '~/modules/armies/armies.service';
 import { StartSiegeDto } from '~/modules/combats/dtos/siege.dto';
 import { ISiegeJob } from '~/modules/combats/types';
-import { ConfigService } from '~/modules/config/config.service';
+import { AppConfig } from '~/modules/config/appConfig';
 import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
-import { UnitType } from 'shared-types';
 
 const bullSettlementSiegeQueueName = (settlementId: string) =>
   `combat:siege:settlement_${settlementId}`;
@@ -32,7 +32,7 @@ export class CombatsService {
     @Inject(forwardRef(() => SettlementsService))
     private settlementsService: SettlementsService,
     @InjectRedis() private readonly redis: Redis,
-    private configService: ConfigService,
+    private configService: AppConfig,
     private readonly armyRepository: ArmyRepository,
     @Inject(forwardRef(() => ArmiesService))
     private armiesService: ArmiesService,

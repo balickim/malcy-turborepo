@@ -9,8 +9,8 @@ import { GroupsMembersEntity } from '~/modules/chat/entities/groups-members.enti
 import { GroupsEntity } from '~/modules/chat/entities/groups.entity';
 import { MessagesEntity } from '~/modules/chat/entities/messages.entity';
 import { WsJwtGuard } from '~/modules/chat/guards/ws-jwt.guard';
+import { AppConfig } from '~/modules/config/appConfig';
 import { ConfigModule } from '~/modules/config/config.module';
-import { ConfigService } from '~/modules/config/config.service';
 
 import { ChatController } from './chat.controller';
 
@@ -24,7 +24,7 @@ import { ChatController } from './chat.controller';
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: async (configService: AppConfig) => ({
         secret: configService.appConfig.JWT_SECRET,
         signOptions: {
           expiresIn: parseInt(
@@ -32,11 +32,11 @@ import { ChatController } from './chat.controller';
           ),
         },
       }),
-      inject: [ConfigService],
+      inject: [AppConfig],
     }),
   ],
   controllers: [ChatController],
-  providers: [ChatGateway, WsJwtGuard, ConfigService, ChatService],
+  providers: [ChatGateway, WsJwtGuard, AppConfig, ChatService],
   exports: [],
 })
 export class ChatModule {}

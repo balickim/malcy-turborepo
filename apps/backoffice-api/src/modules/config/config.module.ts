@@ -1,12 +1,16 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConfigController } from '~/modules/config/config.controller';
+import { ConfigService } from '~/modules/config/config.service';
+import { WorldsConfigEntity } from '~/modules/worlds-config/entities/worlds-config.entity';
 
-import { ConfigService } from './config.service';
+import { AppConfig } from './appConfig';
 
 @Module({
-  providers: [ConfigService],
+  imports: [TypeOrmModule.forFeature([WorldsConfigEntity])],
+  providers: [AppConfig, ConfigService],
   controllers: [ConfigController],
-  exports: [ConfigService],
+  exports: [AppConfig, ConfigService],
 })
 export class ConfigModule {}

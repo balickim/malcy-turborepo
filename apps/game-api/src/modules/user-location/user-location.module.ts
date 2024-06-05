@@ -3,8 +3,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WsJwtGuard } from '~/modules/chat/guards/ws-jwt.guard';
+import { AppConfig } from '~/modules/config/appConfig';
 import { ConfigModule } from '~/modules/config/config.module';
-import { ConfigService } from '~/modules/config/config.service';
 import { EventLogEntity } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { FogOfWarModule } from '~/modules/fog-of-war/fog-of-war.module';
@@ -26,7 +26,7 @@ import { CacheRedisProviderModule } from '~/providers/cache/redis/provider.modul
     HabitableZonesModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: async (configService: AppConfig) => ({
         secret: configService.appConfig.JWT_SECRET,
         signOptions: {
           expiresIn: parseInt(
@@ -34,7 +34,7 @@ import { CacheRedisProviderModule } from '~/providers/cache/redis/provider.modul
           ),
         },
       }),
-      inject: [ConfigService],
+      inject: [AppConfig],
     }),
   ],
   providers: [

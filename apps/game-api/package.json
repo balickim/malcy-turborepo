@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@liaoliaots/nestjs-redis": "^9.0.5",
+    "@nestjs/axios": "^3.0.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.2.0",
@@ -49,12 +50,11 @@
     "pg": "^8.11.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
+    "shared-types": "workspace:*",
     "socket.io": "^4.7.4",
-    "typeorm": "^0.3.20",
-    "shared-types": "workspace:*"
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
-    "tsconfig": "workspace:*",
     "@faker-js/faker": "^8.4.1",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
@@ -82,6 +82,7 @@
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.2",
+    "tsconfig": "workspace:*",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },

@@ -1,12 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { ConfigService } from '~/modules/config/config.service';
+import { AppConfig } from '~/modules/config/appConfig';
 
 @ApiTags('config')
 @Controller('config')
 export class ConfigController {
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: AppConfig) {}
 
   @Get('/')
   async getConfig() {

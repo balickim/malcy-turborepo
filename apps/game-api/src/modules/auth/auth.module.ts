@@ -5,8 +5,8 @@ import { AuthController } from '~/modules/auth/auth.controller';
 import { AuthService } from '~/modules/auth/auth.service';
 import { JwtStrategy } from '~/modules/auth/strategy/jwt.strategy';
 import { LocalStrategy } from '~/modules/auth/strategy/local.strategy';
+import { AppConfig } from '~/modules/config/appConfig';
 import { ConfigModule } from '~/modules/config/config.module';
-import { ConfigService } from '~/modules/config/config.service';
 import { EventLogModule } from '~/modules/event-log/event-log.module';
 import { UsersModule } from '~/modules/users/users.module';
 
@@ -16,7 +16,7 @@ import { UsersModule } from '~/modules/users/users.module';
     EventLogModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: async (configService: AppConfig) => ({
         secret: configService.appConfig.JWT_SECRET,
         signOptions: {
           expiresIn: parseInt(
@@ -24,7 +24,7 @@ import { UsersModule } from '~/modules/users/users.module';
           ),
         },
       }),
-      inject: [ConfigService],
+      inject: [AppConfig],
     }),
     ConfigModule,
   ],

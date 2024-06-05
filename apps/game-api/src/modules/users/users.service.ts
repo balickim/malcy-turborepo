@@ -5,7 +5,7 @@ import Redis from 'ioredis';
 import { Repository } from 'typeorm';
 
 import { include } from '~/common/utils';
-import { ConfigService } from '~/modules/config/config.service';
+import { AppConfig } from '~/modules/config/appConfig';
 import { IJwtUser } from '~/modules/users/dtos/users.dto';
 import { UsersEntity } from '~/modules/users/entities/users.entity';
 
@@ -18,7 +18,7 @@ export class UsersService {
     @InjectRepository(UsersEntity)
     private usersRepository: Repository<UsersEntity>,
     @InjectRedis() private readonly redis: Redis,
-    private configService: ConfigService,
+    private configService: AppConfig,
   ) {}
 
   findOneByEmail(email: string): Promise<UsersEntity | null> {
