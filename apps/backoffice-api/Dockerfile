@@ -11,7 +11,7 @@ RUN npm install -g pnpm
 COPY .npmrc .npmrc
 
 # Copy pnpm workspace file from the root context
-COPY ../../pnpm-workspace.yaml .
+COPY ../../pnpm-workspace.yaml ./pnpm-workspace.yaml
 
 # Copy package.json and pnpm-lock.yaml from the root context
 COPY ../../package.json ../../pnpm-lock.yaml ./
