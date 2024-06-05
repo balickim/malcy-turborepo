@@ -10,11 +10,11 @@ RUN npm install -g pnpm
 # Copy .npmrc to handle peer dependencies
 COPY .npmrc .npmrc
 
-# Copy pnpm workspace files
-COPY pnpm-workspace.yaml ./
+# Copy pnpm workspace file from the root context
+COPY ../../pnpm-workspace.yaml .
 
-# Copy package.json and pnpm-lock.yaml
-COPY package*.json pnpm-lock.yaml ./
+# Copy package.json and pnpm-lock.yaml from the root context
+COPY ../../package.json ../../pnpm-lock.yaml ./
 
 # Install dependencies
 RUN pnpm install --legacy-peer-deps
