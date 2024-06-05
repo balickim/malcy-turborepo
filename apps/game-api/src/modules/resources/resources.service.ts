@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GameConfig } from 'shared-types';
+import { GameConfig, ResourceTypeEnum } from 'shared-types';
 import { Repository } from 'typeorm';
 
 import { ConfigService } from '~/modules/config/config.service';
 import {
-  ResourceTypeEnum,
   SettlementsEntity,
   SettlementTypesEnum,
 } from '~/modules/settlements/entities/settlements.entity';

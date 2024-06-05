@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IResource, UnitType } from 'shared-types';
+import { IResource, ResourceTypeEnum, UnitType } from 'shared-types';
 import { Repository } from 'typeorm';
 
 import { include, includeAll } from '~/common/utils';
@@ -24,7 +24,6 @@ import {
 } from '~/modules/settlements/dtos/settlements.dto';
 import TransferArmyDto from '~/modules/settlements/dtos/transferArmyDto';
 import {
-  ResourceTypeEnum,
   SettlementsEntity,
   SettlementTypesEnum,
 } from '~/modules/settlements/entities/settlements.entity';

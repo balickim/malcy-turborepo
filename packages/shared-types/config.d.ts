@@ -1,5 +1,10 @@
 import { UnitType } from './armies';
 
+export const enum ResourceTypeEnum {
+  wood = 'wood',
+  gold = 'gold',
+}
+
 export interface IResource {
   [ResourceTypeEnum.gold]: number;
   [ResourceTypeEnum.wood]: number;

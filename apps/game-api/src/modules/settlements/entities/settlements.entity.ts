@@ -23,11 +23,6 @@ export enum SettlementTypesEnum {
   CAPITOL_SETTLEMENT = 'CAPITOL_SETTLEMENT',
 }
 
-export const enum ResourceTypeEnum {
-  wood = 'wood',
-  gold = 'gold',
-}
-
 @Entity({ name: 'settlements' })
 export class SettlementsEntity extends AuditableBaseEntity {
   @PrimaryColumn()

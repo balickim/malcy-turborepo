@@ -1,10 +1,7 @@
+import { ResourceTypeEnum } from "shared-types";
+
 import { SettlementTypesEnum } from "~/api/settlements/dtos";
 import { UnitType } from "~/types/army";
-
-export enum ResourceTypeEnum {
-  gold = "gold",
-  wood = "wood",
-}
 
 export interface IResources {
   [ResourceTypeEnum.gold]: number;
