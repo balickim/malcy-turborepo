@@ -14,7 +14,7 @@ import { include, includeAll } from '~/common/utils';
 import { convertGeoJSONToPoint } from '~/common/utils/postgis';
 import { ArmiesService } from '~/modules/armies/armies.service';
 import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
-import { AppConfig } from '~/modules/config/appConfig';
+import { ConfigService } from '~/modules/config/config.service';
 import { ActionType } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { CreateSettlementDto } from '~/modules/settlements/dtos/createSettlementDto';
@@ -42,7 +42,7 @@ export class SettlementsService {
     private armyEntityRepository: Repository<ArmyEntity>,
     private userLocationService: UserLocationService,
     private eventLogService: EventLogService,
-    private configService: AppConfig,
+    private configService: ConfigService,
     @Inject(forwardRef(() => ArmiesService))
     private armiesService: ArmiesService,
   ) {}
@@ -236,35 +236,37 @@ export class SettlementsService {
       },
     });
 
+    const gameConfig = await this.configService.gameConfig();
+
     const maxGoldMiningTown =
-      this.configService.gameConfig.SETTLEMENT[SettlementTypesEnum.MINING_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.gold];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.MINING_TOWN].RESOURCES_CAP[
+        ResourceTypeEnum.gold
+      ];
     const maxGoldCastleTown =
-      this.configService.gameConfig.SETTLEMENT[SettlementTypesEnum.CASTLE_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.gold];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.CASTLE_TOWN].RESOURCES_CAP[
+        ResourceTypeEnum.gold
+      ];
     const maxGoldFortifiedSettlement =
-      this.configService.gameConfig.SETTLEMENT[
-        SettlementTypesEnum.FORTIFIED_SETTLEMENT
-      ].RESOURCES_CAP[ResourceTypeEnum.gold];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.FORTIFIED_SETTLEMENT]
+        .RESOURCES_CAP[ResourceTypeEnum.gold];
     const maxGoldCapitolSettlement =
-      this.configService.gameConfig.SETTLEMENT[
-        SettlementTypesEnum.CAPITOL_SETTLEMENT
-      ].RESOURCES_CAP[ResourceTypeEnum.gold];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.CAPITOL_SETTLEMENT]
+        .RESOURCES_CAP[ResourceTypeEnum.gold];
 
     const maxWoodMiningTown =
-      this.configService.gameConfig.SETTLEMENT[SettlementTypesEnum.MINING_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.wood];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.MINING_TOWN].RESOURCES_CAP[
+        ResourceTypeEnum.wood
+      ];
     const maxWoodCastleTown =
-      this.configService.gameConfig.SETTLEMENT[SettlementTypesEnum.CASTLE_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.wood];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.CASTLE_TOWN].RESOURCES_CAP[
+        ResourceTypeEnum.wood
+      ];
     const maxWoodFortifiedSettlement =
-      this.configService.gameConfig.SETTLEMENT[
-        SettlementTypesEnum.FORTIFIED_SETTLEMENT
-      ].RESOURCES_CAP[ResourceTypeEnum.wood];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.FORTIFIED_SETTLEMENT]
+        .RESOURCES_CAP[ResourceTypeEnum.wood];
     const maxWoodCapitolSettlement =
-      this.configService.gameConfig.SETTLEMENT[
-        SettlementTypesEnum.CAPITOL_SETTLEMENT
-      ].RESOURCES_CAP[ResourceTypeEnum.wood];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.CAPITOL_SETTLEMENT]
+        .RESOURCES_CAP[ResourceTypeEnum.wood];
 
     return this.armyEntityRepository
       .createQueryBuilder()

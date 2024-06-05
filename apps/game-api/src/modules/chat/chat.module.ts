@@ -24,12 +24,10 @@ import { ChatController } from './chat.controller';
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: AppConfig) => ({
-        secret: configService.appConfig.JWT_SECRET,
+      useFactory: async (appConfig: AppConfig) => ({
+        secret: appConfig.get().JWT_SECRET,
         signOptions: {
-          expiresIn: parseInt(
-            configService.appConfig.JWT_ACCESS_TOKEN_EXPIRES_IN,
-          ),
+          expiresIn: parseInt(appConfig.get().JWT_ACCESS_TOKEN_EXPIRES_IN),
         },
       }),
       inject: [AppConfig],

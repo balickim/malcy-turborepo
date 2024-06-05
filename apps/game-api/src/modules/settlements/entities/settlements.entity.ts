@@ -2,7 +2,6 @@ import { Max, Min } from 'class-validator';
 import { nanoid } from 'nanoid';
 import {
   BeforeInsert,
-  Check,
   Column,
   Entity,
   GeoJSON,
@@ -30,25 +29,6 @@ export const enum ResourceTypeEnum {
 }
 
 @Entity({ name: 'settlements' })
-// resource values must be also changes in game.config.ts because this is evaluated before config
-@Check(`
-  "gold" >= 0 AND "gold" <= CASE
-    WHEN "type" = '${SettlementTypesEnum.MINING_TOWN}' THEN 4000
-    WHEN "type" = '${SettlementTypesEnum.CASTLE_TOWN}' THEN 8000
-    WHEN "type" = '${SettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN 16000
-    WHEN "type" = '${SettlementTypesEnum.CAPITOL_SETTLEMENT}' THEN 100000
-    ELSE 4000
-  END
-`)
-@Check(`
-  "wood" >= 0 AND "wood" <= CASE
-    WHEN "type" = '${SettlementTypesEnum.MINING_TOWN}' THEN 1000
-    WHEN "type" = '${SettlementTypesEnum.CASTLE_TOWN}' THEN 2000
-    WHEN "type" = '${SettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN 4000
-    WHEN "type" = '${SettlementTypesEnum.CAPITOL_SETTLEMENT}' THEN 80000
-    ELSE 1000
-  END
-`)
 export class SettlementsEntity extends AuditableBaseEntity {
   @PrimaryColumn()
   id: string;

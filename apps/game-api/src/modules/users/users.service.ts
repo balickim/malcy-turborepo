@@ -5,7 +5,7 @@ import Redis from 'ioredis';
 import { Repository } from 'typeorm';
 
 import { include } from '~/common/utils';
-import { AppConfig } from '~/modules/config/appConfig';
+import { ConfigService } from '~/modules/config/config.service';
 import { IJwtUser } from '~/modules/users/dtos/users.dto';
 import { UsersEntity } from '~/modules/users/entities/users.entity';
 
@@ -18,7 +18,7 @@ export class UsersService {
     @InjectRepository(UsersEntity)
     private usersRepository: Repository<UsersEntity>,
     @InjectRedis() private readonly redis: Redis,
-    private configService: AppConfig,
+    private configService: ConfigService,
   ) {}
 
   findOneByEmail(email: string): Promise<UsersEntity | null> {
@@ -59,7 +59,9 @@ export class UsersService {
   }
 
   public async getIsOnline(userId: string) {
-    const TIME_SECONDS = this.configService.gameConfig.USER_IS_ONLINE_SECONDS;
+    const gameConfig = await this.configService.gameConfig();
+
+    const TIME_SECONDS = gameConfig.USER_IS_ONLINE_SECONDS;
     const userLastAction = await this.redis.get(userLastActionRedisKey(userId));
     if (!userLastAction) {
       return false;

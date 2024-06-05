@@ -17,7 +17,7 @@ export class ConfigService implements OnModuleInit {
     private appConfig: AppConfig,
     private readonly httpService: HttpService,
   ) {
-    this.WORLD_CONFIG_KEY = `world_config_${this.appConfig.appConfig.WORLD_NAME}`;
+    this.WORLD_CONFIG_KEY = `world_config_${this.appConfig.get().WORLD_NAME}`;
   }
 
   async onModuleInit() {
@@ -29,9 +29,9 @@ export class ConfigService implements OnModuleInit {
     const { data } = await firstValueFrom(
       this.httpService
         .get<GameConfig>(
-          this.appConfig.appConfig.BACKOFFICE_HOST +
+          this.appConfig.get().BACKOFFICE_HOST +
             '/config/' +
-            this.appConfig.appConfig.WORLD_NAME,
+            this.appConfig.get().WORLD_NAME,
         )
         .pipe(
           catchError((error) => {

@@ -17,7 +17,7 @@ import { ArmyRepository } from '~/modules/armies/armies.repository';
 import { ArmiesService } from '~/modules/armies/armies.service';
 import { StartSiegeDto } from '~/modules/combats/dtos/siege.dto';
 import { ISiegeJob } from '~/modules/combats/types';
-import { AppConfig } from '~/modules/config/appConfig';
+import { ConfigService } from '~/modules/config/config.service';
 import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
 
@@ -32,7 +32,7 @@ export class CombatsService {
     @Inject(forwardRef(() => SettlementsService))
     private settlementsService: SettlementsService,
     @InjectRedis() private readonly redis: Redis,
-    private configService: AppConfig,
+    private configService: ConfigService,
     private readonly armyRepository: ArmyRepository,
     @Inject(forwardRef(() => ArmiesService))
     private armiesService: ArmiesService,
@@ -135,9 +135,10 @@ export class CombatsService {
   private siegeProcessor = async (job: Job<ISiegeJob>) => {
     let breakthroughChance = 0;
     let success = false;
+    const gameConfig = await this.configService.gameConfig();
 
     while (!success) {
-      await sleep(this.configService.gameConfig.COMBAT.SIEGE.TIME_TICK_MS);
+      await sleep(gameConfig.COMBAT.SIEGE.TIME_TICK_MS);
       breakthroughChance += this.getBreakthroughChance();
       if (breakthroughChance > 100) breakthroughChance = 100;
 
@@ -149,7 +150,7 @@ export class CombatsService {
         const defenderArmy = await this.armyRepository.findOne({
           where: { id: job.data.defenderSettlement.army.id },
         });
-        const battleOutcome = this.calculateBattleOutcome(job.data.army, {
+        const battleOutcome = await this.calculateBattleOutcome(job.data.army, {
           [UnitType.SWORDSMAN]: defenderArmy[UnitType.SWORDSMAN],
           [UnitType.ARCHER]: defenderArmy[UnitType.ARCHER],
           [UnitType.KNIGHT]: defenderArmy[UnitType.KNIGHT],
@@ -262,25 +263,24 @@ export class CombatsService {
     };
   }
 
-  public calculateBattleOutcome(
+  public async calculateBattleOutcome(
     attackerArmy: Record<UnitType, number>,
     defenderArmy: Record<UnitType, number>,
-  ): IBattleOutcome {
+  ): Promise<IBattleOutcome> {
     let attackerPower = 0;
     let defenderPower = 0;
+    const gameConfig = await this.configService.gameConfig();
 
     for (const unitType in attackerArmy) {
       const unitCount = attackerArmy[unitType as UnitType];
-      const unitStats =
-        this.configService.gameConfig.COMBAT.UNITS[unitType as UnitType];
+      const unitStats = gameConfig.COMBAT.UNITS[unitType as UnitType];
       attackerPower +=
         unitCount * (unitStats.ATTACK + unitStats.DEFENSE + unitStats.HEALTH);
     }
 
     for (const unitType in defenderArmy) {
       const unitCount = defenderArmy[unitType as UnitType];
-      const unitStats =
-        this.configService.gameConfig.COMBAT.UNITS[unitType as UnitType];
+      const unitStats = gameConfig.COMBAT.UNITS[unitType as UnitType];
       defenderPower +=
         unitCount * (unitStats.ATTACK + unitStats.DEFENSE + unitStats.HEALTH);
     }

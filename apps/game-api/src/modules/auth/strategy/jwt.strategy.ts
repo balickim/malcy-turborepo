@@ -7,11 +7,11 @@ import { AppConfig } from '~/modules/config/appConfig';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly configService: AppConfig) {
+  constructor(private readonly appConfig: AppConfig) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.appConfig.JWT_SECRET,
+      secretOrKey: appConfig.get().JWT_SECRET,
     });
   }
 

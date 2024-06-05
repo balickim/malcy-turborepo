@@ -16,7 +16,7 @@ import { Repository } from 'typeorm';
 
 import { sleep } from '~/common/utils';
 import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
-import { AppConfig } from '~/modules/config/appConfig';
+import { ConfigService } from '~/modules/config/config.service';
 import {
   RequestRecruitmentDto,
   ResponseRecruitmentDto,
@@ -44,7 +44,7 @@ export class RecruitmentsService implements OnModuleInit {
     private armyRepository: Repository<ArmyEntity>,
     @Inject(forwardRef(() => SettlementsService))
     private settlementsService: SettlementsService,
-    private configService: AppConfig,
+    private configService: ConfigService,
   ) {}
 
   // Assigns processors to all active or waiting jobs after server restart
@@ -90,10 +90,11 @@ export class RecruitmentsService implements OnModuleInit {
     recruitDto: RequestRecruitmentDto,
     settlement: PrivateSettlementDto,
   ) {
+    const gameConfig = await this.configService.gameConfig();
+
     const unitRecruitmentTime =
-      this.configService.gameConfig.SETTLEMENT[settlement.type].RECRUITMENT[
-        recruitDto.unitType
-      ].TIME_MS ?? undefined;
+      gameConfig.SETTLEMENT[settlement.type].RECRUITMENT[recruitDto.unitType]
+        .TIME_MS ?? undefined;
 
     if (unitRecruitmentTime === undefined) {
       throw new BadRequestException(
@@ -102,9 +103,8 @@ export class RecruitmentsService implements OnModuleInit {
     }
 
     const unitCost =
-      this.configService.gameConfig.SETTLEMENT[settlement.type].RECRUITMENT[
-        recruitDto.unitType
-      ].COST ?? undefined;
+      gameConfig.SETTLEMENT[settlement.type].RECRUITMENT[recruitDto.unitType]
+        .COST ?? undefined;
     const goldCost = unitCost[ResourceTypeEnum.gold] * recruitDto.unitCount;
     const woodCost = unitCost[ResourceTypeEnum.wood] * recruitDto.unitCount;
 

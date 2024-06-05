@@ -17,7 +17,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private configService: AppConfig,
+    private appConfig: AppConfig,
     private eventLogService: EventLogService,
   ) {}
 
@@ -36,10 +36,10 @@ export class AuthService {
   private async generateToken(user: UsersEntity): Promise<Tokens> {
     const payload = { id: user.id, email: user.email, username: user.username };
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: this.configService.appConfig.JWT_ACCESS_TOKEN_EXPIRES_IN,
+      expiresIn: this.appConfig.get().JWT_ACCESS_TOKEN_EXPIRES_IN,
     });
     const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: this.configService.appConfig.JWT_REFRESH_TOKEN_EXPIRES_IN,
+      expiresIn: this.appConfig.get().JWT_REFRESH_TOKEN_EXPIRES_IN,
     });
     return { access_token: accessToken, refresh_token: refreshToken };
   }

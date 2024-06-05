@@ -9,14 +9,12 @@ import { ConfigModule } from '~/modules/config/config.module';
     RedisModule.forRootAsync({
       imports: [ConfigModule],
       inject: [AppConfig],
-      useFactory: async (
-        configService: AppConfig,
-      ): Promise<RedisModuleOptions> => {
+      useFactory: async (appConfig: AppConfig): Promise<RedisModuleOptions> => {
         return {
           config: {
-            host: configService.appConfig.REDIS_HOST,
-            port: configService.appConfig.REDIS_PORT,
-            password: configService.appConfig.REDIS_PASSWORD,
+            host: appConfig.get().REDIS_HOST,
+            port: appConfig.get().REDIS_PORT,
+            password: appConfig.get().REDIS_PASSWORD,
             maxRetriesPerRequest: null,
           },
         };

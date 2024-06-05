@@ -14,17 +14,17 @@ import { WorldsConfigEntity } from '~/modules/worlds-config/entities/worlds-conf
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule, EventLogModule],
       inject: [AppConfig],
-      useFactory: (configService: AppConfig) => {
+      useFactory: (appConfig: AppConfig) => {
         return {
           type: 'postgres',
-          host: configService.appConfig.DB_HOST,
-          port: configService.appConfig.DB_PORT,
-          username: configService.appConfig.DB_USERNAME,
-          password: configService.appConfig.DB_PASSWORD,
-          database: configService.appConfig.DB_DATABASE,
+          host: appConfig.get().DB_HOST,
+          port: appConfig.get().DB_PORT,
+          username: appConfig.get().DB_USERNAME,
+          password: appConfig.get().DB_PASSWORD,
+          database: appConfig.get().DB_DATABASE,
           migrations: [],
           migrationsTableName: 'typeorm_migrations',
-          synchronize: configService.appConfig.DB_SYNCHRONIZE,
+          synchronize: appConfig.get().DB_SYNCHRONIZE,
           entities: [EventLogEntity, HabitableZonesEntity, WorldsConfigEntity],
           subscribers: [EventLogSubscriber],
         };

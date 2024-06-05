@@ -15,7 +15,7 @@ async function bootstrap() {
   const configService = app.get(AppConfig);
 
   const allowedOrigins = [
-    configService.appConfig.FE_APP_HOST,
+    configService.get().FE_APP_HOST,
     'capacitor://localhost',
     'ionic://localhost',
     'http://localhost',
@@ -40,7 +40,7 @@ async function bootstrap() {
   app.useGlobalGuards(new JwtGuard(app.get(Reflector)));
   app.useGlobalInterceptors(new TransformInterceptor(new Reflector()));
 
-  const port = configService.appConfig.PORT;
+  const port = configService.get().PORT;
 
   const config = new DocumentBuilder().build();
   const document = SwaggerModule.createDocument(app, config);

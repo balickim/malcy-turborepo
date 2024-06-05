@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { GameConfig } from 'shared-types';
 import { Repository } from 'typeorm';
 
-import { AppConfig } from '~/modules/config/appConfig';
+import { ConfigService } from '~/modules/config/config.service';
 import {
   ResourceTypeEnum,
   SettlementsEntity,
@@ -17,82 +18,94 @@ export class ResourcesService {
   constructor(
     @InjectRepository(SettlementsEntity)
     private settlementsEntityRepository: Repository<SettlementsEntity>,
-    private configService: AppConfig,
+    private configService: ConfigService,
   ) {}
 
   getBaseValue(
     settlementType: SettlementTypesEnum,
     resourceType: ResourceTypeEnum,
+    gameConfig: GameConfig,
   ) {
-    return this.configService.gameConfig.SETTLEMENT[settlementType]
-      .RESOURCE_GENERATION_BASE[resourceType];
+    return gameConfig.SETTLEMENT[settlementType].RESOURCE_GENERATION_BASE[
+      resourceType
+    ];
   }
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   async updateResources() {
+    const gameConfig = await this.configService.gameConfig();
+
     const goldMiningTown = this.getBaseValue(
       SettlementTypesEnum.MINING_TOWN,
       ResourceTypeEnum.gold,
+      gameConfig,
     );
     const goldCastleTown = this.getBaseValue(
       SettlementTypesEnum.CASTLE_TOWN,
       ResourceTypeEnum.gold,
+      gameConfig,
     );
     const goldFortifiedSettlement = this.getBaseValue(
       SettlementTypesEnum.FORTIFIED_SETTLEMENT,
       ResourceTypeEnum.gold,
+      gameConfig,
     );
     const goldCapitolSettlement = this.getBaseValue(
       SettlementTypesEnum.CAPITOL_SETTLEMENT,
       ResourceTypeEnum.gold,
+      gameConfig,
     );
 
     const woodMiningTown = this.getBaseValue(
       SettlementTypesEnum.MINING_TOWN,
       ResourceTypeEnum.wood,
+      gameConfig,
     );
     const woodCastleTown = this.getBaseValue(
       SettlementTypesEnum.CASTLE_TOWN,
       ResourceTypeEnum.wood,
+      gameConfig,
     );
     const woodFortifiedSettlement = this.getBaseValue(
       SettlementTypesEnum.FORTIFIED_SETTLEMENT,
       ResourceTypeEnum.wood,
+      gameConfig,
     );
     const woodCapitolSettlement = this.getBaseValue(
       SettlementTypesEnum.CAPITOL_SETTLEMENT,
       ResourceTypeEnum.wood,
+      gameConfig,
     );
 
     const maxGoldMiningTown =
-      this.configService.gameConfig.SETTLEMENT[SettlementTypesEnum.MINING_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.gold];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.MINING_TOWN].RESOURCES_CAP[
+        ResourceTypeEnum.gold
+      ];
     const maxGoldCastleTown =
-      this.configService.gameConfig.SETTLEMENT[SettlementTypesEnum.CASTLE_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.gold];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.CASTLE_TOWN].RESOURCES_CAP[
+        ResourceTypeEnum.gold
+      ];
     const maxGoldFortifiedSettlement =
-      this.configService.gameConfig.SETTLEMENT[
-        SettlementTypesEnum.FORTIFIED_SETTLEMENT
-      ].RESOURCES_CAP[ResourceTypeEnum.gold];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.FORTIFIED_SETTLEMENT]
+        .RESOURCES_CAP[ResourceTypeEnum.gold];
     const maxGoldCapitolSettlement =
-      this.configService.gameConfig.SETTLEMENT[
-        SettlementTypesEnum.CAPITOL_SETTLEMENT
-      ].RESOURCES_CAP[ResourceTypeEnum.gold];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.CAPITOL_SETTLEMENT]
+        .RESOURCES_CAP[ResourceTypeEnum.gold];
 
     const maxWoodMiningTown =
-      this.configService.gameConfig.SETTLEMENT[SettlementTypesEnum.MINING_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.wood];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.MINING_TOWN].RESOURCES_CAP[
+        ResourceTypeEnum.wood
+      ];
     const maxWoodCastleTown =
-      this.configService.gameConfig.SETTLEMENT[SettlementTypesEnum.CASTLE_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.wood];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.CASTLE_TOWN].RESOURCES_CAP[
+        ResourceTypeEnum.wood
+      ];
     const maxWoodFortifiedSettlement =
-      this.configService.gameConfig.SETTLEMENT[
-        SettlementTypesEnum.FORTIFIED_SETTLEMENT
-      ].RESOURCES_CAP[ResourceTypeEnum.wood];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.FORTIFIED_SETTLEMENT]
+        .RESOURCES_CAP[ResourceTypeEnum.wood];
     const maxWoodCapitolSettlement =
-      this.configService.gameConfig.SETTLEMENT[
-        SettlementTypesEnum.CAPITOL_SETTLEMENT
-      ].RESOURCES_CAP[ResourceTypeEnum.wood];
+      gameConfig.SETTLEMENT[SettlementTypesEnum.CAPITOL_SETTLEMENT]
+        .RESOURCES_CAP[ResourceTypeEnum.wood];
 
     const query = this.settlementsEntityRepository
       .createQueryBuilder()

@@ -7,7 +7,7 @@ import { AppConfig } from '~/modules/config/appConfig';
 export class WsJwtGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private configService: AppConfig,
+    private appConfig: AppConfig,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
@@ -20,7 +20,7 @@ export class WsJwtGuard implements CanActivate {
 
     try {
       client.user = this.jwtService.verify(token, {
-        secret: this.configService.appConfig.JWT_SECRET,
+        secret: this.appConfig.get().JWT_SECRET,
       });
       return true;
     } catch (error) {

@@ -24,7 +24,7 @@ export class AppConfig {
     REDIS_PASSWORD: str({ default: 'password' }),
   });
 
-  get appConfig() {
+  public get() {
     return this._appConfig;
   }
 }

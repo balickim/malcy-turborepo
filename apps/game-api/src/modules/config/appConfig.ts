@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { config } from 'dotenv';
 import { bool, cleanEnv, num, port, str } from 'envalid';
 
-import { gameConfig } from './game.config';
-
 config();
 
 @Injectable()
@@ -33,11 +31,7 @@ export class AppConfig {
     REDIS_PASSWORD: str({ default: 'password' }),
   });
 
-  get appConfig() {
+  public get() {
     return this._appConfig;
-  }
-
-  get gameConfig() {
-    return gameConfig();
   }
 }

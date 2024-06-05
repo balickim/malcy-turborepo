@@ -6,10 +6,11 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { GameConfig } from 'shared-types';
 import { Server, Socket } from 'socket.io';
 
 import { WsJwtGuard } from '~/modules/chat/guards/ws-jwt.guard';
-import { AppConfig } from '~/modules/config/appConfig';
+import { ConfigService } from '~/modules/config/config.service';
 import { FogOfWarService } from '~/modules/fog-of-war/fog-of-war.service';
 import { HabitableZonesService } from '~/modules/habitable-zones/habitable-zones.service';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
@@ -35,6 +36,7 @@ import {
 })
 export class UserLocationGateway {
   private readonly logger = new Logger(UserLocationGateway.name);
+  private readonly gameConfig: GameConfig;
   @WebSocketServer()
   server: Server;
 
@@ -42,7 +44,7 @@ export class UserLocationGateway {
     private userLocationService: UserLocationService,
     private settlementsService: SettlementsService,
     private habitableZonesService: HabitableZonesService,
-    private configService: AppConfig,
+    private configService: ConfigService,
     private fogOfWarService: FogOfWarService,
     private wsJwtGuard: WsJwtGuard,
   ) {}
@@ -101,19 +103,21 @@ export class UserLocationGateway {
   }
 
   private async getNearbyUsers(payload: IUpdateLocationParams) {
+    const gameConfig = await this.configService.gameConfig();
     return this.userLocationService.getOnlineUsersInRadius(
       payload.location.lng,
       payload.location.lat,
-      this.configService.gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
+      gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
       'm',
       [payload.userId],
     );
   }
 
   private async getNearbySettlements(payload: IUpdateLocationParams) {
+    const gameConfig = await this.configService.gameConfig();
     return this.settlementsService.findSettlementsInRadius(
       payload.location,
-      this.configService.gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
+      gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
     );
   }
 
@@ -124,9 +128,10 @@ export class UserLocationGateway {
   }
 
   private async getNearbyHabitableZones(payload: IUpdateLocationParams) {
+    const gameConfig = await this.configService.gameConfig();
     return this.habitableZonesService.findHabitableZonesInRadius(
       payload.location,
-      this.configService.gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
+      gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
     );
   }
 

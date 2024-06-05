@@ -2,7 +2,7 @@ import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
 
-import { AppConfig } from '~/modules/config/appConfig';
+import { ConfigService } from '~/modules/config/config.service';
 import { ActionType } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { FogOfWarService } from '~/modules/fog-of-war/fog-of-war.service';
@@ -26,7 +26,7 @@ export class UserLocationService {
 
   constructor(
     @InjectRedis() private readonly redis: Redis,
-    private configService: AppConfig,
+    private configService: ConfigService,
     private eventLogService: EventLogService,
     private readonly usersService: UsersService,
     @Inject(forwardRef(() => FogOfWarService))
@@ -61,11 +61,12 @@ export class UserLocationService {
       Date.now().toString(),
     ); // change old location timestamp to new one
 
+    const gameConfig = await this.configService.gameConfig();
     return await this.fogOfWarService.updateDiscoveredArea(
       params.userId,
       params.location.lat,
       params.location.lng,
-      this.configService.gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
+      gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
     );
   }
 
@@ -81,8 +82,9 @@ export class UserLocationService {
     location: LatLng;
     radiusMetres?: number;
   }): Promise<boolean> {
+    const gameConfig = await this.configService.gameConfig();
     const defaultMaxInRadiusDistanceToTakeActionMeters =
-      this.configService.gameConfig.DEFAULT_MAX_RADIUS_TO_TAKE_ACTION_METERS;
+      gameConfig.DEFAULT_MAX_RADIUS_TO_TAKE_ACTION_METERS;
     const distance = await this.calculateDistance(params);
     return (
       distance !== null &&
@@ -102,9 +104,10 @@ export class UserLocationService {
       params.userId,
     );
     const timeElapsedSec = (Date.now() - Number(previousTimestamp)) / 1000;
+    const gameConfig = await this.configService.gameConfig();
 
     const defaultMaxUserSpeed =
-      this.configService.gameConfig.DEFAULT_MAX_USER_SPEED_METERS_PER_SECOND;
+      gameConfig.DEFAULT_MAX_USER_SPEED_METERS_PER_SECOND;
     return (
       distance !== null &&
       distance / timeElapsedSec <=
