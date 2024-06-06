@@ -8,7 +8,7 @@ config();
 export class AppConfig {
   private readonly _appConfig = cleanEnv(process.env, {
     BACKOFFICE_HOST: str(),
-    API_KEY: str(),
+    BACKOFFICE_API_KEY: str(),
 
     FE_APP_HOST: str({ devDefault: 'http://localhost:5173' }),
 

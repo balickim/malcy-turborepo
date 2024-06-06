@@ -1,8 +1,9 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 
 import { AppModule } from '~/app.module';
+import { ApiKeyAuthGuard } from '~/modules/auth/guards/apiKey.guard';
 import { AppConfig } from '~/modules/config/appConfig';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -35,6 +36,7 @@ async function bootstrap() {
   );
 
   app.use(cookieParser());
+  app.useGlobalGuards(new ApiKeyAuthGuard(app.get(Reflector)));
   const port = configService.get().PORT;
 
   const config = new DocumentBuilder().build();

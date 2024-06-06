@@ -26,12 +26,18 @@ export class ConfigService implements OnModuleInit {
   }
 
   private async retrieveGameConfig(): Promise<WorldConfig> {
+    const apiKey = this.appConfig.get().BACKOFFICE_API_KEY;
     const { data } = await firstValueFrom(
       this.httpService
         .get<WorldConfig>(
           this.appConfig.get().BACKOFFICE_HOST +
             '/config/' +
             this.appConfig.get().WORLD_NAME,
+          {
+            headers: {
+              'x-api-key': apiKey,
+            },
+          },
         )
         .pipe(
           catchError((error) => {
