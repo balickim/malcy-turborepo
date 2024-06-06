@@ -6,7 +6,7 @@ import { IApiResponse } from "~/types/common";
 export default class ConfigApi {
   private readonly basePath = `${import.meta.env.VITE_API_URL}/config`;
 
-  getServerConfig = async (): Promise<IApiResponse<WorldConfig>> => {
+  getWorldConfig = async (): Promise<IApiResponse<WorldConfig>> => {
     return fetchWrapper(`${this.basePath}`);
   };
 }

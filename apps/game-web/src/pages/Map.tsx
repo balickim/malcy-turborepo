@@ -22,15 +22,15 @@ import Settlements from "~/components/Settlements";
 import AddSettlementModal from "~/components/Settlements/Modals/AddSettlementModal";
 import { useOthersPlayersPositionsWatcher } from "~/utils/useOtherPlayersPositionsWatcher";
 import { usePlayerPositionWatcher } from "~/utils/usePlayerPositionWatcher";
-import { useServerConfig } from "~/utils/useServerConfig";
 import { useUser } from "~/utils/useUser";
+import { useWorldConfig } from "~/utils/useWorldConfig.ts";
 
 import "leaflet/dist/leaflet.css";
 
 const Map = () => {
   const playerLocation = usePlayerPositionWatcher();
   const otherPlayersPositions = useOthersPlayersPositionsWatcher();
-  const serverConfig = useServerConfig({ refetchOnWindowFocus: false });
+  const worldConfig = useWorldConfig({ refetchOnWindowFocus: false });
   useUser({ refetchInterval: 5000 });
 
   const mapRef = useRef<L.Map>(null);
@@ -47,7 +47,7 @@ const Map = () => {
     }
   };
 
-  if (!playerLocation || serverConfig.isFetching) {
+  if (!playerLocation || worldConfig.isFetching) {
     return (
       <PageContainer>
         <NoPlayerPositionInfo />
@@ -55,7 +55,7 @@ const Map = () => {
     );
   }
 
-  const cityBounds = serverConfig.data!.data.WORLD_BOUNDS!;
+  const cityBounds = worldConfig.data!.data.WORLD_BOUNDS!;
   return (
     <PageContainer ionContentProps={{ scrollY: false }}>
       <ArmyInfoOnMap />

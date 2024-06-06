@@ -61,7 +61,7 @@ export class UsersService {
   public async getIsOnline(userId: string) {
     const gameConfig = await this.configService.gameConfig();
 
-    const TIME_SECONDS = gameConfig.USER_IS_ONLINE_SECONDS;
+    const TIME_SECONDS = gameConfig.MAX_USER_IS_ONLINE_SECONDS;
     const userLastAction = await this.redis.get(userLastActionRedisKey(userId));
     if (!userLastAction) {
       return false;

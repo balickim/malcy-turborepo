@@ -45,9 +45,7 @@ export function UserLocationMarker({
       <Marker position={position} icon={walkingManIcon} />
       <Circle
         center={position}
-        radius={
-          serverConfigStore.config!.DEFAULT_MAX_RADIUS_TO_TAKE_ACTION_METERS
-        }
+        radius={serverConfigStore.config!.MAX_RADIUS_TO_TAKE_ACTION_METERS}
       />
     </>
   ) : null;

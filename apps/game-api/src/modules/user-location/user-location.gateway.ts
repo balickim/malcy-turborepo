@@ -105,7 +105,7 @@ export class UserLocationGateway {
     return this.userLocationService.getOnlineUsersInRadius(
       payload.location.lng,
       payload.location.lat,
-      gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
+      gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
       'm',
       [payload.userId],
     );
@@ -115,7 +115,7 @@ export class UserLocationGateway {
     const gameConfig = await this.configService.gameConfig();
     return this.settlementsService.findSettlementsInRadius(
       payload.location,
-      gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
+      gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
     );
   }
 
@@ -129,7 +129,7 @@ export class UserLocationGateway {
     const gameConfig = await this.configService.gameConfig();
     return this.habitableZonesService.findHabitableZonesInRadius(
       payload.location,
-      gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
+      gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
     );
   }
 

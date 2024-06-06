@@ -66,7 +66,7 @@ export class UserLocationService {
       params.userId,
       params.location.lat,
       params.location.lng,
-      gameConfig.PLAYER_DISCOVER_RADIUS_METERS,
+      gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
     );
   }
 
@@ -84,7 +84,7 @@ export class UserLocationService {
   }): Promise<boolean> {
     const gameConfig = await this.configService.gameConfig();
     const defaultMaxInRadiusDistanceToTakeActionMeters =
-      gameConfig.DEFAULT_MAX_RADIUS_TO_TAKE_ACTION_METERS;
+      gameConfig.MAX_RADIUS_TO_TAKE_ACTION_METERS;
     const distance = await this.calculateDistance(params);
     return (
       distance !== null &&
@@ -106,8 +106,7 @@ export class UserLocationService {
     const timeElapsedSec = (Date.now() - Number(previousTimestamp)) / 1000;
     const gameConfig = await this.configService.gameConfig();
 
-    const defaultMaxUserSpeed =
-      gameConfig.DEFAULT_MAX_USER_SPEED_METERS_PER_SECOND;
+    const defaultMaxUserSpeed = gameConfig.MAX_USER_SPEED_METERS_PER_SECOND;
     return (
       distance !== null &&
       distance / timeElapsedSec <=

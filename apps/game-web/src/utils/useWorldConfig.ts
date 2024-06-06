@@ -5,7 +5,7 @@ import ConfigApi from "~/api/config";
 import store from "~/store";
 import { IApiResponse } from "~/types/common";
 
-export function useServerConfig(
+export function useWorldConfig(
   options?: Omit<
     UndefinedInitialDataOptions<IApiResponse<WorldConfig>>,
     "queryKey" | "queryFn"
@@ -13,15 +13,15 @@ export function useServerConfig(
 ) {
   const configApi = new ConfigApi();
   const { serverConfigStore } = store;
-  const serverConfig = useQuery({
+  const worldConfig = useQuery({
     ...options,
-    queryKey: ["serverConfig"],
-    queryFn: () => configApi.getServerConfig(),
+    queryKey: ["worldConfig"],
+    queryFn: () => configApi.getWorldConfig(),
   });
 
-  if (serverConfig.isSuccess) {
-    serverConfigStore.setConfig(serverConfig.data.data);
+  if (worldConfig.isSuccess) {
+    serverConfigStore.setConfig(worldConfig.data.data);
   }
 
-  return serverConfig;
+  return worldConfig;
 }

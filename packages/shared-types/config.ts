@@ -22,37 +22,40 @@ interface UnitCombatStats {
   HEALTH: number;
 }
 
-interface Recruitment {
-  [UnitType.SWORDSMAN]?: UnitRecruitment;
-  [UnitType.ARCHER]?: UnitRecruitment;
-  [UnitType.KNIGHT]?: UnitRecruitment;
-  [UnitType.LUCHADOR]?: UnitRecruitment;
-  [UnitType.ARCHMAGE]?: UnitRecruitment;
-}
-
-interface UnitCombat {
-  [UnitType.SWORDSMAN]?: UnitCombatStats;
-  [UnitType.ARCHER]?: UnitCombatStats;
-  [UnitType.KNIGHT]?: UnitCombatStats;
-  [UnitType.LUCHADOR]?: UnitCombatStats;
-  [UnitType.ARCHMAGE]?: UnitCombatStats;
+interface UnitTypeMapper<T> {
+  [UnitType.SWORDSMAN]?: T;
+  [UnitType.ARCHER]?: T;
+  [UnitType.KNIGHT]?: T;
+  [UnitType.LUCHADOR]?: T;
+  [UnitType.ARCHMAGE]?: T;
 }
 
 interface SettlementConfig {
   MAX: number | 'infinite';
-  RECRUITMENT: Recruitment;
+  RECRUITMENT: UnitTypeMapper<UnitRecruitment>;
   RESOURCES_CAP: IResource;
   RESOURCE_GENERATION_BASE: IResource;
 }
 
 export interface WorldConfig {
+  // World boundaries configuration
   WORLD_BOUNDS: [number, number][];
-  DEFAULT_MAX_RADIUS_TO_TAKE_ACTION_METERS: number;
-  PLAYER_DISCOVER_RADIUS_METERS: number;
-  DEFAULT_MAX_USER_SPEED_METERS_PER_SECOND: number;
-  USER_IS_ONLINE_SECONDS: number;
-  DEFAULT_RESOURCE_DISPOSITION_RATE: number;
-  COMBAT: { UNITS: UnitCombat; SIEGE: { TIME_TICK_MS: number } };
+
+  // Action and interaction configurations
+  MAX_RADIUS_TO_TAKE_ACTION_METERS: number;
+  MAX_RADIUS_TO_DISCOVER_METERS: number;
+  MAX_USER_SPEED_METERS_PER_SECOND: number;
+  MAX_USER_IS_ONLINE_SECONDS: number;
+
+  // Combat configurations
+  COMBAT: {
+    UNITS: UnitTypeMapper<UnitCombatStats>;
+    SIEGE: {
+      TIME_TICK_MS: number;
+    };
+  };
+
+  // Settlement configurations
   SETTLEMENT: {
     [SettlementTypesEnum.MINING_TOWN]: SettlementConfig;
     [SettlementTypesEnum.CASTLE_TOWN]: SettlementConfig;
