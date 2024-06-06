@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { LatLngExpression } from "leaflet";
 import { Pane, Polygon, useMap } from "react-leaflet";
 
 import FogOfWarApi from "~/api/fog-of-war/routes.ts";
-import { IBounds } from "~/types/settlement.ts";
+import useMapBounds from "~/utils/useViewBounds.ts";
 
 const POLYGON_COLOR = {
   GOLD: "gold",
@@ -13,8 +13,9 @@ const POLYGON_COLOR = {
 
 const HabitableZones = () => {
   const fogOfWarApi = new FogOfWarApi();
-  const [bounds, setBounds] = useState<IBounds>();
   const map = useMap();
+  const bounds = useMapBounds(map);
+
   const { data } = useQuery({
     queryKey: ["habitableZonesBounds", bounds],
     queryFn: () => (bounds ? fogOfWarApi.getHabitableZones(bounds) : undefined),
@@ -22,31 +23,13 @@ const HabitableZones = () => {
     refetchInterval: 5000,
   });
 
-  useEffect(() => {
-    const onMapMove = () => {
-      const tmpBounds = map.getBounds();
-      const northEastLat = tmpBounds.getNorthEast().lat;
-      const northEastLng = tmpBounds.getNorthEast().lng;
-      const southWestLat = tmpBounds.getSouthWest().lat;
-      const southWestLng = tmpBounds.getSouthWest().lng;
-
-      setBounds({ northEastLat, northEastLng, southWestLat, southWestLng });
-    };
-
-    onMapMove();
-    map.on("moveend", onMapMove);
-    return () => {
-      map.off("moveend", onMapMove);
-    };
-  }, [map]);
-
   if (!data?.data) return null;
   return (
     <Pane name={"zones"}>
       {data.data.map((item) => (
         <Polygon
           key={item.id}
-          positions={[...item.area]}
+          positions={[...(item.area as unknown as LatLngExpression[])]}
           color={POLYGON_COLOR[item.type]}
         />
       ))}

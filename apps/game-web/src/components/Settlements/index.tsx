@@ -13,13 +13,13 @@ import PickUpOrPutDownArmyModal from "~/components/Settlements/Modals/PickUpOrPu
 import StartSiegeModal from "~/components/Settlements/Modals/StartSiegeModal";
 import ViewSettlementModal from "~/components/Settlements/Modals/ViewSettlementModal";
 import store from "~/store";
-import { IBounds } from "~/types/settlement";
+import useMapBounds from "~/utils/useViewBounds.ts";
 
 export default function Settlements() {
   const fogOfWarApi = new FogOfWarApi();
   const { userStore } = store;
   const map = useMap();
-  const [bounds, setBounds] = useState<IBounds>();
+  const bounds = useMapBounds(map);
   const [isSettlementModalOpen, setIsSettlementModalOpen] = useState(false);
   const [isSiegeModalOpen, setIsSiegeModalOpen] = useState(false);
   const [lookUpModalData, setLookUpModalData] = useState<
@@ -49,24 +49,6 @@ export default function Settlements() {
     enabled: !!bounds,
     refetchInterval: 5000,
   });
-
-  useEffect(() => {
-    const onMapMove = () => {
-      const tmpBounds = map.getBounds();
-      const northEastLat = tmpBounds.getNorthEast().lat;
-      const northEastLng = tmpBounds.getNorthEast().lng;
-      const southWestLat = tmpBounds.getSouthWest().lat;
-      const southWestLng = tmpBounds.getSouthWest().lng;
-
-      setBounds({ northEastLat, northEastLng, southWestLat, southWestLng });
-    };
-
-    onMapMove();
-    map.on("moveend", onMapMove);
-    return () => {
-      map.off("moveend", onMapMove);
-    };
-  }, [map]);
 
   useEffect(() => {
     if (isSuccess) {
