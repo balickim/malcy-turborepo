@@ -1,0 +1,8 @@
+{
+  "name": "Malcy Backoffice",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite",
+  "id": "cc10979b"
+}
