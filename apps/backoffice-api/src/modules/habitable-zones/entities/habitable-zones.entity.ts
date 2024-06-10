@@ -1,8 +1,15 @@
 import { Max, Min } from 'class-validator';
 import { nanoid } from 'nanoid';
-import { BeforeInsert, Column, Entity, GeoJSON, PrimaryColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 
 import { AuditableBaseEntity } from '~/modules/event-log/entities/auditable-base.entity';
+import { WorldsConfigEntity } from '~/modules/worlds-config/entities/worlds-config.entity';
 
 export enum HabitableZonesTypesEnum {
   GOLD = 'GOLD',
@@ -32,6 +39,15 @@ export class HabitableZonesEntity extends AuditableBaseEntity {
   @Min(1)
   @Max(10)
   resourcesMultiplicator: number;
+
+  @ManyToOne(
+    () => WorldsConfigEntity,
+    (worldConfig) => worldConfig.habitableZones,
+  )
+  worldConfig: WorldsConfigEntity;
+
+  @Column()
+  worldConfigId: string;
 
   @BeforeInsert()
   generateId() {

@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 
 import { AppModule } from '~/app.module';
+import { TransformInterceptor } from '~/common/interceptors/response.interceptor';
 import { ApiKeyAuthGuard } from '~/modules/auth/guards/apiKey.guard';
 import { AppConfig } from '~/modules/config/appConfig';
 
@@ -37,6 +38,8 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.useGlobalGuards(new ApiKeyAuthGuard(app.get(Reflector)));
+  app.useGlobalInterceptors(new TransformInterceptor(new Reflector()));
+
   const port = configService.get().PORT;
 
   const config = new DocumentBuilder().build();

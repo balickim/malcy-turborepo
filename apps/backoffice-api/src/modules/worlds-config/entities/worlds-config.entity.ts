@@ -1,7 +1,8 @@
 import { WorldConfig } from 'shared-types';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { AuditableBaseEntity } from '~/modules/event-log/entities/auditable-base.entity';
+import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';
 
 @Entity({ name: 'worldsConfig' })
 export class WorldsConfigEntity extends AuditableBaseEntity {
@@ -13,4 +14,10 @@ export class WorldsConfigEntity extends AuditableBaseEntity {
 
   @Column({ type: 'jsonb' })
   config: WorldConfig;
+
+  @OneToMany(
+    () => HabitableZonesEntity,
+    (habitableZone) => habitableZone.worldConfig,
+  )
+  habitableZones: HabitableZonesEntity[];
 }
