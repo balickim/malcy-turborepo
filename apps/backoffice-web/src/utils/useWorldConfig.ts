@@ -6,6 +6,7 @@ import store from "~/store";
 import { IApiResponse } from "~/types/common";
 
 export function useWorldConfig(
+  world: string,
   options?: Omit<
     UndefinedInitialDataOptions<IApiResponse<WorldConfig>>,
     "queryKey" | "queryFn"
@@ -16,7 +17,7 @@ export function useWorldConfig(
   const worldConfig = useQuery({
     ...options,
     queryKey: ["worldConfig"],
-    queryFn: () => configApi.getWorldConfig(),
+    queryFn: () => configApi.getWorldConfig(world),
   });
 
   if (worldConfig.isSuccess) {

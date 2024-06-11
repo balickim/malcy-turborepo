@@ -10,12 +10,16 @@ import HabitableZones from "~/components/Map/HabitableZones.tsx";
 import { Loading } from "~/components/Map/Loading.tsx";
 import { LocationFinderDummy } from "~/components/Map/LocationFinderDummy";
 import PageContainer from "~/components/PageContainer";
+import store from "~/store";
 import { useWorldConfig } from "~/utils/useWorldConfig.ts";
 
 import "leaflet/dist/leaflet.css";
 
 const Map = () => {
-  const worldConfig = useWorldConfig({ refetchOnWindowFocus: false });
+  const { selectedWorldStore } = store;
+  const worldConfig = useWorldConfig(selectedWorldStore.worldName!, {
+    refetchOnWindowFocus: false,
+  });
   const mapRef = useRef<L.Map>(null);
 
   if (worldConfig.isFetching) {

@@ -1,4 +1,9 @@
 import { makeAutoObservable } from "mobx";
+import {
+  isPersisting,
+  makePersistable,
+  stopPersisting,
+} from "mobx-persist-store";
 import { IDTOResponseWorldsList } from "shared-types";
 
 class SelectedWorldStore {
@@ -7,6 +12,15 @@ class SelectedWorldStore {
 
   constructor() {
     makeAutoObservable(this);
+    const storageName = "UserStore";
+    if (isPersisting(this)) {
+      stopPersisting(this);
+    }
+    makePersistable(this, {
+      name: storageName,
+      properties: ["worldId", "worldName"],
+      storage: window.localStorage,
+    });
   }
 
   setConfig(worldId: string, worldName: string) {

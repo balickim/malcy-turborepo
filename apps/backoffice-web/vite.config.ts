@@ -4,7 +4,7 @@ import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  server: { port: 5000 },
+  server: { port: 5171 },
   plugins: [
     react({
       jsxImportSource: "@welldone-software/why-did-you-render",

@@ -1,5 +1,5 @@
 import { UnitType } from './armies';
-import { SettlementTypesEnum } from './settlements';
+import { SharedSettlementTypesEnum } from './settlements';
 
 export const enum ResourceTypeEnum {
   wood = 'wood',
@@ -57,9 +57,9 @@ export interface WorldConfig {
 
   // Settlement configurations
   SETTLEMENT: {
-    [SettlementTypesEnum.MINING_TOWN]: SettlementConfig;
-    [SettlementTypesEnum.CASTLE_TOWN]: SettlementConfig;
-    [SettlementTypesEnum.FORTIFIED_SETTLEMENT]: SettlementConfig;
-    [SettlementTypesEnum.CAPITOL_SETTLEMENT]: SettlementConfig;
+    [SharedSettlementTypesEnum.MINING_TOWN]: SettlementConfig;
+    [SharedSettlementTypesEnum.CASTLE_TOWN]: SettlementConfig;
+    [SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]: SettlementConfig;
+    [SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]: SettlementConfig;
   };
 }

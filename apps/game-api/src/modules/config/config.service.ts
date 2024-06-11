@@ -29,7 +29,7 @@ export class ConfigService implements OnModuleInit {
     const apiKey = this.appConfig.get().BACKOFFICE_API_KEY;
     const { data } = await firstValueFrom(
       this.httpService
-        .get<WorldConfig>(
+        .get<{ data: WorldConfig }>(
           this.appConfig.get().BACKOFFICE_HOST +
             '/config/' +
             this.appConfig.get().WORLD_NAME,
@@ -46,7 +46,7 @@ export class ConfigService implements OnModuleInit {
           }),
         ),
     );
-    return data;
+    return data.data;
   }
 
   private async setConfig(worldConfig: WorldConfig) {

@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   IResource,
   ResourceTypeEnum,
-  SettlementTypesEnum,
+  SharedSettlementTypesEnum,
   UnitType,
 } from 'shared-types';
 import { Repository } from 'typeorm';
@@ -240,33 +240,29 @@ export class SettlementsService {
     const gameConfig = await this.configService.gameConfig();
 
     const maxGoldMiningTown =
-      gameConfig.SETTLEMENT[SettlementTypesEnum.MINING_TOWN].RESOURCES_CAP[
-        ResourceTypeEnum.gold
-      ];
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.MINING_TOWN]
+        .RESOURCES_CAP[ResourceTypeEnum.gold];
     const maxGoldCastleTown =
-      gameConfig.SETTLEMENT[SettlementTypesEnum.CASTLE_TOWN].RESOURCES_CAP[
-        ResourceTypeEnum.gold
-      ];
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CASTLE_TOWN]
+        .RESOURCES_CAP[ResourceTypeEnum.gold];
     const maxGoldFortifiedSettlement =
-      gameConfig.SETTLEMENT[SettlementTypesEnum.FORTIFIED_SETTLEMENT]
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]
         .RESOURCES_CAP[ResourceTypeEnum.gold];
     const maxGoldCapitolSettlement =
-      gameConfig.SETTLEMENT[SettlementTypesEnum.CAPITOL_SETTLEMENT]
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
         .RESOURCES_CAP[ResourceTypeEnum.gold];
 
     const maxWoodMiningTown =
-      gameConfig.SETTLEMENT[SettlementTypesEnum.MINING_TOWN].RESOURCES_CAP[
-        ResourceTypeEnum.wood
-      ];
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.MINING_TOWN]
+        .RESOURCES_CAP[ResourceTypeEnum.wood];
     const maxWoodCastleTown =
-      gameConfig.SETTLEMENT[SettlementTypesEnum.CASTLE_TOWN].RESOURCES_CAP[
-        ResourceTypeEnum.wood
-      ];
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CASTLE_TOWN]
+        .RESOURCES_CAP[ResourceTypeEnum.wood];
     const maxWoodFortifiedSettlement =
-      gameConfig.SETTLEMENT[SettlementTypesEnum.FORTIFIED_SETTLEMENT]
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]
         .RESOURCES_CAP[ResourceTypeEnum.wood];
     const maxWoodCapitolSettlement =
-      gameConfig.SETTLEMENT[SettlementTypesEnum.CAPITOL_SETTLEMENT]
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
         .RESOURCES_CAP[ResourceTypeEnum.wood];
 
     return this.armyEntityRepository
@@ -274,16 +270,16 @@ export class SettlementsService {
       .update(SettlementsEntity)
       .set({
         gold: () => `CASE 
-          WHEN "type" = '${SettlementTypesEnum.MINING_TOWN}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldMiningTown})
-          WHEN "type" = '${SettlementTypesEnum.CASTLE_TOWN}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldCastleTown})
-          WHEN "type" = '${SettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldFortifiedSettlement})
-          WHEN "type" = '${SettlementTypesEnum.CAPITOL_SETTLEMENT}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldCapitolSettlement})
+          WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldMiningTown})
+          WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldCastleTown})
+          WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldFortifiedSettlement})
+          WHEN "type" = '${SharedSettlementTypesEnum.CAPITOL_SETTLEMENT}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldCapitolSettlement})
         END`,
         wood: () => `CASE 
-          WHEN "type" = '${SettlementTypesEnum.MINING_TOWN}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodMiningTown})
-          WHEN "type" = '${SettlementTypesEnum.CASTLE_TOWN}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodCastleTown})
-          WHEN "type" = '${SettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodFortifiedSettlement})
-          WHEN "type" = '${SettlementTypesEnum.CAPITOL_SETTLEMENT}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodCapitolSettlement})
+          WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodMiningTown})
+          WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodCastleTown})
+          WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodFortifiedSettlement})
+          WHEN "type" = '${SharedSettlementTypesEnum.CAPITOL_SETTLEMENT}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodCapitolSettlement})
         END`,
       })
       .where('id = :id', { id: settlement.id })

@@ -1,4 +1,4 @@
-export const enum SettlementTypesEnum {
+export const enum SharedSettlementTypesEnum {
   MINING_TOWN = "MINING_TOWN",
   CASTLE_TOWN = "CASTLE_TOWN",
   FORTIFIED_SETTLEMENT = "FORTIFIED_SETTLEMENT",
