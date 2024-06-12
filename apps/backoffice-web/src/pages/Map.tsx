@@ -14,6 +14,7 @@ import store from "~/store";
 import { useWorldConfig } from "~/utils/useWorldConfig.ts";
 
 import "leaflet/dist/leaflet.css";
+import "leaflet-draw/dist/leaflet.draw.css";
 
 const Map = () => {
   const { selectedWorldStore } = store;
@@ -31,6 +32,8 @@ const Map = () => {
   }
 
   const cityBounds = worldConfig.data!.data.WORLD_BOUNDS!;
+  const bounds = L.latLngBounds(cityBounds);
+  const center = bounds.getCenter();
   return (
     <PageContainer ionContentProps={{ scrollY: false }}>
       <DndProvider backend={isPlatform("mobile") ? TouchBackend : HTML5Backend}>
@@ -43,6 +46,7 @@ const Map = () => {
           zoom={18}
           minZoom={13}
           maxZoom={18}
+          center={center}
           maxBounds={cityBounds}
           maxBoundsViscosity={1}
         >
