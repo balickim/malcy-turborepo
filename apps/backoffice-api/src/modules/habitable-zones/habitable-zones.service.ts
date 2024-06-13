@@ -69,7 +69,13 @@ export class HabitableZonesService {
       this.logger.error(
         `FINDING HABITABLE ZONES IN BOUNDS southWest.lat:${southWest.lat}, southWest.lng:${southWest.lng}, northEast.lat:${northEast.lat}, northEast.lng:${northEast.lng} FAILED: ${e}`,
       );
-      throw e; // Ensure the error is propagated
+      throw e;
     }
+  }
+
+  public async createHabitableZone(data: HabitableZonesEntity) {
+    const newHabitableZone = this.habitableZonesEntityRepository.create(data);
+
+    return this.habitableZonesEntityRepository.save(newHabitableZone);
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { HabitableZonesService } from './habitable-zones.service';
@@ -28,5 +28,10 @@ export class HabitableZonesController {
       southWest,
       northEast,
     );
+  }
+
+  @Post('/create')
+  async createHabitableZone(@Body() body: any) {
+    return this.habitableZonesService.createHabitableZone(body);
   }
 }

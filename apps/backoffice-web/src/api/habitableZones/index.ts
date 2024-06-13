@@ -14,4 +14,11 @@ export default class HabitableZonesApi {
     const data = new URLSearchParams(convertBoundsToSearchParams(bounds));
     return fetchWrapper(`${this.basePath}/habitable-zones-in-bounds?${data}`);
   };
+
+  create = async (body: any) => {
+    return fetchWrapper(`${this.basePath}/create`, {
+      body: JSON.stringify(body),
+      method: "POST",
+    });
+  };
 }
