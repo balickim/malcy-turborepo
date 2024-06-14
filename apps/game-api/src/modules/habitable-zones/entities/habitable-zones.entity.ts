@@ -33,6 +33,8 @@ export class HabitableZonesEntity extends AuditableBaseEntity {
   @Column({
     type: 'enum',
     enum: HabitableZonesTypesEnum,
+    nullable: true,
+    default: null,
   })
   type: HabitableZonesTypesEnum;
 

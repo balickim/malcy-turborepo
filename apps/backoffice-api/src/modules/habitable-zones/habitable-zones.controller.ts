@@ -1,5 +1,14 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { IDtoHabitableZone } from 'shared-types';
 
 import { HabitableZonesService } from './habitable-zones.service';
 
@@ -30,8 +39,23 @@ export class HabitableZonesController {
     );
   }
 
+  @Get('/download/:worldName')
+  async downloadHabitableZones(@Query('worldName') worldName: string) {
+    return this.habitableZonesService.downloadHabitableZones(worldName);
+  }
+
   @Post('/create')
-  async createHabitableZone(@Body() body: any) {
+  async createHabitableZone(@Body() body: IDtoHabitableZone) {
     return this.habitableZonesService.createHabitableZone(body);
+  }
+
+  @Put('/edit')
+  async editHabitableZone(@Body() body: IDtoHabitableZone) {
+    return this.habitableZonesService.editHabitableZone(body);
+  }
+
+  @Delete('/delete')
+  async deleteHabitableZone(@Body() body: IDtoHabitableZone) {
+    return this.habitableZonesService.deleteHabitableZone(body);
   }
 }

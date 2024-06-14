@@ -24,7 +24,10 @@ export class DiscoveredHabitableZonesEntity extends AuditableBaseEntity {
   @Column()
   discoveredByUserId: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+    default: null,
+  })
   type: HabitableZonesTypesEnum;
 
   @ManyToOne(

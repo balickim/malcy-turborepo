@@ -1,12 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Polygon } from 'geojson';
 import {
   HabitableZonesTypesEnum,
   IDTOResponseFindHabitableZonesInBounds,
+  IDtoHabitableZone,
 } from 'shared-types';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 
-import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';
+import {
+  HabitableZonesEntity,
+  HabitableZonesTypesEnum as InternalHabitableZonesTypesEnum,
+} from '~/modules/habitable-zones/entities/habitable-zones.entity';
+
+import { WorldsConfigService } from '../worlds-config/worlds-config.service';
 
 @Injectable()
 export class HabitableZonesService {
@@ -15,6 +22,7 @@ export class HabitableZonesService {
   constructor(
     @InjectRepository(HabitableZonesEntity)
     private habitableZonesEntityRepository: Repository<HabitableZonesEntity>,
+    private worldsConfigService: WorldsConfigService,
   ) {}
 
   async findHabitableZonesInBounds(
@@ -73,9 +81,37 @@ export class HabitableZonesService {
     }
   }
 
-  public async createHabitableZone(data: HabitableZonesEntity) {
-    const newHabitableZone = this.habitableZonesEntityRepository.create(data);
+  public async downloadHabitableZones(worldName: string) {
+    const worldConfigId =
+      await this.worldsConfigService.getWorldIdByName(worldName);
+
+    return this.habitableZonesEntityRepository.find({
+      where: { worldConfigId },
+    });
+  }
+
+  public async createHabitableZone(data: IDtoHabitableZone) {
+    const newHabitableZone = this.habitableZonesEntityRepository.create({
+      area: data.area as DeepPartial<Polygon>,
+      worldConfigId: data.worldConfigId,
+      type: data.type as unknown as InternalHabitableZonesTypesEnum,
+    });
 
     return this.habitableZonesEntityRepository.save(newHabitableZone);
+  }
+
+  public async editHabitableZone(data: IDtoHabitableZone) {
+    return this.habitableZonesEntityRepository.update(
+      { id: data.id },
+      {
+        area: data.area as DeepPartial<Polygon>,
+        worldConfigId: data.worldConfigId,
+        type: data.type as unknown as InternalHabitableZonesTypesEnum,
+      },
+    );
+  }
+
+  public async deleteHabitableZone(data: IDtoHabitableZone) {
+    return this.habitableZonesEntityRepository.softDelete({ id: data.id });
   }
 }

@@ -17,4 +17,13 @@ export class WorldsConfigService {
       select: ['id', 'name'],
     });
   }
+
+  public async getWorldIdByName(name: string) {
+    const data = await this.worldsConfigEntityRepository.findOne({
+      select: ['id'],
+      where: { name },
+    });
+
+    return data.id;
+  }
 }
