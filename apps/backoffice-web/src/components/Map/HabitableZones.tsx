@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { LatLngExpression } from "leaflet";
-import { useState } from "react";
+import { DrawEvents, LatLngExpression } from "leaflet";
+import { useState, useEffect, useRef } from "react";
 import { FeatureGroup, Polygon, useMap } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 
@@ -14,10 +14,16 @@ const POLYGON_COLOR = {
   IRON: "silver",
 } as const;
 
-const HabitableZones = () => {
+function HabitableZones() {
   const [selectedType, setSelectedType] = useState<
     keyof typeof POLYGON_COLOR | null
   >(null);
+  const selectedTypeRef = useRef(selectedType);
+
+  useEffect(() => {
+    selectedTypeRef.current = selectedType;
+  }, [selectedType]);
+
   const map = useMap();
   const bounds = useMapBounds(map);
   const { selectedWorldStore } = store;
@@ -35,7 +41,15 @@ const HabitableZones = () => {
     mutationFn: habitableZonesApi.create,
   });
 
-  const onCreated = async (e: any) => {
+  const handleTypeSelect = (value: keyof typeof POLYGON_COLOR) => {
+    setSelectedType(() => {
+      const newState = value;
+      console.log("New state inside handleTypeSelect:", newState); // This should log the new state
+      return newState;
+    });
+  };
+
+  const onCreated = async (e: DrawEvents.Created) => {
     const { layerType, layer } = e;
     if (layerType === "polygon") {
       const polygon = {
@@ -47,11 +61,10 @@ const HabitableZones = () => {
       };
 
       try {
-        console.log("selectedType", selectedType);
         await createZoneMutation.mutateAsync({
           area: polygon.geometry,
           worldConfigId: selectedWorldStore.worldId,
-          type: "GOLD",
+          type: selectedTypeRef.current, // Use the latest state value from ref
         });
       } catch (error) {
         console.error("Error sending polygons:", error);
@@ -78,7 +91,6 @@ const HabitableZones = () => {
     });
   };
 
-  console.log(selectedType);
   return (
     <>
       <div style={{ position: "absolute", top: 10, left: 10, zIndex: 1000 }}>
@@ -87,7 +99,7 @@ const HabitableZones = () => {
             type="radio"
             value="GOLD"
             checked={selectedType === "GOLD"}
-            onChange={() => setSelectedType("GOLD")}
+            onChange={() => handleTypeSelect("GOLD")}
           />
           Gold
         </label>
@@ -96,7 +108,7 @@ const HabitableZones = () => {
             type="radio"
             value="WOOD"
             checked={selectedType === "WOOD"}
-            onChange={() => setSelectedType("WOOD")}
+            onChange={() => handleTypeSelect("WOOD")}
           />
           Wood
         </label>
@@ -105,7 +117,7 @@ const HabitableZones = () => {
             type="radio"
             value="IRON"
             checked={selectedType === "IRON"}
-            onChange={() => setSelectedType("IRON")}
+            onChange={() => handleTypeSelect("IRON")}
           />
           Iron
         </label>
@@ -138,6 +150,6 @@ const HabitableZones = () => {
       </FeatureGroup>
     </>
   );
-};
+}
 
 export default HabitableZones;
