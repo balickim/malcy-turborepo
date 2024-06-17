@@ -43,8 +43,12 @@ async function bootstrap() {
   const port = configService.get().PORT;
 
   const config = new DocumentBuilder().build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+
+  const environment = configService.get().NODE_ENV;
+  if (environment === 'development') {
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('docs', app, document);
+  }
 
   await app.listen(port);
   console.log(`Application is running on: ${await app.getUrl()}`);

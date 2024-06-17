@@ -2,8 +2,6 @@ import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 
-import { AppController } from '~/app.controller';
-import { AppService } from '~/app.service';
 import { checkPostGISExtension } from '~/common/utils/postgis';
 import { ArmiesModule } from '~/modules/armies/armies.module';
 import { AuthModule } from '~/modules/auth/auth.module';
@@ -38,8 +36,8 @@ import { PostgresDatabaseProviderModule } from '~/providers/database/postgres/pr
     FogOfWarModule,
     CombatsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule implements OnModuleInit {
   private readonly logger = new Logger(AppModule.name);

@@ -7,6 +7,8 @@ config();
 @Injectable()
 export class AppConfig {
   private readonly _appConfig = cleanEnv(process.env, {
+    NODE_ENV: str({ choices: ['development', 'production'] }),
+
     BACKOFFICE_HOST: str(),
     BACKOFFICE_API_KEY: str(),
 

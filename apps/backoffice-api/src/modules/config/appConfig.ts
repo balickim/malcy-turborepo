@@ -7,6 +7,8 @@ config();
 @Injectable()
 export class AppConfig {
   private readonly _appConfig = cleanEnv(process.env, {
+    NODE_ENV: str({ choices: ['development', 'production'] }),
+
     API_KEY: str(),
     PORT: port({ devDefault: 8080 }),
 
