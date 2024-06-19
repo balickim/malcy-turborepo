@@ -35,5 +35,6 @@ module.exports = {
         alphabetize: { order: 'asc', ignoreCase: true },
       },
     ],
+    'no-reserved-keys': 'off',
   },
 };

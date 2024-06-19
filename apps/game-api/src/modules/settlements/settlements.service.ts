@@ -22,6 +22,7 @@ import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
 import { ConfigService } from '~/modules/config/config.service';
 import { ActionType } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
+import { HabitableZonesService } from '~/modules/habitable-zones/habitable-zones.service';
 import { CreateSettlementDto } from '~/modules/settlements/dtos/createSettlementDto';
 import {
   PrivateSettlementDto,
@@ -46,6 +47,7 @@ export class SettlementsService {
     private configService: ConfigService,
     @Inject(forwardRef(() => ArmiesService))
     private armiesService: ArmiesService,
+    private habitableZonesService: HabitableZonesService,
   ) {}
 
   async createSettlement(
@@ -59,6 +61,18 @@ export class SettlementsService {
         createSettlementDto.position.lat,
       ],
     };
+
+    const isUserInHabitableZone =
+      await this.habitableZonesService.isCoordinateInHabitableZone(
+        createSettlementDto.position.lng,
+        createSettlementDto.position.lat,
+      );
+
+    if (!isUserInHabitableZone) {
+      throw new BadRequestException(
+        'Settlements can only be created inside of a habitable zone',
+      );
+    }
 
     const isUserWithinRadius =
       await this.userLocationService.isUserWithinRadius({
@@ -269,13 +283,13 @@ export class SettlementsService {
       .createQueryBuilder()
       .update(SettlementsEntity)
       .set({
-        gold: () => `CASE 
+        gold: () => `CASE
           WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldMiningTown})
           WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldCastleTown})
           WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldFortifiedSettlement})
           WHEN "type" = '${SharedSettlementTypesEnum.CAPITOL_SETTLEMENT}' THEN LEAST("gold" + ${resourcesUsed[ResourceTypeEnum.gold]}, ${maxGoldCapitolSettlement})
         END`,
-        wood: () => `CASE 
+        wood: () => `CASE
           WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodMiningTown})
           WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodCastleTown})
           WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodFortifiedSettlement})

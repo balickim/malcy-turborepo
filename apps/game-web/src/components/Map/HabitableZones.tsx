@@ -30,7 +30,7 @@ const HabitableZones = () => {
         <Polygon
           key={item.id}
           positions={[...(item.area as unknown as LatLngExpression[])]}
-          color={POLYGON_COLOR[item.type]}
+          color={POLYGON_COLOR[item.type] || "green"}
         />
       ))}
     </Pane>

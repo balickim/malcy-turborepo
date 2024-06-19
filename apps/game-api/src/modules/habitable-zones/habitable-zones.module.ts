@@ -7,9 +7,16 @@ import { HabitableZonesController } from '~/modules/habitable-zones/habitable-zo
 import { HabitableZonesService } from '~/modules/habitable-zones/habitable-zones.service';
 
 import { AppConfig } from '../config/appConfig';
+import { DiscoveredHabitableZonesEntity } from './entities/discovered-habitable-zones.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([HabitableZonesEntity]), HttpModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      HabitableZonesEntity,
+      DiscoveredHabitableZonesEntity,
+    ]),
+    HttpModule,
+  ],
   controllers: [HabitableZonesController],
   providers: [AppConfig, HabitableZonesService],
   exports: [HabitableZonesService],

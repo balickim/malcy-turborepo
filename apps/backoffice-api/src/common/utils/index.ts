@@ -25,3 +25,28 @@ export function include<T extends object>(
     )
     .map((col) => col.propertyName) as Array<keyof T>;
 }
+
+export function gameWorldDbConfig(worldName: string) {
+  const host = process.env[`${worldName}_DB_HOST`];
+  const port = parseInt(process.env[`${worldName}_DB_PORT`], 10) || 5432;
+  const username = process.env[`${worldName}_DB_USER`];
+  const password = process.env[`${worldName}_DB_PASS`];
+  const database = process.env[`${worldName}_DB_DATABASE`];
+
+  if (!host)
+    console.error(`Missing environment variable: ${worldName}_DB_HOST`);
+  if (!username)
+    console.error(`Missing environment variable: ${worldName}_DB_USER`);
+  if (!password)
+    console.error(`Missing environment variable: ${worldName}_DB_PASS`);
+  if (!database)
+    console.error(`Missing environment variable: ${worldName}_DB_DATABASE`);
+
+  return {
+    host,
+    port,
+    username,
+    password,
+    database,
+  };
+}

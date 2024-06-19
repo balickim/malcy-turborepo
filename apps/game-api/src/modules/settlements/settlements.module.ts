@@ -6,6 +6,7 @@ import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
 import { ConfigModule } from '~/modules/config/config.module';
 import { EventLogModule } from '~/modules/event-log/event-log.module';
 import { FogOfWarModule } from '~/modules/fog-of-war/fog-of-war.module';
+import { HabitableZonesModule } from '~/modules/habitable-zones/habitable-zones.module';
 import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 import { SettlementsController } from '~/modules/settlements/settlements.controller';
 import { SettlementsGateway } from '~/modules/settlements/settlements.gateway';
@@ -21,6 +22,7 @@ import { UserLocationModule } from '~/modules/user-location/user-location.module
     ConfigModule,
     EventLogModule,
     forwardRef(() => UserLocationModule),
+    HabitableZonesModule,
   ],
   controllers: [SettlementsController],
   providers: [SettlementsService, SettlementsGateway, SettlementsSubscriber],

@@ -7,6 +7,7 @@ import { ConfigModule } from '~/modules/config/config.module';
 import { EventLogEntity } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { FogOfWarModule } from '~/modules/fog-of-war/fog-of-war.module';
+import { HabitableZonesModule } from '~/modules/habitable-zones/habitable-zones.module';
 import { RecruitmentsController } from '~/modules/recruitments/recruitments.controller';
 import { RecruitmentsService } from '~/modules/recruitments/recruitments.service';
 import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
@@ -21,6 +22,7 @@ import { UsersModule } from '~/modules/users/users.module';
     UsersModule,
     forwardRef(() => FogOfWarModule),
     forwardRef(() => ArmiesModule),
+    HabitableZonesModule,
   ],
   controllers: [RecruitmentsController],
   providers: [

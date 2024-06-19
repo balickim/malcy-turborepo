@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { AppConfig } from '~/modules/config/appConfig';
 import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';
 
+import { DiscoveredHabitableZonesEntity } from './entities/discovered-habitable-zones.entity';
+
 @Injectable()
 export class HabitableZonesService implements OnModuleInit {
   private readonly logger = new Logger(HabitableZonesService.name);
@@ -14,6 +16,8 @@ export class HabitableZonesService implements OnModuleInit {
   constructor(
     @InjectRepository(HabitableZonesEntity)
     private habitableZonesEntityRepository: Repository<HabitableZonesEntity>,
+    @InjectRepository(DiscoveredHabitableZonesEntity)
+    private discoveredHabitableZonesEntityRepository: Repository<DiscoveredHabitableZonesEntity>,
     private readonly httpService: HttpService,
     private appConfig: AppConfig,
   ) {}
@@ -67,5 +71,23 @@ export class HabitableZonesService implements OnModuleInit {
         },
       )
       .getMany();
+  }
+
+  async isCoordinateInHabitableZone(
+    longitude: number,
+    latitude: number,
+  ): Promise<boolean> {
+    const result = await this.discoveredHabitableZonesEntityRepository
+      .createQueryBuilder('dhz')
+      .innerJoinAndSelect('dhz.habitableZone', 'hz')
+      .where(
+        'ST_Contains(hz.area, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326))',
+        { longitude, latitude },
+      )
+      .getOne();
+
+    console.log(result);
+
+    return !!result;
   }
 }

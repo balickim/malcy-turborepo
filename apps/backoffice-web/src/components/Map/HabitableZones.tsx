@@ -159,7 +159,7 @@ function HabitableZones() {
             <Polygon
               key={item.id}
               positions={[...(item.area as unknown as LatLngExpression[])]}
-              color={POLYGON_COLOR[item.type]}
+              color={POLYGON_COLOR[item.type] || "green"}
               // @ts-expect-error unique identifier assigned here is later used in onEdited and onDeleted functions
               pathOptions={{ id: item.id }}
             />
