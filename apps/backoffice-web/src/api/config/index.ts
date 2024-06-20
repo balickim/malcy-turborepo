@@ -4,7 +4,7 @@ import { fetchWrapper } from "~/api/fetch";
 import { IApiResponse } from "~/types/common";
 
 export default class ConfigApi {
-  private readonly basePath = `${import.meta.env.VITE_API_URL}/config`;
+  private readonly basePath = `${import.meta.env.VITE_BACKOFFICE_API_URL}/config`;
 
   getWorldConfig = async (
     world: string,

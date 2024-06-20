@@ -7,12 +7,19 @@ import {
   IonTabs,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { mapOutline, mapSharp, logInOutline, logInSharp } from "ionicons/icons";
+import {
+  mapOutline,
+  mapSharp,
+  logInOutline,
+  logInSharp,
+  document,
+} from "ionicons/icons";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Redirect } from "react-router";
 import { Route } from "react-router-dom";
 
+import Data from "~/pages/Data";
 import Map from "~/pages/Map";
 import SelectWorld from "~/pages/SelectWorld.tsx";
 import store from "~/store";
@@ -38,6 +45,10 @@ const appPages: IAppPage[] = [
     url: "/select-world",
     Component: SelectWorld,
   },
+  {
+    url: "/data",
+    Component: Data,
+  },
 ];
 
 export default observer(function MenuRouter() {
@@ -51,6 +62,12 @@ export default observer(function MenuRouter() {
             url: "/",
             iosIcon: mapOutline,
             mdIcon: mapSharp,
+          },
+          {
+            title: "Data",
+            url: "/data",
+            iosIcon: document,
+            mdIcon: document,
           },
         ]
       : [

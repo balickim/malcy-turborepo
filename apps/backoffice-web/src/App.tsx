@@ -5,7 +5,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Toaster } from "react-hot-toast";
 
 import AppVersion from "~/components/AppVersion";
-import MenuRouter from "~/components/MenuRouter/MenuRouter";
+import MenuRouter from "~/components/MenuRouter";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";

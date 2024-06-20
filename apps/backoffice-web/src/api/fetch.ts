@@ -1,5 +1,7 @@
 import { toast } from "react-hot-toast";
 
+import store from "~/store";
+
 interface IFetchOptions extends RequestInit {
   headers?: HeadersInit;
 }
@@ -8,10 +10,16 @@ export async function fetchWrapper<T>(
   url: string,
   options?: IFetchOptions,
 ): Promise<T> {
+  const { selectedWorldStore } = store;
   try {
     const apiKey = import.meta.env.VITE_BACKOFFICE_API_KEY;
     const headers = new Headers(options?.headers ?? {});
     headers.set("x-api-key", apiKey);
+
+    if (selectedWorldStore.worldName) {
+      headers.set("x-world-name", selectedWorldStore.worldName);
+    }
+
     if (!headers.has("Content-Type")) {
       headers.set("Content-Type", "application/json");
     }
