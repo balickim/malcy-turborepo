@@ -158,7 +158,7 @@ export class FogOfWarService {
     };
 
     return this.discoveredSettlementsEntityRepository.upsert(recordToUpsert, {
-      conflictPaths: ['settlementId'],
+      conflictPaths: ['settlementId', 'discoveredByUserId'],
     });
   }
 
@@ -175,7 +175,7 @@ export class FogOfWarService {
     return this.discoveredHabitableZonesEntityRepository.upsert(
       recordToUpsert,
       {
-        conflictPaths: ['habitableZoneId'],
+        conflictPaths: ['habitableZoneId', 'discoveredByUserId'],
       },
     );
   }
