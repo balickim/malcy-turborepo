@@ -1,20 +1,18 @@
 import { Injectable } from '@nestjs/common';
-// import {
-//   UsersEntity,
-//   SettlementsEntity,
-//   ArmyEntity,
-//   EventLogEntity,
-//   ConversationsEntity,
-//   GroupsEntity,
-//   GroupsMembersEntity,
-//   MessagesEntity,
-//   HabitableZonesEntity,
-//   DiscoveredSettlementsEntity,
-//   DiscoveredAreaEntity,
-//   VisibleAreaEntity,
-//   DiscoveredHabitableZonesEntity,
-// } from 'shared-nestjs';
-import { DataSource, DataSourceOptions } from 'typeorm';
+import {
+  UsersEntity,
+  SettlementsEntity,
+  ArmyEntity,
+  EventLogEntity,
+  ConversationsEntity,
+  GroupsEntity,
+  GroupsMembersEntity,
+  MessagesEntity,
+  DiscoveredSettlementsEntity,
+  HabitableZonesEntity,
+  DiscoveredHabitableZonesEntity,
+} from 'shared-nestjs';
+import { DataSource, DataSourceOptions, Repository } from 'typeorm';
 
 import { gameWorldDbConfig } from '~/common/utils';
 
@@ -37,36 +35,34 @@ export class GameWorldBridgeService {
       username,
       password,
       database,
-      // entities: Object.values(entities),
       entities: [
-        // UsersEntity,
-        // SettlementsEntity,
-        // ArmyEntity,
-        // EventLogEntity,
-        // ConversationsEntity,
-        // GroupsEntity,
-        // GroupsMembersEntity,
-        // MessagesEntity,
-        // HabitableZonesEntity,
-        // DiscoveredSettlementsEntity,
-        // DiscoveredAreaEntity,
-        // VisibleAreaEntity,
-        // DiscoveredHabitableZonesEntity,
+        UsersEntity,
+        SettlementsEntity,
+        ArmyEntity,
+        EventLogEntity,
+        ConversationsEntity,
+        GroupsEntity,
+        GroupsMembersEntity,
+        MessagesEntity,
+        DiscoveredSettlementsEntity,
+        HabitableZonesEntity,
+        DiscoveredHabitableZonesEntity,
       ],
+      cache: false,
       synchronize: false,
     };
 
     const dataSource = new DataSource(dataSourceOptions);
     await dataSource.initialize();
-    this.dataSources.set(worldName, dataSource);
 
+    this.dataSources.set(worldName, dataSource);
     return dataSource;
   }
 
-  // async getSettlements(worldName: string): Promise<SettlementsEntity[]> {
-  //   const dataSource = await this.connectToGameDatabase(worldName);
-  //   const settlementsRepository: Repository<SettlementsEntity> =
-  //     dataSource.getRepository(SettlementsEntity);
-  //   return settlementsRepository.find({ take: 10 });
-  // }
+  async getSettlements(worldName: string): Promise<SettlementsEntity[]> {
+    const dataSource = await this.connectToGameDatabase(worldName);
+    const settlementsRepository: Repository<SettlementsEntity> =
+      dataSource.getRepository(SettlementsEntity);
+    return settlementsRepository.find({ take: 10 });
+  }
 }

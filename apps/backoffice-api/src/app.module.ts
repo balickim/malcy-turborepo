@@ -4,8 +4,8 @@ import { DataSource } from 'typeorm';
 
 import { checkPostGISExtension } from '~/common/utils/postgis';
 import { AuthModule } from '~/modules/auth/auth.module';
-import { DatabaseModule } from '~/modules/database/database.module';
 import { EventLogModule } from '~/modules/event-log/event-log.module';
+import { GameWorldBridgeModule } from '~/modules/game-world-bridge/game-world-bridge.module';
 import { HabitableZonesModule } from '~/modules/habitable-zones/habitable-zones.module';
 import { WorldsConfigModule } from '~/modules/worlds-config/worlds-config.module';
 import { CacheRedisProviderModule } from '~/providers/cache/redis/provider.module';
@@ -20,7 +20,7 @@ import { PostgresDatabaseProviderModule } from '~/providers/database/postgres/pr
     EventLogModule,
     AuthModule,
     HabitableZonesModule,
-    DatabaseModule,
+    GameWorldBridgeModule,
   ],
   controllers: [],
   providers: [],

@@ -21,7 +21,7 @@ const Data = () => {
 
   return (
     <PageContainer>
-      <pre>{JSON.stringify(settlementsList, null, 2)}</pre>
+      <pre>{JSON.stringify(settlementsList.data?.data, null, 2)}</pre>
     </PageContainer>
   );
 };

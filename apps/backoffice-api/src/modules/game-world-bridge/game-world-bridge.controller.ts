@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Headers } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { GameWorldBridgeService } from './game-world-bridge.service';
@@ -10,8 +10,8 @@ export class GameWorldBridgeController {
     private readonly gameWorldBridgeService: GameWorldBridgeService,
   ) {}
 
-  // @Get('/settlements')
-  // async getSettlements(@Headers('x-world-name') worldName: string) {
-  //   return this.gameWorldBridgeService.getSettlements(worldName);
-  // }
+  @Get('/settlements')
+  async getSettlements(@Headers('x-world-name') worldName: string) {
+    return this.gameWorldBridgeService.getSettlements(worldName);
+  }
 }
