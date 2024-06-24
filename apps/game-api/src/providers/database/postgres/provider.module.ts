@@ -38,14 +38,14 @@ import { UsersModule } from '~/modules/users/users.module';
       useFactory: (appConfig: AppConfig) => {
         return {
           type: 'postgres',
-          host: appConfig.get().DB_HOST,
-          port: appConfig.get().DB_PORT,
-          username: appConfig.get().DB_USERNAME,
-          password: appConfig.get().DB_PASSWORD,
-          database: appConfig.get().DB_DATABASE,
+          host: appConfig.get().GAME_DB_HOST,
+          port: appConfig.get().GAME_DB_PORT,
+          username: appConfig.get().GAME_DB_USERNAME,
+          password: appConfig.get().GAME_DB_PASSWORD,
+          database: appConfig.get().GAME_DB_DATABASE,
           migrations: [],
           migrationsTableName: 'typeorm_migrations',
-          synchronize: appConfig.get().DB_SYNCHRONIZE,
+          synchronize: appConfig.get().GAME_DB_SYNCHRONIZE,
           entities: [
             UsersEntity,
             SettlementsEntity,

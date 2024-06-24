@@ -8,7 +8,6 @@ import { EventLogModule } from '~/modules/event-log/event-log.module';
 import { GameWorldBridgeModule } from '~/modules/game-world-bridge/game-world-bridge.module';
 import { HabitableZonesModule } from '~/modules/habitable-zones/habitable-zones.module';
 import { WorldsConfigModule } from '~/modules/worlds-config/worlds-config.module';
-import { CacheRedisProviderModule } from '~/providers/cache/redis/provider.module';
 import { PostgresDatabaseProviderModule } from '~/providers/database/postgres/provider.module';
 
 @Module({
@@ -16,7 +15,6 @@ import { PostgresDatabaseProviderModule } from '~/providers/database/postgres/pr
     WorldsConfigModule,
     ScheduleModule.forRoot(),
     PostgresDatabaseProviderModule,
-    CacheRedisProviderModule,
     EventLogModule,
     AuthModule,
     HabitableZonesModule,

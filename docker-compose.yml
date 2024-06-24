@@ -1,0 +1,43 @@
+services:
+  postgres-backoffice:
+    container_name: postgres-backoffice
+    image: imresamu/postgis-arm64
+    env_file:
+      - ./apps/backoffice-api/.env
+    ports:
+      - "${BACKOFFICE_DB_PORT}:5432"
+    environment:
+      - POSTGRES_DB=${BACKOFFICE_DB_DATABASE}
+      - POSTGRES_PASSWORD=${BACKOFFICE_DB_PASSWORD}
+      - POSTGRES_USER=${BACKOFFICE_DB_USERNAME}
+    volumes:
+      - postgres-backoffice-data:/var/lib/postgresql/data
+
+  postgres-game:
+    container_name: postgres-game
+    image: imresamu/postgis-arm64
+    env_file:
+      - ./apps/game-api/.env
+    ports:
+      - "${GAME_DB_PORT}:5432"
+    environment:
+      - POSTGRES_DB=${GAME_DB_DATABASE}
+      - POSTGRES_PASSWORD=${GAME_DB_PASSWORD}
+      - POSTGRES_USER=${GAME_DB_USERNAME}
+    volumes:
+      - postgres-game-data:/var/lib/postgresql/data
+
+  redis-game:
+    container_name: redis-game
+    image: redis:latest
+    env_file:
+      - ./apps/game-api/.env
+    ports:
+      - "${GAME_REDIS_PORT}:6379"
+    volumes:
+      - redis-game-data:/data
+
+volumes:
+  postgres-backoffice-data:
+  postgres-game-data:
+  redis-game-data:

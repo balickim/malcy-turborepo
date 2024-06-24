@@ -21,16 +21,16 @@ export class AppConfig {
     JWT_ACCESS_TOKEN_EXPIRES_IN: str({ devDefault: '1h' }),
     JWT_REFRESH_TOKEN_EXPIRES_IN: str({ devDefault: '31d' }),
 
-    DB_HOST: str(),
-    DB_PORT: num(),
-    DB_DATABASE: str(),
-    DB_USERNAME: str(),
-    DB_PASSWORD: str(),
-    DB_SYNCHRONIZE: bool({ default: false, devDefault: true }),
+    GAME_DB_HOST: str(),
+    GAME_DB_PORT: num(),
+    GAME_DB_DATABASE: str(),
+    GAME_DB_USERNAME: str(),
+    GAME_DB_PASSWORD: str(),
+    GAME_DB_SYNCHRONIZE: bool({ default: false, devDefault: true }),
 
-    REDIS_HOST: str(),
-    REDIS_PORT: num(),
-    REDIS_PASSWORD: str({ default: 'password' }),
+    GAME_REDIS_HOST: str(),
+    GAME_REDIS_PORT: num(),
+    GAME_REDIS_PASSWORD: str({ default: 'password' }),
   });
 
   public get() {

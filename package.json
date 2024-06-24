@@ -2,8 +2,13 @@
   "name": "malcy-turborepo",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:docker": "node ./scripts/load-env-and-docker.js",
+    "dev:backoffice": "turbo run dev --filter=./apps/*backoffice*",
+    "dev:game": "turbo run dev --filter=./apps/*game*",
+    "build": "turbo run build",
+    "build:backoffice": "turbo run build --filter=./apps/*backoffice*",
+    "build:game": "turbo run build --filter=./apps/*game*",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },

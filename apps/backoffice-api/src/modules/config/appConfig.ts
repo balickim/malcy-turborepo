@@ -14,16 +14,12 @@ export class AppConfig {
 
     FE_APP_HOST: str({ devDefault: 'http://localhost:5173' }),
 
-    DB_HOST: str(),
-    DB_PORT: num(),
-    DB_DATABASE: str(),
-    DB_USERNAME: str(),
-    DB_PASSWORD: str(),
-    DB_SYNCHRONIZE: bool({ default: false, devDefault: true }),
-
-    REDIS_HOST: str(),
-    REDIS_PORT: num(),
-    REDIS_PASSWORD: str({ default: 'password' }),
+    BACKOFFICE_DB_HOST: str(),
+    BACKOFFICE_DB_PORT: num(),
+    BACKOFFICE_DB_DATABASE: str(),
+    BACKOFFICE_DB_USERNAME: str(),
+    BACKOFFICE_DB_PASSWORD: str(),
+    BACKOFFICE_DB_SYNCHRONIZE: bool({ default: false, devDefault: true }),
   });
 
   public get() {

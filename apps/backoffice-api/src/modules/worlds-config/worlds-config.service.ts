@@ -24,6 +24,6 @@ export class WorldsConfigService {
       where: { name },
     });
 
-    return data.id;
+    return data?.id;
   }
 }

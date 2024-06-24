@@ -17,14 +17,14 @@ import { WorldsConfigEntity } from '~/modules/worlds-config/entities/worlds-conf
       useFactory: (appConfig: AppConfig) => {
         return {
           type: 'postgres',
-          host: appConfig.get().DB_HOST,
-          port: appConfig.get().DB_PORT,
-          username: appConfig.get().DB_USERNAME,
-          password: appConfig.get().DB_PASSWORD,
-          database: appConfig.get().DB_DATABASE,
+          host: appConfig.get().BACKOFFICE_DB_HOST,
+          port: appConfig.get().BACKOFFICE_DB_PORT,
+          username: appConfig.get().BACKOFFICE_DB_USERNAME,
+          password: appConfig.get().BACKOFFICE_DB_PASSWORD,
+          database: appConfig.get().BACKOFFICE_DB_DATABASE,
           migrations: [],
           migrationsTableName: 'typeorm_migrations',
-          synchronize: appConfig.get().DB_SYNCHRONIZE,
+          synchronize: appConfig.get().BACKOFFICE_DB_SYNCHRONIZE,
           entities: [EventLogEntity, HabitableZonesEntity, WorldsConfigEntity],
           subscribers: [EventLogSubscriber],
         };

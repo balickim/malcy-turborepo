@@ -12,9 +12,9 @@ import { ConfigModule } from '~/modules/config/config.module';
       useFactory: async (appConfig: AppConfig): Promise<RedisModuleOptions> => {
         return {
           config: {
-            host: appConfig.get().REDIS_HOST,
-            port: appConfig.get().REDIS_PORT,
-            password: appConfig.get().REDIS_PASSWORD,
+            host: appConfig.get().GAME_REDIS_HOST,
+            port: appConfig.get().GAME_REDIS_PORT,
+            password: appConfig.get().GAME_REDIS_PASSWORD,
             maxRetriesPerRequest: null,
           },
         };

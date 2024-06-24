@@ -16,6 +16,6 @@ export class ConfigService {
       where: { name: worldName },
     });
 
-    return worldsConfigEntity.config;
+    return worldsConfigEntity?.config;
   }
 }
