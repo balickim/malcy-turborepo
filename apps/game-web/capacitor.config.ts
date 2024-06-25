@@ -6,9 +6,13 @@ const config: CapacitorConfig = {
   webDir: "dist",
   server: {
     androidScheme: "http",
+    allowNavigation: ["*"],
   },
   plugins: {
     CapacitorHttp: {
+      enabled: true,
+    },
+    CapacitorCookies: {
       enabled: true,
     },
   },

@@ -24,12 +24,17 @@ class WebSocketStore<T> {
       await this.refreshAccessToken();
     }
     this.initializeSocket();
+    this.setupVisibilityChangeListener();
   }
 
   initializeSocket() {
     if (this.socket || !this.accessToken) return;
 
     this.socket = io(`${URL}/${this.namespace}`, {
+      transports: ["websocket"],
+      extraHeaders: {
+        "X-Capacitor-HTTP-Plugin": "true",
+      },
       auth: { token: this.accessToken },
     });
 
@@ -43,6 +48,7 @@ class WebSocketStore<T> {
 
     this.socket.on("disconnect", () => {
       console.log(`Disconnected from ${this.namespace} WebSocket server`);
+      this.reconnect();
     });
 
     this.socket.on("connect_error", (err) => {
@@ -59,6 +65,7 @@ class WebSocketStore<T> {
       const newAccessToken = await tryRefreshToken();
       if (newAccessToken) {
         this.accessToken = newAccessToken;
+        this.reconnect();
       } else {
         console.error("Failed to refresh access token");
         this.socket?.disconnect();
@@ -75,6 +82,22 @@ class WebSocketStore<T> {
     } else {
       this.unsentMessageQueue.push({ event, data });
     }
+  }
+
+  reconnect() {
+    if (this.socket) {
+      this.socket.connect();
+    } else {
+      this.initializeSocket();
+    }
+  }
+
+  setupVisibilityChangeListener() {
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && this.socket?.disconnected) {
+        this.reconnect();
+      }
+    });
   }
 }
 
