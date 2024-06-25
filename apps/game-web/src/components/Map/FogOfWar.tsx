@@ -22,7 +22,7 @@ const FogOfWar = ({ cityBounds }: IFogOfWar) => {
       websocketUserLocation.socket?.off("allDiscoveredByUser");
       websocketUserLocation.socket?.off("allVisibleByUser");
     };
-  }, [websocketUserLocation.socket]);
+  }, []);
 
   return (
     <>

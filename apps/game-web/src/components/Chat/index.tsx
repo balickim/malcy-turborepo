@@ -1,6 +1,7 @@
 import { IonSpinner } from "@ionic/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import { IMessageDto } from "~/api/chat/dtos";
@@ -54,11 +55,15 @@ const Chat = () => {
         new Audio("notification.mp3").play();
       }
     });
+    websocketChat.socket?.on("error", (args) =>
+      toast.error(args, { duration: 10000 }),
+    );
 
     return () => {
       websocketChat.socket?.off("newMessage");
+      websocketChat.socket?.off("error");
     };
-  }, [websocketChat.socket]);
+  }, []);
 
   const sendMessageWrapper = (content: string) => {
     const data: ISendMessageData = {

@@ -38,7 +38,7 @@ export function UserLocationMarker({
     return () => {
       websocketUserLocation.socket?.off("location:error");
     };
-  }, [location, websocketUserLocation.socket]);
+  }, [location]);
 
   return position ? (
     <>
