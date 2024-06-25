@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -33,6 +34,7 @@ export interface SocketWithUser extends Socket {
   namespace: '/chat',
 })
 export class ChatGateway {
+  private readonly logger = new Logger(ChatGateway.name);
   @WebSocketServer()
   server: Server;
 
@@ -57,11 +59,13 @@ export class ChatGateway {
     }
 
     const newMessage = this.createMessage(data, client.user);
-    this.chatService.saveMessage(newMessage, client.user);
-
-    this.server
-      // .to(`conversation_${data.conversationId}`)
-      .emit('newMessage', newMessage);
+    try {
+      await this.chatService.saveMessage(newMessage, client.user);
+      this.server.emit('newMessage', newMessage);
+    } catch (error) {
+      this.logger.error(error);
+      this.server.emit('error', 'There was an error when sending a message');
+    }
   }
 
   createMessage(data: RequestMessageDto, user: IJwtUser): ResponseMessageDto {

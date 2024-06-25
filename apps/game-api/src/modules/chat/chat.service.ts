@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { WsException } from '@nestjs/websockets';
 import { Repository } from 'typeorm';
 
 import { ResponseMessageDto } from '~/modules/chat/dtos/response-message.dto';
@@ -17,12 +18,18 @@ export class ChatService {
 
   public async saveMessage(messageDto: ResponseMessageDto, user: IJwtUser) {
     this.logger.log(`NEW MESSAGE IN CONVERSATION ${messageDto.conversationId}`);
-    return this.messagesEntityRepository.insert({
-      user,
-      content: messageDto.content,
-      createdAt: messageDto.createdAt,
-      conversation: { id: messageDto.conversationId },
-    });
+    try {
+      await this.messagesEntityRepository.insert({
+        user,
+        content: messageDto.content,
+        createdAt: messageDto.createdAt,
+        conversation: { id: messageDto.conversationId },
+      });
+    } catch (error) {
+      throw new ConflictException(
+        `When inserting new chat message -- ERROR: ${error}`,
+      );
+    }
   }
 
   public async getMessagesByConversationId(

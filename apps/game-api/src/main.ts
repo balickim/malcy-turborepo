@@ -7,6 +7,8 @@ import { TransformInterceptor } from '~/common/interceptors/response.interceptor
 import { JwtGuard } from '~/modules/auth/guards/jwt.guard';
 import { AppConfig } from '~/modules/config/appConfig';
 
+import { AllExceptionsFilter } from './common/filters/all-exception.filter';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cors = require('cors');
 
@@ -39,6 +41,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.useGlobalGuards(new JwtGuard(app.get(Reflector)));
   app.useGlobalInterceptors(new TransformInterceptor(new Reflector()));
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   const port = configService.get().PORT;
 
