@@ -75,7 +75,7 @@ export class UserLocationGateway {
     client: Socket,
     payload: IUpdateLocationParams,
   ) {
-    const debounceTime = 5000; // 5 seconds
+    const debounceTime = 1000; // 1 seconds
     const currentTime = Date.now();
     const lastUpdateTime = this.userUpdateTimestamps.get(payload.userId) || 0;
 
