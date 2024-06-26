@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import L from "leaflet";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Marker, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 
@@ -15,7 +15,7 @@ import ViewSettlementModal from "~/components/Settlements/Modals/ViewSettlementM
 import store from "~/store";
 import useMapBounds from "~/utils/useViewBounds.ts";
 
-export default function Settlements() {
+const Settlements = () => {
   const fogOfWarApi = new FogOfWarApi();
   const { userStore } = store;
   const map = useMap();
@@ -30,15 +30,10 @@ export default function Settlements() {
     "pick_up" | "put_down" | undefined
   >(undefined);
   const [contextMenuData, setContextMenuData] = useState<
-    | {
-        position: {
-          x: number;
-          y: number;
-        } | null;
-        settlement: ISettlementDto;
-      }
+    | { position: { x: number; y: number } | null; settlement: ISettlementDto }
     | undefined
   >(undefined);
+
   const {
     data: settlementsData,
     isSuccess,
@@ -67,21 +62,6 @@ export default function Settlements() {
     }
   }, [isSuccess, settlementsData?.data]);
 
-  // useEffect(() => {
-  //   function newSettlement(value: ISettlementDto) {
-  //     setSettlements((previous) => {
-  //       const updatedSettlements = new Map(previous.map((s) => [s.id, s]));
-  //       updatedSettlements.set(value.id, value);
-  //       return Array.from(updatedSettlements.values());
-  //     });
-  //   }
-  //
-  //   baseSocket.on("newSettlement", newSettlement);
-  //   return () => {
-  //     baseSocket.off("newSettlement", newSettlement);
-  //   };
-  // }, []);
-
   const closeModals = useCallback(() => {
     setOpenedModal(undefined);
     setContextMenuData(undefined);
@@ -90,12 +70,12 @@ export default function Settlements() {
     setIsSiegeModalOpen(false);
   }, []);
 
-  const handleMarkerClick = (
-    settlement: ISettlementDto,
-    event: L.LeafletMouseEvent,
-  ) => {
-    setContextMenuData({ settlement, position: event.containerPoint });
-  };
+  const handleMarkerClick = useCallback(
+    (settlement: ISettlementDto, event: L.LeafletMouseEvent) => {
+      setContextMenuData({ settlement, position: event.containerPoint });
+    },
+    [],
+  );
 
   const MemoizedMarker = memo(
     ({
@@ -108,17 +88,16 @@ export default function Settlements() {
       <Marker
         key={settlement.id}
         position={settlement}
-        icon={CustomMarkerIcon({
-          settlement,
-          userStore,
-        })}
+        icon={CustomMarkerIcon({ settlement, userStore })}
         eventHandlers={{
           click: onMarkerClick,
         }}
       />
     ),
   );
+
   MemoizedMarker.displayName = "MemoizedMarker";
+
   const renderContextMenu = () => {
     if (!contextMenuData || !contextMenuData.position) return null;
 
@@ -158,27 +137,32 @@ export default function Settlements() {
       />
     );
   };
+
+  const memoizedMarkerClusterGroup = useMemo(
+    () => (
+      <MarkerClusterGroup chunkedLoading disableClusteringAtZoom={18}>
+        {settlements.map((settlement) => (
+          <MemoizedMarker
+            key={settlement.id}
+            settlement={settlement}
+            onMarkerClick={(event) => {
+              if (settlement.siege) {
+                console.log(settlement.siege);
+                setLookUpModalData(settlement);
+                return;
+              }
+              handleMarkerClick(settlement, event);
+            }}
+          />
+        ))}
+      </MarkerClusterGroup>
+    ),
+    [settlements, handleMarkerClick, setLookUpModalData],
+  );
+
   return (
     <>
-      <MarkerClusterGroup chunkedLoading disableClusteringAtZoom={18}>
-        {settlements.map((settlement) => {
-          return (
-            <MemoizedMarker
-              key={settlement.id}
-              settlement={settlement}
-              onMarkerClick={(event) => {
-                if (settlement.siege) {
-                  console.log(settlement.siege);
-                  setLookUpModalData(settlement);
-                  return;
-                }
-
-                handleMarkerClick(settlement, event);
-              }}
-            />
-          );
-        })}
-      </MarkerClusterGroup>
+      {memoizedMarkerClusterGroup}
 
       <ViewSettlementModal
         isOpen={isSettlementModalOpen}
@@ -207,4 +191,6 @@ export default function Settlements() {
       {renderContextMenu()}
     </>
   );
-}
+};
+
+export default memo(Settlements);
