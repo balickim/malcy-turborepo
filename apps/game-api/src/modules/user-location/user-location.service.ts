@@ -23,6 +23,7 @@ const userLocationTimestampKey = 'user:location:timestamp';
 @Injectable()
 export class UserLocationService {
   private readonly logger = new Logger(UserLocationService.name);
+  private userLocationUpdateTimestamps: Map<string, number> = new Map();
 
   constructor(
     @InjectRedis() private readonly redis: Redis,
@@ -34,6 +35,20 @@ export class UserLocationService {
   ) {}
 
   public async updateLocation(params: IUpdateLocationParams) {
+    const debounceTime = 5000; // 5 seconds
+    const currentTime = Date.now();
+    const lastUpdateTime =
+      this.userLocationUpdateTimestamps.get(params.userId) || 0;
+
+    if (currentTime - lastUpdateTime < debounceTime) {
+      this.logger.log(
+        `Debounced location update for user ID: ${params.userId}`,
+      );
+      return;
+    }
+
+    this.userLocationUpdateTimestamps.set(params.userId, currentTime);
+
     const isUserSpeedWithinLimit = await this.isUserSpeedWithinLimit({
       userId: params.userId,
       location: { lat: params.location.lat, lng: params.location.lng },

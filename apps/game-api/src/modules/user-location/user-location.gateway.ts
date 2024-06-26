@@ -97,7 +97,6 @@ export class UserLocationGateway {
 
   private async updatePlayerLocation(payload: IUpdateLocationParams) {
     await this.userLocationService.updateLocation(payload);
-    this.logger.debug(`LOCATION UPDATED FOR USER: ${payload.userId}`);
   }
 
   private async getNearbyUsers(payload: IUpdateLocationParams) {
