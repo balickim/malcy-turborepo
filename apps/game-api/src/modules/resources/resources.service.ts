@@ -107,13 +107,13 @@ export class ResourcesService {
       .createQueryBuilder()
       .update(SettlementsEntity)
       .set({
-        gold: () => `CASE 
+        gold: () => `CASE
           WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' THEN LEAST("gold" + ${goldMiningTown} * "resourcesMultiplicator", ${maxGoldMiningTown})
           WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' THEN LEAST("gold" + ${goldCastleTown} * "resourcesMultiplicator", ${maxGoldCastleTown})
           WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN LEAST("gold" + ${goldFortifiedSettlement} * "resourcesMultiplicator", ${maxGoldFortifiedSettlement})
           WHEN "type" = '${SharedSettlementTypesEnum.CAPITOL_SETTLEMENT}' THEN LEAST("gold" + ${goldCapitolSettlement} * "resourcesMultiplicator", ${maxGoldCapitolSettlement})
         END`,
-        wood: () => `CASE 
+        wood: () => `CASE
           WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' THEN LEAST("wood" + ${woodMiningTown} * "resourcesMultiplicator", ${maxWoodMiningTown})
           WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' THEN LEAST("wood" + ${woodCastleTown} * "resourcesMultiplicator", ${maxWoodCastleTown})
           WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN LEAST("wood" + ${woodFortifiedSettlement} * "resourcesMultiplicator", ${maxWoodFortifiedSettlement})
@@ -124,6 +124,6 @@ export class ResourcesService {
 
     await this.settlementsEntityRepository.query(query);
 
-    this.logger.log('Distributing resources to settlements FINISHED');
+    this.logger.debug('Distributing resources to settlements FINISHED');
   }
 }
