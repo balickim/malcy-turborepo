@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
@@ -51,6 +52,9 @@ async function bootstrap() {
   if (environment === 'development') {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('docs', app, document);
+  }
+  if (environment === 'production') {
+    Logger.overrideLogger(['warn', 'error']);
   }
 
   await app.listen(port, '0.0.0.0');
