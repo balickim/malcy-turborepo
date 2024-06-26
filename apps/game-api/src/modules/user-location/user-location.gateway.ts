@@ -35,6 +35,7 @@ import {
 })
 export class UserLocationGateway {
   private readonly logger = new Logger(UserLocationGateway.name);
+  private userUpdateTimestamps: Map<string, number> = new Map();
   @WebSocketServer()
   server: Server;
 
@@ -74,6 +75,18 @@ export class UserLocationGateway {
     client: Socket,
     payload: IUpdateLocationParams,
   ) {
+    const debounceTime = 5000; // 5 seconds
+    const currentTime = Date.now();
+    const lastUpdateTime = this.userUpdateTimestamps.get(payload.userId) || 0;
+
+    if (currentTime - lastUpdateTime < debounceTime) {
+      this.logger.log(
+        `Debounced processPlayerPosition for user ID: ${payload.userId}`,
+      );
+      return;
+    }
+    this.userUpdateTimestamps.set(payload.userId, currentTime);
+
     await this.updatePlayerLocation(payload);
 
     const nearbyUsers = await this.getNearbyUsers(payload);
