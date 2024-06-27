@@ -1,3 +1,5 @@
+import { Capacitor } from "@capacitor/core";
+import { LocalNotifications } from "@capacitor/local-notifications";
 import { IonSpinner } from "@ionic/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
@@ -49,10 +51,24 @@ const Chat = () => {
   }, [messagesInConversation]);
 
   useEffect(() => {
-    websocketChat.socket?.on("newMessage", (message: IMessageDto) => {
+    websocketChat.socket?.on("newMessage", async (message: IMessageDto) => {
       setMessages((prevMessages) => [message, ...prevMessages]);
       if (message.user.id !== userStore.user.id) {
-        new Audio("notification.mp3").play();
+        if (!Capacitor.isNativePlatform()) new Audio("notification.mp3").play();
+
+        await LocalNotifications.schedule({
+          notifications: [
+            {
+              title: `${message.user.username} napisał:`,
+              body: `${message.content}`,
+              id: 1,
+              sound: undefined,
+              attachments: undefined,
+              actionTypeId: "",
+              extra: null,
+            },
+          ],
+        });
       }
     });
     websocketChat.socket?.on("error", (args) =>

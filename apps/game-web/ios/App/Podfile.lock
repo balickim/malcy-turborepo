@@ -3,6 +3,8 @@ PODS:
     - CapacitorCordova
   - CapacitorApp (5.0.7):
     - Capacitor
+  - CapacitorCommunityBackgroundGeolocation (0.0.1):
+    - Capacitor
   - CapacitorCordova (5.7.5)
   - CapacitorGeolocation (5.0.7):
     - Capacitor
@@ -10,16 +12,20 @@ PODS:
     - Capacitor
   - CapacitorKeyboard (5.0.8):
     - Capacitor
+  - CapacitorLocalNotifications (6.0.0):
+    - Capacitor
   - CapacitorStatusBar (5.0.7):
     - Capacitor
 
 DEPENDENCIES:
   - "Capacitor (from `../../../../node_modules/.pnpm/@capacitor+ios@5.7.5_@capacitor+core@6.1.0/node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../../../node_modules/.pnpm/@capacitor+app@5.0.7_@capacitor+core@6.1.0/node_modules/@capacitor/app`)"
+  - "CapacitorCommunityBackgroundGeolocation (from `../../../../node_modules/.pnpm/@capacitor-community+background-geolocation@1.2.17_@capacitor+core@6.1.0/node_modules/@capacitor-community/background-geolocation`)"
   - "CapacitorCordova (from `../../../../node_modules/.pnpm/@capacitor+ios@5.7.5_@capacitor+core@6.1.0/node_modules/@capacitor/ios`)"
   - "CapacitorGeolocation (from `../../../../node_modules/.pnpm/@capacitor+geolocation@5.0.7_@capacitor+core@6.1.0/node_modules/@capacitor/geolocation`)"
   - "CapacitorHaptics (from `../../../../node_modules/.pnpm/@capacitor+haptics@5.0.7_@capacitor+core@6.1.0/node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../../../node_modules/.pnpm/@capacitor+keyboard@5.0.8_@capacitor+core@6.1.0/node_modules/@capacitor/keyboard`)"
+  - "CapacitorLocalNotifications (from `../../../../node_modules/.pnpm/@capacitor+local-notifications@6.0.0_@capacitor+core@6.1.0/node_modules/@capacitor/local-notifications`)"
   - "CapacitorStatusBar (from `../../../../node_modules/.pnpm/@capacitor+status-bar@5.0.7_@capacitor+core@6.1.0/node_modules/@capacitor/status-bar`)"
 
 EXTERNAL SOURCES:
@@ -27,6 +33,8 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/.pnpm/@capacitor+ios@5.7.5_@capacitor+core@6.1.0/node_modules/@capacitor/ios"
   CapacitorApp:
     :path: "../../../../node_modules/.pnpm/@capacitor+app@5.0.7_@capacitor+core@6.1.0/node_modules/@capacitor/app"
+  CapacitorCommunityBackgroundGeolocation:
+    :path: "../../../../node_modules/.pnpm/@capacitor-community+background-geolocation@1.2.17_@capacitor+core@6.1.0/node_modules/@capacitor-community/background-geolocation"
   CapacitorCordova:
     :path: "../../../../node_modules/.pnpm/@capacitor+ios@5.7.5_@capacitor+core@6.1.0/node_modules/@capacitor/ios"
   CapacitorGeolocation:
@@ -35,18 +43,22 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/.pnpm/@capacitor+haptics@5.0.7_@capacitor+core@6.1.0/node_modules/@capacitor/haptics"
   CapacitorKeyboard:
     :path: "../../../../node_modules/.pnpm/@capacitor+keyboard@5.0.8_@capacitor+core@6.1.0/node_modules/@capacitor/keyboard"
+  CapacitorLocalNotifications:
+    :path: "../../../../node_modules/.pnpm/@capacitor+local-notifications@6.0.0_@capacitor+core@6.1.0/node_modules/@capacitor/local-notifications"
   CapacitorStatusBar:
     :path: "../../../../node_modules/.pnpm/@capacitor+status-bar@5.0.7_@capacitor+core@6.1.0/node_modules/@capacitor/status-bar"
 
 SPEC CHECKSUMS:
   Capacitor: 7d42085cb786b2d3ea9ac8a17ebd7e3305be7b72
   CapacitorApp: 17fecd0e6cb23feafac7eb0939417389038b0979
+  CapacitorCommunityBackgroundGeolocation: 6f26f4290377dbd1d6dec21e62cb66f008f61ec7
   CapacitorCordova: c946a6052b547e1e185fc46862003f7b9130ead1
   CapacitorGeolocation: 918a292459542bcce98433f9e7c7909f8c72838a
   CapacitorHaptics: 7c7c206f0c96a628fed073830c96d28c4b2e772e
   CapacitorKeyboard: aec619a578235c6ce279075009a2689c2cf5c42c
+  CapacitorLocalNotifications: 4ab68f0be5f697a579558fadd307d823a9ec1c26
   CapacitorStatusBar: f390fbb49b82ffb754ea4b3cf71dc8b048baf3e7
 
-PODFILE CHECKSUM: 18006eb8f6819aa4e5f58be777326f7f66095ad8
+PODFILE CHECKSUM: 27ed200d0ac9b48c3d7c461da6a445e619ad4db6
 
 COCOAPODS: 1.15.2
