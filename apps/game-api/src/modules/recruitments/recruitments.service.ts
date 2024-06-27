@@ -271,7 +271,7 @@ export class RecruitmentsService implements OnModuleInit {
       throw new Error('Army not found for the given settlement.');
     }
 
-    army[recruitDto.unitType] += 1;
+    army[recruitDto.unitType.toLowerCase()] += 1;
     await this.armyRepository.save(army);
 
     await this.saveRecruitmentProgress(recruitDto, jobId, currentProgress + 1);

@@ -51,7 +51,7 @@ export function CurrentRecruitments({
       recruitmentJob.data.finishesOn,
     ).toLocaleTimeString();
 
-    const unitImage = `assets/units/${recruitmentJob.data.unitType}.webp`;
+    const unitImage = `/assets/units/${recruitmentJob.data.unitType.toLowerCase()}.webp`;
     const unitType = recruitmentJob.data.unitType;
     return (
       <div
