@@ -3,11 +3,13 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonModal,
   IonPopover,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { arrowBackOutline } from "ionicons/icons";
 import { useQuery } from "@tanstack/react-query";
 import { memo } from "react";
 
@@ -56,15 +58,16 @@ const ViewSettlementModal = memo(
     const isOwn = userStore.user.id === settlementData.user.id;
     return (
       <IonModal isOpen={isOpen} onWillDismiss={() => closeModal()}>
-        <IonHeader>
-          <IonToolbar>
-            <IonButtons slot="start">
-              <IonButton onClick={() => closeModal()}>Cancel</IonButton>
-            </IonButtons>
-            <IonTitle>{settlementData?.name}</IonTitle>
-          </IonToolbar>
+        <IonHeader className="bg-primary shadow-none px-4 h-16 text-white flex justify-center items-center">
+          <IonIcon
+            icon={arrowBackOutline}
+            onClick={() => closeModal()}
+            size={"large"}
+            className="transition-transform duration-300 ease-in-out transform hover:scale-110 active:scale-125"
+          />
+          <IonTitle>{settlementData?.name}</IonTitle>
         </IonHeader>
-        <IonContent>
+        <IonContent className="bg-secondary">
           {isOwn ? <ArmyInfo army={settlementData.army} /> : null}
           {isOwn ? (
             <ResourcesInfo
@@ -79,6 +82,46 @@ const ViewSettlementModal = memo(
             <div className="inline-block w-full align-bottom bg-white rounded-lg text-left shadow-xl transform transition-all">
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div className="mt-2 sm:mt-0 sm:ml-4">
+                  <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div className="sm:flex sm:items-start">
+                      <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10">
+                        <IonPopover
+                          trigger={`trigger-${settlementData.type}`}
+                          triggerAction="hover"
+                          showBackdrop={false}
+                        >
+                          <img
+                            src={settlementImage[settlementData.type]}
+                            alt={settlementData.type}
+                          />
+                        </IonPopover>
+                        <img
+                          id={`trigger-${settlementData.type}`}
+                          src={settlementImage[settlementData.type]}
+                          alt={settlementData.type}
+                          className="max-h-40 mx-auto rounded-full"
+                        />
+                      </div>
+
+                      <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3
+                          className="text-lg leading-6 font-medium text-gray-900"
+                          id="modal-title"
+                        >
+                          {settlementData.name}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          settlement id: {settlementData.id}
+                        </p>
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">
+                            Type: {settlementData.type}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <h4 className="text-lg leading-6 font-medium text-gray-900">
                     User Profile
                   </h4>
@@ -88,45 +131,6 @@ const ViewSettlementModal = memo(
                   <p className="text-sm text-gray-500">
                     user id: {settlementData.user.id}
                   </p>
-                </div>
-
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10">
-                      <IonPopover
-                        trigger={`trigger-${settlementData.type}`}
-                        triggerAction="hover"
-                        showBackdrop={false}
-                      >
-                        <img
-                          src={settlementImage[settlementData.type]}
-                          alt={settlementData.type}
-                        />
-                      </IonPopover>
-                      <img
-                        id={`trigger-${settlementData.type}`}
-                        src={settlementImage[settlementData.type]}
-                        alt={settlementData.type}
-                        className="max-h-40 mx-auto rounded-full"
-                      />
-                    </div>
-                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <h3
-                        className="text-lg leading-6 font-medium text-gray-900"
-                        id="modal-title"
-                      >
-                        {settlementData.name}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        settlement id: {settlementData.id}
-                      </p>
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-500">
-                          Type: {settlementData.type}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

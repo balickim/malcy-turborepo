@@ -81,7 +81,7 @@ export const RecruitUnit: React.FC<IRecruitUnitProps> = ({
         type="number"
         value={unitCount}
         onChange={(e) => setUnitCount(parseInt(e.target.value))}
-        className="w-10 text-center"
+        className="w-10 text-center shadow-md bg-white"
       />
       <p
         className={"text-cyan-300 hover:cursor-pointer hover:text-cyan-500"}
