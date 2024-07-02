@@ -1,17 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import L from "leaflet";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Marker, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 
 import FogOfWarApi from "~/api/fog-of-war/routes";
 import { ISettlementDto } from "~/api/settlements/dtos";
 import ContextMenu from "~/components/ContextMenu";
+import ArmyDeployment from "~/components/Settlements/ArmyDeployment";
 import { CustomMarkerIcon } from "~/components/Settlements/CustomMarkerIcon";
-import LookUpSiegeModal from "~/components/Settlements/Modals/LookUpSiegeModal";
-import PickUpOrPutDownArmyModal from "~/components/Settlements/Modals/PickUpOrPutDownArmyModal";
-import StartSiegeModal from "~/components/Settlements/Modals/StartSiegeModal";
-import ViewSettlementModal from "~/components/Settlements/Modals/ViewSettlementModal";
+import SettlementInfo from "~/components/Settlements/SettlementInfo";
+import SiegeInfo from "~/components/Settlements/SiegeInfo";
+import StartSiege from "~/components/Settlements/StartSiege";
+import BasicModalContainer, {
+  IModalHandle,
+} from "~/components/ui/BasicModalContainer";
 import store from "~/store";
 import useMapBounds from "~/utils/useViewBounds.ts";
 
@@ -20,15 +23,18 @@ const Settlements = () => {
   const { userStore } = store;
   const map = useMap();
   const bounds = useMapBounds(map);
-  const [isSettlementModalOpen, setIsSettlementModalOpen] = useState(false);
-  const [isSiegeModalOpen, setIsSiegeModalOpen] = useState(false);
+  const startSiegeModalRef = useRef<IModalHandle>(null);
+  const settlementInfoModalRef = useRef<IModalHandle>(null);
+  const siegeInfoModalRef = useRef<IModalHandle>(null);
+  const armyDeploymentModalRef = useRef<IModalHandle>(null);
+
   const [lookUpModalData, setLookUpModalData] = useState<
     ISettlementDto | undefined
   >();
   const [settlements, setSettlements] = useState<ISettlementDto[]>([]);
-  const [openedModal, setOpenedModal] = useState<
-    "pick_up" | "put_down" | undefined
-  >(undefined);
+  const [openedModal, setOpenedModal] = useState<"pick_up" | "put_down">(
+    "pick_up",
+  );
   const [contextMenuData, setContextMenuData] = useState<
     | { position: { x: number; y: number } | null; settlement: ISettlementDto }
     | undefined
@@ -62,14 +68,6 @@ const Settlements = () => {
     }
   }, [isSuccess, settlementsData?.data]);
 
-  const closeModals = useCallback(() => {
-    setOpenedModal(undefined);
-    setContextMenuData(undefined);
-    setLookUpModalData(undefined);
-    setIsSettlementModalOpen(false);
-    setIsSiegeModalOpen(false);
-  }, []);
-
   const handleMarkerClick = useCallback(
     (settlement: ISettlementDto, event: L.LeafletMouseEvent) => {
       setContextMenuData({ settlement, position: event.containerPoint });
@@ -95,7 +93,6 @@ const Settlements = () => {
       />
     ),
   );
-
   MemoizedMarker.displayName = "MemoizedMarker";
 
   const renderContextMenu = () => {
@@ -111,17 +108,23 @@ const Settlements = () => {
         items={[
           {
             icon: "assets/modal_info.png",
-            onClick: () => setIsSettlementModalOpen(true),
+            onClick: () => settlementInfoModalRef.current?.open(),
           },
           ...(isOwn
             ? [
                 {
                   icon: "assets/malcy_leap_off_hand.png",
-                  onClick: () => setOpenedModal("put_down"),
+                  onClick: () => {
+                    armyDeploymentModalRef.current?.open();
+                    setOpenedModal("put_down");
+                  },
                 },
                 {
                   icon: "assets/malcy_take_up.webp",
-                  onClick: () => setOpenedModal("pick_up"),
+                  onClick: () => {
+                    armyDeploymentModalRef.current?.open();
+                    setOpenedModal("pick_up");
+                  },
                 },
               ]
             : []),
@@ -129,7 +132,7 @@ const Settlements = () => {
             ? [
                 {
                   icon: "assets/start_siege.webp",
-                  onClick: () => setIsSiegeModalOpen(true),
+                  onClick: () => siegeInfoModalRef.current?.open(),
                 },
               ]
             : []),
@@ -157,35 +160,56 @@ const Settlements = () => {
         ))}
       </MarkerClusterGroup>
     ),
-    [settlements, handleMarkerClick, setLookUpModalData],
+    [settlements, handleMarkerClick, setLookUpModalData, MemoizedMarker],
   );
 
   return (
     <>
       {memoizedMarkerClusterGroup}
 
-      <ViewSettlementModal
-        isOpen={isSettlementModalOpen}
-        closeModal={closeModals}
-        settlementId={contextMenuData && contextMenuData.settlement.id}
+      <BasicModalContainer
+        ref={settlementInfoModalRef}
+        head={contextMenuData && contextMenuData.settlement.name}
+        body={
+          <SettlementInfo
+            settlementId={contextMenuData && contextMenuData.settlement.id}
+          />
+        }
       />
-      <PickUpOrPutDownArmyModal
-        type={openedModal}
-        isOpen={!!openedModal}
-        closeModal={closeModals}
-        settlementId={contextMenuData && contextMenuData.settlement.id}
+
+      <BasicModalContainer
+        ref={armyDeploymentModalRef}
+        head={
+          openedModal === "pick_up" ? "Podnieś żołnierzy" : "Upuść żołnierzy"
+        }
+        body={
+          <ArmyDeployment
+            type={openedModal}
+            settlementId={contextMenuData && contextMenuData.settlement.id}
+          />
+        }
       />
-      <StartSiegeModal
-        isOpen={isSiegeModalOpen}
-        closeModal={closeModals}
-        settlementId={contextMenuData && contextMenuData.settlement.id}
-        refetch={refetchSettlementsInBounds}
+
+      <BasicModalContainer
+        ref={startSiegeModalRef}
+        head={"Rozpocznij oblężenie"}
+        body={
+          <StartSiege
+            refetch={refetchSettlementsInBounds}
+            settlementId={contextMenuData && contextMenuData.settlement.id}
+          />
+        }
       />
-      <LookUpSiegeModal
-        isOpen={!!lookUpModalData}
-        closeModal={closeModals}
-        settlement={lookUpModalData}
-        refetch={refetchSettlementsInBounds}
+
+      <BasicModalContainer
+        ref={startSiegeModalRef}
+        head={"Oblężenie"}
+        body={
+          <SiegeInfo
+            refetch={refetchSettlementsInBounds}
+            settlement={lookUpModalData}
+          />
+        }
       />
 
       {renderContextMenu()}

@@ -10,7 +10,7 @@ import { UnitType } from "~/types/army";
 import { useUser } from "~/utils/useUser";
 
 interface IArmyDeployment {
-  settlementId: string;
+  settlementId?: string;
   type: "pick_up" | "put_down";
 }
 
