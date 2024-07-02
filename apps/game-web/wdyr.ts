@@ -1,7 +1,7 @@
 /// <reference types="@welldone-software/why-did-you-render" />
 import * as React from "react";
 
-if (import.meta.env.DEV) {
+if (import.meta.env.DEV && import.meta.env.VITE_USE_WDYR === "true") {
   const { default: wdyr } = await import(
     "@welldone-software/why-did-you-render"
   );

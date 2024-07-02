@@ -1,4 +1,3 @@
-import legacy from "@vitejs/plugin-legacy";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
@@ -9,7 +8,6 @@ export default defineConfig({
     react({
       jsxImportSource: "@welldone-software/why-did-you-render",
     }),
-    legacy(),
   ],
   resolve: {
     alias: {
