@@ -7,41 +7,28 @@ interface IResources {
   woodMax?: number;
 }
 
-export function ResourcesInfo(resources: IResources) {
-  if (resources.gold === undefined || resources.wood === undefined) return null;
+export function ResourcesInfo({ gold, goldMax, wood, woodMax }: IResources) {
+  if (gold === undefined || wood === undefined) return null;
 
-  const gold = ResourceTypeEnum.gold;
-  const goldMax = resources.goldMax;
-  const wood = ResourceTypeEnum.wood;
-  const woodMax = resources.woodMax;
+  const resources = [
+    { type: ResourceTypeEnum.gold, value: gold, max: goldMax },
+    { type: ResourceTypeEnum.wood, value: wood, max: woodMax },
+  ];
 
   return (
-    <div className={"flex justify-end gap-2"}>
-      <div key={gold} className={"flex items-center gap-0.5"}>
-        <img
-          src={`assets/units/${gold}_icon.webp`}
-          alt={gold}
-          className={"w-6 h-6 rounded-full"}
-        />
-        <p
-          className={`text-lg ${goldMax && resources[gold] >= goldMax ? "text-red-500" : ""}`}
-        >
-          {resources[gold]}
-        </p>
-      </div>
-
-      <div key={wood} className={"flex items-center gap-0.5"}>
-        <img
-          src={`assets/units/${wood}_icon.webp`}
-          alt={wood}
-          className={"w-6 h-6 rounded-full"}
-        />
-        <p
-          className={`text-lg ${woodMax && resources[wood] >= woodMax ? "text-red-500" : ""}`}
-        >
-          {resources[wood]}
-        </p>
-      </div>
+    <div className={"flex gap-2"}>
+      {resources.map(({ type, value, max }) => (
+        <div key={type} className={"flex items-center gap-0.5"}>
+          <img
+            src={`assets/units/${type}_icon.webp`}
+            alt={type}
+            className={"w-4 h-4 rounded-full"}
+          />
+          <p className={`${max && value >= max ? "text-red-500" : ""}`}>
+            {value}
+          </p>
+        </div>
+      ))}
     </div>
   );
 }

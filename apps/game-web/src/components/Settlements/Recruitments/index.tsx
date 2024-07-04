@@ -38,16 +38,18 @@ export function Recruitments({
         refetchSettlements={refetchSettlement}
       />
 
-      {availableUnits.map((unitType) => (
-        <RecruitUnit
-          key={unitType}
-          unitType={unitType as UnitTypeName}
-          settlementData={settlementData}
-          unitImage={`/assets/units/${unitType.toLowerCase()}.webp`}
-          refetchRecruitments={refetchRecruitments}
-          refetchSettlement={refetchSettlement}
-        />
-      ))}
+      <div className="flex flex-col gap-2">
+        {availableUnits.map((unitType) => (
+          <RecruitUnit
+            key={unitType}
+            unitType={unitType as UnitTypeName}
+            settlementData={settlementData}
+            unitImage={`/assets/units/${unitType.toLowerCase()}.webp`}
+            refetchRecruitments={refetchRecruitments}
+            refetchSettlement={refetchSettlement}
+          />
+        ))}
+      </div>
     </>
   );
 }

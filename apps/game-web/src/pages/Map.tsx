@@ -1,4 +1,11 @@
-import { isPlatform } from "@ionic/react";
+import {
+  IonCol,
+  IonGrid,
+  IonProgressBar,
+  IonRow,
+  IonText,
+  isPlatform,
+} from "@ionic/react";
 import L from "leaflet";
 import { useRef, useState } from "react";
 import { DndProvider } from "react-dnd";
@@ -8,18 +15,17 @@ import { MapContainer, TileLayer } from "react-leaflet";
 
 import ChatWindowOnMap from "~/components/Chat/ChatWindowOnMap";
 import DropTarget from "~/components/DropTarget";
-import ArmyInfoOnMap from "~/components/Map/ArmyInfoOnMap";
+import UserStatsOnMap from "~/components/Map/UserStatsOnMap";
 import Buttons from "~/components/Map/Buttons";
 import FogOfWar from "~/components/Map/FogOfWar";
 import HabitableZones from "~/components/Map/HabitableZones.tsx";
 import { LocationFinderDummy } from "~/components/Map/LocationFinderDummy";
-import { NoPlayerPositionInfo } from "~/components/Map/NoPlayerPositionInfo";
+import OnMapItemContainer from "~/components/Map/OnMapItemContainer";
 import { OtherPlayersLocationMarker } from "~/components/Map/OtherPlayersLocationsMarkers";
-import ResourcesInfoOnMap from "~/components/Map/ResourcesInfoOnMap";
 import { UserLocationMarker } from "~/components/Map/UserLocationMarker";
 import PageContainer from "~/components/PageContainer";
 import Settlements from "~/components/Settlements";
-import AddSettlementModal from "~/components/Settlements/Modals/AddSettlementModal";
+import CreateSettlement from "~/components/Settlements/CreateSettlement";
 import { useOthersPlayersPositionsWatcher } from "~/utils/useOtherPlayersPositionsWatcher";
 import { usePlayerPositionWatcher } from "~/utils/usePlayerPositionWatcher";
 import { useUser } from "~/utils/useUser";
@@ -48,9 +54,24 @@ const Map = () => {
   };
 
   if (!playerLocation || worldConfig.isFetching) {
+    const part1 = playerLocation ? 50 : 0;
+    const part2 = !worldConfig.isFetching ? 50 : 0;
+
+    const ionProgressBarValue = part1 + part2;
     return (
       <PageContainer>
-        <NoPlayerPositionInfo />
+        <div className="flex justify-center items-end h-5/6">
+          <IonGrid>
+            <IonRow className="ion-align-items-center ion-justify-content-center">
+              <IonCol>
+                <IonText color={"light"} className="text-2xl animate-pulse">
+                  Ładowanie...
+                </IonText>
+                <IonProgressBar value={ionProgressBarValue}></IonProgressBar>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        </div>
       </PageContainer>
     );
   }
@@ -58,22 +79,15 @@ const Map = () => {
   const cityBounds = worldConfig.data!.data.WORLD_BOUNDS!;
   return (
     <PageContainer ionContentProps={{ scrollY: false }}>
-      <ArmyInfoOnMap />
-      <ResourcesInfoOnMap />
-      <ChatWindowOnMap />
-
-      <AddSettlementModal
-        modalRef={modalAddSettlementRef}
-        coords={dropCoords}
-      />
+      <CreateSettlement modalRef={modalAddSettlementRef} coords={dropCoords} />
 
       <DndProvider backend={isPlatform("mobile") ? TouchBackend : HTML5Backend}>
-        <Buttons mapRef={mapRef} playerLocation={playerLocation} />
         <MapContainer
           ref={mapRef}
           style={{
-            height: `calc(100vh - ${isPlatform("mobile") ? "50px" : "57px"})`,
             width: "100%",
+            height: "100%",
+            position: "relative",
           }}
           center={[playerLocation.lat, playerLocation.lng]}
           zoom={18}
@@ -86,6 +100,12 @@ const Map = () => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
+
+          <UserStatsOnMap />
+          <Buttons mapRef={mapRef} playerLocation={playerLocation} />
+          <OnMapItemContainer position="bottomleft">
+            <ChatWindowOnMap />
+          </OnMapItemContainer>
 
           <FogOfWar cityBounds={cityBounds} />
           <HabitableZones />

@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { createAnimation } from "@ionic/react";
 import { useEffect, useRef } from "react";
 
 interface IContextMenuItem {
@@ -19,6 +19,7 @@ export default function ContextMenu({
   items,
 }: IContextMenu) {
   const menuRef = useRef<HTMLDivElement>(null);
+
   const calculatePositions = (count: number, radius: number) => {
     const positions = [];
     const step = (2 * Math.PI) / count;
@@ -33,6 +34,7 @@ export default function ContextMenu({
 
     return positions;
   };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -46,7 +48,29 @@ export default function ContextMenu({
     };
   }, [setPosition]);
 
-  const buttonPositions = calculatePositions(items.length, 40);
+  useEffect(() => {
+    if (menuRef.current) {
+      const elements = Array.from(menuRef.current.children);
+      const buttonPositions = calculatePositions(items.length, 40);
+
+      elements.forEach((el, index) => {
+        const animation = createAnimation()
+          .addElement(el)
+          .duration(500)
+          .keyframes([
+            { offset: 0, opacity: "0", transform: "translate(0, 0)" },
+            {
+              offset: 1,
+              opacity: "1",
+              transform: `translate(${buttonPositions[index].x}px, ${buttonPositions[index].y}px)`,
+            },
+          ]);
+
+        animation.play();
+      });
+    }
+  }, [items.length, position]);
+
   return (
     <div
       ref={menuRef}
@@ -58,27 +82,25 @@ export default function ContextMenu({
       }}
     >
       {items.map((item, index) => (
-        <motion.div
+        <div
           key={index}
           onClick={(e) => {
             e.preventDefault();
             item.onClick?.();
           }}
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: 1,
-            x: buttonPositions[index].x,
-            y: buttonPositions[index].y,
+          style={{
+            position: "absolute",
+            cursor: "pointer",
+            width: "31px",
+            height: "31px",
           }}
-          transition={{ duration: 0.5 }}
-          className={"cursor-pointer absolute w-[31px] h-[31px]"}
         >
-          <motion.img
+          <img
             src={item.icon}
             alt={`item ${index}`}
-            className={"rounded-full hover:brightness-125"}
+            className="rounded-full hover:brightness-125"
           />
-        </motion.div>
+        </div>
       ))}
     </div>
   );

@@ -1,20 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import L from "leaflet";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Marker, useMap } from "react-leaflet";
+import { useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 
 import FogOfWarApi from "~/api/fog-of-war/routes";
 import { ISettlementDto } from "~/api/settlements/dtos";
 import ContextMenu from "~/components/ContextMenu";
 import ArmyDeployment from "~/components/Settlements/ArmyDeployment";
-import { CustomMarkerIcon } from "~/components/Settlements/CustomMarkerIcon";
 import SettlementInfo from "~/components/Settlements/SettlementInfo";
 import SiegeInfo from "~/components/Settlements/SiegeInfo";
 import StartSiege from "~/components/Settlements/StartSiege";
 import BasicModalContainer, {
   IModalHandle,
 } from "~/components/ui/BasicModalContainer";
+import MemoizedMarker from "~/components/ui/MemoizedMarker";
 import store from "~/store";
 import useMapBounds from "~/utils/useViewBounds.ts";
 
@@ -75,26 +75,6 @@ const Settlements = () => {
     [],
   );
 
-  const MemoizedMarker = memo(
-    ({
-      settlement,
-      onMarkerClick,
-    }: {
-      settlement: ISettlementDto;
-      onMarkerClick: (event: L.LeafletMouseEvent) => void;
-    }) => (
-      <Marker
-        key={settlement.id}
-        position={settlement}
-        icon={CustomMarkerIcon({ settlement, userStore })}
-        eventHandlers={{
-          click: onMarkerClick,
-        }}
-      />
-    ),
-  );
-  MemoizedMarker.displayName = "MemoizedMarker";
-
   const renderContextMenu = () => {
     if (!contextMenuData || !contextMenuData.position) return null;
 
@@ -132,7 +112,7 @@ const Settlements = () => {
             ? [
                 {
                   icon: "assets/start_siege.webp",
-                  onClick: () => siegeInfoModalRef.current?.open(),
+                  onClick: () => startSiegeModalRef.current?.open(),
                 },
               ]
             : []),
@@ -202,7 +182,7 @@ const Settlements = () => {
       />
 
       <BasicModalContainer
-        ref={startSiegeModalRef}
+        ref={siegeInfoModalRef}
         head={"Oblężenie"}
         body={
           <SiegeInfo

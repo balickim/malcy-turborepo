@@ -8,15 +8,15 @@ export function ArmyInfo({ army }: IArmy) {
   if (!army) return null;
 
   return (
-    <div className={"flex justify-end gap-2"}>
+    <div className={"flex gap-2"}>
       {Object.values(UnitType).map((unitType) => (
         <div key={unitType} className={"flex items-center gap-0.5"}>
           <img
             src={`assets/units/${unitType}_icon.webp`}
             alt={unitType}
-            className={"w-6 h-6 rounded-full"}
+            className={"w-4 h-4 rounded-full"}
           />
-          <p className={"text-lg"}>{army[unitType]}</p>
+          <p>{army[unitType]}</p>
         </div>
       ))}
     </div>

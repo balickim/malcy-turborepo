@@ -1,13 +1,15 @@
-import { IonButton, IonIcon, isPlatform } from "@ionic/react";
-import { motion } from "framer-motion";
+import { createAnimation } from "@ionic/react";
+import { IonIcon } from "@ionic/react";
 import { newspaper } from "ionicons/icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import Chat from "~/components/Chat/index";
+import Button from "~/components/ui/Button";
 
 const ChatWindowOnMap = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const chatRef = useRef(null);
 
   const toggleChatVisibility = () => {
     if (isVisible) {
@@ -16,7 +18,27 @@ const ChatWindowOnMap = () => {
     setIsVisible((prev) => !prev);
   };
 
-  // @ts-expect-error blah
+  useEffect(() => {
+    if (chatRef.current) {
+      const animation = createAnimation()
+        .addElement(chatRef.current)
+        .duration(100)
+        .fromTo("transform", "translateY(100%)", "translateY(0)");
+
+      if (isVisible) {
+        animation.direction("normal").play();
+      } else {
+        animation.direction("reverse").play();
+      }
+
+      animation.onFinish(() => {
+        if (!isVisible) {
+          setIsAnimating(false);
+        }
+      });
+    }
+  }, [isVisible]);
+
   useEffect(() => {
     if (!isVisible && isAnimating) {
       const timer = setTimeout(() => {
@@ -25,40 +47,24 @@ const ChatWindowOnMap = () => {
 
       return () => clearTimeout(timer);
     }
+
+    return;
   }, [isVisible, isAnimating]);
 
-  const marginBottom = isVisible
-    ? isPlatform("mobile")
-      ? "50px"
-      : "57px"
-    : isPlatform("mobile")
-      ? "104px"
-      : "97px";
-
   return (
-    <motion.div
-      initial={{ y: "100%" }}
-      animate={{ y: isVisible ? 0 : "100%" }}
-      transition={{ stiffness: 100 }}
-      onAnimationComplete={() => {
-        if (!isVisible) {
-          setIsAnimating(false);
-        }
-      }}
-      className={`absolute z-[1500] bottom-0`}
-      style={{ marginBottom }}
-    >
-      <IonButton onClick={toggleChatVisibility}>
+    <>
+      <Button className="m-0" onClick={toggleChatVisibility}>
         <IonIcon icon={newspaper} />
-      </IonButton>
+      </Button>
       <div
+        ref={chatRef}
         className={`bg-gray-800 bg-opacity-40 ${
           !isVisible && !isAnimating ? "hidden" : ""
         }`}
       >
         <Chat />
       </div>
-    </motion.div>
+    </>
   );
 };
 

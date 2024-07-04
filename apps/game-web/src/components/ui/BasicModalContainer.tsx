@@ -4,6 +4,9 @@ import {
   IonContent,
   IonTitle,
   IonIcon,
+  IonRow,
+  IonGrid,
+  IonCol,
 } from "@ionic/react";
 import { arrowBackOutline } from "ionicons/icons";
 import { forwardRef, useImperativeHandle, useState, ReactNode } from "react";
@@ -29,20 +32,26 @@ const BasicModalContainer = forwardRef<IModalHandle, IBasicModalContainerProps>(
 
     return (
       <IonModal isOpen={isOpen} onWillDismiss={() => setIsOpen(false)}>
-        <IonHeader className="bg-primary shadow-none px-7 h-16 pt-4 text-white flex justify-center items-center">
-          <IonIcon
-            icon={arrowBackOutline}
-            onClick={() => setIsOpen(false)}
-            size="large"
-            className="transition-transform duration-300 ease-in-out transform hover:scale-110 active:scale-125"
-          />
-          {head ? (
-            <IonTitle className="flex justify-center">{head}</IonTitle>
-          ) : null}
+        <IonHeader className="bg-primary shadow-none px-7 text-white">
+          <IonGrid>
+            <IonRow className="ion-align-items-center">
+              <IonCol className="flex items-center">
+                <IonIcon
+                  icon={arrowBackOutline}
+                  onClick={() => setIsOpen(false)}
+                  size="large"
+                  className="transition-transform duration-300 ease-in-out transform hover:scale-110 active:scale-125"
+                />
+              </IonCol>
+              <IonCol>
+                {head ? (
+                  <IonTitle className="flex justify-center">{head}</IonTitle>
+                ) : null}
+              </IonCol>
+            </IonRow>
+          </IonGrid>
         </IonHeader>
-        <IonContent>
-          <div className={"px-7 bg-primary"}>{body}</div>
-        </IonContent>
+        <IonContent>{body}</IonContent>
       </IonModal>
     );
   },

@@ -1,7 +1,7 @@
 {
   "name": "game-web",
   "private": true,
-  "version": "0.3.5",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -35,7 +35,6 @@
     "@tanstack/react-query-devtools": "^5.25.0",
     "dayjs": "^1.11.10",
     "formik": "^2.4.5",
-    "framer-motion": "^11.0.25",
     "ionicons": "^7.0.0",
     "js-cookie": "^3.0.5",
     "leaflet": "^1.9.4",
@@ -57,7 +56,7 @@
     "react-router-dom": "^5.3.4",
     "shared-types": "workspace:*",
     "socket.io-client": "^4.7.4",
-    "ui": "workspace:*",
+    "shared-ui": "workspace:*",
     "yup": "^1.4.0"
   },
   "devDependencies": {

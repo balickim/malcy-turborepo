@@ -11,13 +11,11 @@ interface IPage extends IonPageProps {
 }
 
 const PageContainer: React.FC<IPage> = (props) => {
-  const { children, ionPageProps, ionContentProps } = props;
+  const { children, ionContentProps } = props;
   return (
-    <IonPage {...ionPageProps}>
-      <IonContent fullscreen {...ionContentProps}>
-        {children}
-      </IonContent>
-    </IonPage>
+    <IonContent fullscreen {...ionContentProps}>
+      {children}
+    </IonContent>
   );
 };
 
