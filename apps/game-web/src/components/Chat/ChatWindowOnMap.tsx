@@ -4,6 +4,7 @@ import { newspaper } from "ionicons/icons";
 import { useState, useEffect, useRef } from "react";
 
 import Chat from "~/components/Chat/index";
+import OnMapItemContainer from "~/components/Map/OnMapItemContainer";
 import Button from "~/components/ui/Button";
 
 const ChatWindowOnMap = () => {
@@ -52,7 +53,7 @@ const ChatWindowOnMap = () => {
   }, [isVisible, isAnimating]);
 
   return (
-    <>
+    <OnMapItemContainer position="bottomleft">
       <Button className="m-0" onClick={toggleChatVisibility}>
         <IonIcon icon={newspaper} />
       </Button>
@@ -64,7 +65,7 @@ const ChatWindowOnMap = () => {
       >
         <Chat />
       </div>
-    </>
+    </OnMapItemContainer>
   );
 };
 

@@ -1,6 +1,6 @@
 import { IonButton, IonIcon } from "@ionic/react";
 import { locateOutline } from "ionicons/icons";
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDrag } from "react-dnd";
 
 import { centerMapOnPlayer } from "~/utils/map";
@@ -17,20 +17,58 @@ export default function Buttons({ mapRef, playerLocation }: IButtons) {
     item: { name: "Settler" },
   }));
 
+  const disableMapDragging = useCallback(() => {
+    if (mapRef.current) {
+      mapRef.current.dragging.disable();
+    }
+  }, [mapRef]);
+
+  const enableMapDragging = useCallback(() => {
+    if (mapRef.current) {
+      mapRef.current.dragging.enable();
+    }
+  }, [mapRef]);
+
+  useEffect(() => {
+    return () => {
+      enableMapDragging();
+    };
+  }, [enableMapDragging]);
+
   return (
-    <>
+    <div
+      className={
+        "leaflet-bottom leaflet-right z-[1500] mb-5 mr-2 flex flex-col gap-1"
+      }
+    >
       <div
         ref={drag}
-        className={"absolute bottom-36 right-2 z-[1500] cursor-grab"}
+        className={
+          "cursor-grab leaflet-control-attribution leaflet-control p-0 flex flex-col !m-0 !bg-inherit"
+        }
+        onMouseDown={disableMapDragging}
+        onMouseUp={enableMapDragging}
+        onTouchStart={disableMapDragging}
+        onTouchEnd={enableMapDragging}
       >
-        <IonButton className={"min-h-8 min-w-16"}>🏠</IonButton>
+        <IonButton
+          className={"m-0 min-h-8 min-w-16"}
+          onMouseDown={disableMapDragging}
+          onMouseUp={enableMapDragging}
+          onTouchStart={disableMapDragging}
+          onTouchEnd={enableMapDragging}
+        >
+          🏠
+        </IonButton>
       </div>
       <IonButton
         onClick={() => centerMapOnPlayer(mapRef, playerLocation)}
-        className={"absolute bottom-20 right-2 z-[1500] min-h-8 min-w-16"}
+        className={
+          "min-h-8 min-w-16 z-[1500] leaflet-control-attribution leaflet-control p-0 flex flex-col !m-0 !bg-inherit"
+        }
       >
         <IonIcon aria-hidden={"true"} ios={locateOutline} md={locateOutline} />
       </IonButton>
-    </>
+    </div>
   );
 }
