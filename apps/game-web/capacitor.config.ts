@@ -15,6 +15,14 @@ const config: CapacitorConfig = {
     CapacitorCookies: {
       enabled: true,
     },
+    BackgroundGeolocation: {
+      locationPermissionDescription:
+        "We need your location for game functionality",
+      backgroundPermissionRationale:
+        "We need to access your location in the background for game functionality",
+      locationUpdateInterval: 5000,
+      startOnBoot: true,
+    },
   },
 };
 
