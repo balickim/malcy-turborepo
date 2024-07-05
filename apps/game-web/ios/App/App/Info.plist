@@ -44,6 +44,14 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need your location for the game functionality</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>We need your location even when the app is in the background for continuous gameplay</string>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>location</string>
+    </array>
 	<true/>
 </dict>
 </plist>

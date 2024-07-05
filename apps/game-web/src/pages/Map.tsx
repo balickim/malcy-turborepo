@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core";
 import {
   IonCol,
   IonGrid,
@@ -7,7 +8,7 @@ import {
   isPlatform,
 } from "@ionic/react";
 import L from "leaflet";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
@@ -19,13 +20,14 @@ import Buttons from "~/components/Map/Buttons";
 import FogOfWar from "~/components/Map/FogOfWar";
 import HabitableZones from "~/components/Map/HabitableZones.tsx";
 import { LocationFinderDummy } from "~/components/Map/LocationFinderDummy";
-import OnMapItemContainer from "~/components/Map/OnMapItemContainer";
 import { OtherPlayersLocationMarker } from "~/components/Map/OtherPlayersLocationsMarkers";
 import { UserLocationMarker } from "~/components/Map/UserLocationMarker";
 import UserStatsOnMap from "~/components/Map/UserStatsOnMap";
 import PageContainer from "~/components/PageContainer";
 import Settlements from "~/components/Settlements";
 import CreateSettlement from "~/components/Settlements/CreateSettlement";
+import store from "~/store";
+import { startBackgroundGeolocation } from "~/utils/backgroundGeolocation";
 import { useOthersPlayersPositionsWatcher } from "~/utils/useOtherPlayersPositionsWatcher";
 import { usePlayerPositionWatcher } from "~/utils/usePlayerPositionWatcher";
 import { useUser } from "~/utils/useUser";
@@ -38,6 +40,12 @@ const Map = () => {
   const otherPlayersPositions = useOthersPlayersPositionsWatcher();
   const worldConfig = useWorldConfig({ refetchOnWindowFocus: false });
   useUser({ refetchInterval: 5000 });
+
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      startBackgroundGeolocation(store.userStore.user.id);
+    }
+  }, []);
 
   const mapRef = useRef<L.Map>(null);
   const modalAddSettlementRef = useRef<HTMLIonModalElement>(null);
