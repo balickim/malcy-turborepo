@@ -8,10 +8,10 @@ import {
   Request,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { StartRecruitmentDto } from 'shared-nestjs';
 
 import { EnsureWithinLocation } from '~/common/decorators/ensure-within-location.decorator';
 import { IExpressRequestWithUser } from '~/modules/auth/guards/jwt.guard';
-import { RequestRecruitmentDto } from '~/modules/recruitments/dtos/recruitments.dto';
 import { RecruitmentsService } from '~/modules/recruitments/recruitments.service';
 import { IExpressRequestWithUserAndSettlement } from '~/modules/user-location/guards/near-settlement-location.guard';
 import { IJwtUser } from '~/modules/users/dtos/users.dto';
@@ -23,9 +23,10 @@ export class RecruitmentsController {
 
   @Post('/')
   @EnsureWithinLocation('settlementId', 'mark')
+  // TODO create decorator that ensures only settlement owner can start recruitment
   async startRecruitment(
     @Request() req: IExpressRequestWithUserAndSettlement,
-    @Body() recruitDto: RequestRecruitmentDto,
+    @Body() recruitDto: StartRecruitmentDto,
   ) {
     return this.recruitService.startRecruitment(recruitDto, req.settlement);
   }

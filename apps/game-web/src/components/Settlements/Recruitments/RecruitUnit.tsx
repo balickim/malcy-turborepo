@@ -8,14 +8,14 @@ import {
 } from "@ionic/react";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
+import { StartRecruitmentDto } from "shared-nestjs";
+import { UnitType } from "shared-types";
 
 import RecruitmentsApi from "~/api/recruitments";
-import { IRequestRecruitmentDto } from "~/api/recruitments/dtos";
 import { IPrivateSettlementDto } from "~/api/settlements/dtos";
 import { ResourcesInfo } from "~/components/ResourcesInfo";
 import Button from "~/components/ui/Button";
 import store from "~/store";
-import { UnitType } from "~/types/army";
 
 interface IRecruitUnitProps {
   unitType: (typeof UnitType)[keyof typeof UnitType];
@@ -42,20 +42,21 @@ export const RecruitUnit: React.FC<IRecruitUnitProps> = ({
 }) => {
   const { serverConfigStore } = store;
   const recruitmentsApi = new RecruitmentsApi();
-  const [unitCount, setUnitCount] = useState<number>(0);
+  const [unitCount, setUnitCount] = useState<number | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const mutation = useMutation({
-    mutationFn: (data: IRequestRecruitmentDto) =>
+    mutationFn: (data: StartRecruitmentDto) =>
       recruitmentsApi.startRecruitment(data),
   });
 
-  const start = async (data: IRequestRecruitmentDto) => {
+  const start = async (data: StartRecruitmentDto) => {
     setIsLoading(true);
-    await mutation.mutateAsync(data);
-    setUnitCount(0);
-    await Promise.allSettled([refetchSettlement(), refetchRecruitments()]);
-    setIsLoading(false);
+    await mutation.mutateAsync(data).finally(async () => {
+      await Promise.allSettled([refetchSettlement(), refetchRecruitments()]);
+      setIsLoading(false);
+    });
+    setUnitCount(undefined);
   };
 
   const unitCost =
@@ -85,15 +86,15 @@ export const RecruitUnit: React.FC<IRecruitUnitProps> = ({
           />
         </IonCol>
 
-        <IonCol size="5" className="text-center justify-center">
+        <IonCol size="7" className="text-center justify-center">
           <p className="capitalize text-primary font-bold text-nowrap">
             {/* @ts-expect-error aaa */}
             {UNITTYPE_TRANSLATIONS[unitType.toLowerCase()]}
           </p>
           <ResourcesInfo
-            wood={unitCost.wood * unitCount}
+            wood={unitCost.wood * (unitCount || 0)}
             woodMax={settlementData.wood}
-            gold={unitCost.gold * unitCount}
+            gold={unitCost.gold * (unitCount || 0)}
             goldMax={settlementData.gold}
           />
           <IonRange
@@ -106,15 +107,20 @@ export const RecruitUnit: React.FC<IRecruitUnitProps> = ({
           />
 
           <IonRow class="ion-align-items-center">
-            <IonCol size="6">
+            <IonCol size="8">
               <IonInput
                 type="number"
                 value={unitCount}
-                onIonChange={(e) => setUnitCount(e.target.value as number)}
-                className="w-full !pl-1 text-start border-2 rounded-lg"
+                clearInput={true}
+                onIonInput={(e) => {
+                  const value = e.target.value as string;
+                  const formattedValue = value.replace(/^0+/, "");
+                  setUnitCount(Number(formattedValue));
+                }}
+                className="w-full !pl-1 text-start border-2 rounded-lg h-2"
               />
             </IonCol>
-            <IonCol size="6">
+            <IonCol size="4">
               <p
                 className={
                   "text-sm text-cyan-300 hover:cursor-pointer hover:text-cyan-500"
@@ -127,14 +133,18 @@ export const RecruitUnit: React.FC<IRecruitUnitProps> = ({
           </IonRow>
         </IonCol>
 
-        <IonCol size="5">
+        <IonCol size="3">
           <Button
             onClick={() =>
-              start({ unitCount, unitType, settlementId: settlementData.id })
+              start({
+                unitCount: unitCount || 0,
+                unitType,
+                settlementId: settlementData.id,
+              })
             }
             isLoading={isLoading}
           >
-            <p className="text-xs">Zrekrutuj</p>
+            <p className="text-xs">Start</p>
           </Button>
         </IonCol>
       </IonRow>

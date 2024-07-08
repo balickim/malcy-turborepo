@@ -1,7 +1,7 @@
 {
   "name": "game-web",
   "private": true,
-  "version": "0.4.2",
+  "version": "0.4.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -57,6 +57,7 @@
     "shared-types": "workspace:*",
     "socket.io-client": "^4.7.4",
     "shared-ui": "workspace:*",
+    "shared-nestjs": "workspace:*",
     "yup": "^1.4.0"
   },
   "devDependencies": {

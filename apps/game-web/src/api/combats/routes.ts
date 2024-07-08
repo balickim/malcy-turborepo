@@ -1,5 +1,6 @@
+import { ResponseStartRecruitmentDto } from "shared-nestjs";
+
 import { fetchWrapper } from "~/api/fetch";
-import { IResponseRecruitmentDto } from "~/api/recruitments/dtos";
 import { TArmy } from "~/types/army";
 import { IJob } from "~/types/common";
 
@@ -9,7 +10,7 @@ export default class CombatsApi {
   startSiege = async (body: {
     army: TArmy;
     settlementId: string;
-  }): Promise<IJob<IResponseRecruitmentDto>> => {
+  }): Promise<IJob<ResponseStartRecruitmentDto>> => {
     return fetchWrapper(`${this.basePath}/start-siege`, {
       body: JSON.stringify(body),
       method: "POST",
@@ -23,7 +24,7 @@ export default class CombatsApi {
       | false
       | {
           jobId: string;
-          data: any;
+          data: never;
           remainingDelay: number;
           progress: number | object;
         }

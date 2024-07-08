@@ -1,16 +1,17 @@
-import { fetchWrapper } from "~/api/fetch";
 import {
-  IRequestRecruitmentDto,
-  IResponseRecruitmentDto,
-} from "~/api/recruitments/dtos";
+  ResponseStartRecruitmentDto,
+  StartRecruitmentDto,
+} from "shared-nestjs";
+
+import { fetchWrapper } from "~/api/fetch";
 import { IApiResponse, IJob } from "~/types/common";
 
 export default class RecruitmentsApi {
   private readonly basePath = `${import.meta.env.VITE_API_URL}/recruitments`;
 
   startRecruitment = async (
-    body: IRequestRecruitmentDto,
-  ): Promise<IJob<IResponseRecruitmentDto>> => {
+    body: StartRecruitmentDto,
+  ): Promise<IJob<ResponseStartRecruitmentDto>> => {
     return fetchWrapper(this.basePath, {
       body: JSON.stringify(body),
       method: "POST",
@@ -19,7 +20,7 @@ export default class RecruitmentsApi {
 
   getUnfinishedRecruitmentsBySettlementId = async (
     id: string,
-  ): Promise<IApiResponse<IJob<IResponseRecruitmentDto>[]>> => {
+  ): Promise<IApiResponse<IJob<ResponseStartRecruitmentDto>[]>> => {
     return fetchWrapper(`${this.basePath}/${id}`);
   };
 

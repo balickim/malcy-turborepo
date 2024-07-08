@@ -2,10 +2,10 @@ import { IonButton, IonIcon, IonPopover, IonProgressBar } from "@ionic/react";
 import { useMutation } from "@tanstack/react-query";
 import { trashOutline } from "ionicons/icons";
 import { toast } from "react-hot-toast";
+import { ResponseStartRecruitmentDto } from "shared-nestjs";
 import { UnitType } from "shared-types";
 
 import RecruitmentsApi from "~/api/recruitments";
-import { IResponseRecruitmentDto } from "~/api/recruitments/dtos";
 import { IApiResponse, IJob } from "~/types/common";
 
 const UNITTYPE_TRANSLATIONS = {
@@ -17,7 +17,7 @@ const UNITTYPE_TRANSLATIONS = {
 } as const;
 
 interface IRecruitment {
-  currentRecruitments?: IApiResponse<IJob<IResponseRecruitmentDto>[]>;
+  currentRecruitments?: IApiResponse<IJob<ResponseStartRecruitmentDto>[]>;
   refetchRecruitments: () => Promise<unknown>;
   refetchSettlements: () => void;
 }

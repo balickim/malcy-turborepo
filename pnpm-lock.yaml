@@ -535,6 +535,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+      shared-nestjs:
+        specifier: workspace:*
+        version: link:../../packages/shared-nestjs
       shared-types:
         specifier: workspace:*
         version: link:../../packages/shared-types
@@ -746,6 +749,9 @@ importers:
       react-router-dom:
         specifier: ^5.3.4
         version: 5.3.4(react@18.2.0)
+      shared-nestjs:
+        specifier: workspace:*
+        version: link:../../packages/shared-nestjs
       shared-types:
         specifier: workspace:*
         version: link:../../packages/shared-types
@@ -906,6 +912,9 @@ importers:
       '@nestjs/core':
         specifier: ^10.0.0
         version: 10.3.8(@nestjs/common@10.3.8)(@nestjs/platform-express@10.3.8)(@nestjs/websockets@10.3.8)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
       class-validator:
         specifier: ^0.14.1
         version: 0.14.1

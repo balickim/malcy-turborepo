@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
@@ -40,6 +40,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.useGlobalGuards(new JwtGuard(app.get(Reflector)));
   app.useGlobalInterceptors(new TransformInterceptor(new Reflector()));
+  app.useGlobalPipes(new ValidationPipe());
 
   const port = configService.get().PORT;
 

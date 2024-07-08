@@ -11,16 +11,16 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
+import {
+  ResponseStartRecruitmentDto,
+  StartRecruitmentDto,
+} from 'shared-nestjs';
 import { ResourceTypeEnum, UnitType } from 'shared-types';
 import { Repository } from 'typeorm';
 
 import { sleep } from '~/common/utils';
 import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
 import { ConfigService } from '~/modules/config/config.service';
-import {
-  RequestRecruitmentDto,
-  ResponseRecruitmentDto,
-} from '~/modules/recruitments/dtos/recruitments.dto';
 import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
 import { IJwtUser } from '~/modules/users/dtos/users.dto';
@@ -75,7 +75,7 @@ export class RecruitmentsService implements OnModuleInit {
     );
     await Promise.all(
       [...queueNames].map((queueName) => {
-        new Queue<ResponseRecruitmentDto>(queueName, {
+        new Queue<ResponseStartRecruitmentDto>(queueName, {
           connection: this.redis,
         });
         new Worker(queueName, this.recruitProcessor, {
@@ -86,7 +86,7 @@ export class RecruitmentsService implements OnModuleInit {
   }
 
   public async startRecruitment(
-    recruitDto: RequestRecruitmentDto,
+    recruitDto: StartRecruitmentDto,
     settlement: PrivateSettlementDto,
   ) {
     const gameConfig = await this.configService.gameConfig();
@@ -130,7 +130,7 @@ export class RecruitmentsService implements OnModuleInit {
     const finishesOn = new Date(
       Date.now() + recruitDto.unitCount * unitRecruitmentTime + totalDelayMs,
     );
-    const data: ResponseRecruitmentDto = {
+    const data: ResponseStartRecruitmentDto = {
       ...recruitDto,
       unitRecruitmentTime,
       finishesOn,
@@ -142,7 +142,7 @@ export class RecruitmentsService implements OnModuleInit {
       lockedResources,
     );
 
-    const queue = new Queue<ResponseRecruitmentDto>(
+    const queue = new Queue<ResponseStartRecruitmentDto>(
       bullSettlementRecruitmentQueueName(recruitDto.settlementId),
       { connection: this.redis },
     );
@@ -151,9 +151,13 @@ export class RecruitmentsService implements OnModuleInit {
       this.recruitProcessor,
       { connection: this.redis },
     );
-    const job: Job<ResponseRecruitmentDto> = await queue.add('recruit', data, {
-      delay: totalDelayMs,
-    });
+    const job: Job<ResponseStartRecruitmentDto> = await queue.add(
+      'recruit',
+      data,
+      {
+        delay: totalDelayMs,
+      },
+    );
     this.logger.log(
       `Job added to queue for settlement ${recruitDto.settlementId} with ID: ${job.id}`,
     );
@@ -169,11 +173,11 @@ export class RecruitmentsService implements OnModuleInit {
       await this.settlementsService.getPublicSettlementById(settlementId);
     if (settlement.user.id !== user.id) throw new UnauthorizedException();
 
-    const queue = new Queue<ResponseRecruitmentDto>(
+    const queue = new Queue<ResponseStartRecruitmentDto>(
       bullSettlementRecruitmentQueueName(settlementId),
       { connection: this.redis },
     );
-    const job: Job<ResponseRecruitmentDto> = await queue.getJob(jobId);
+    const job: Job<ResponseStartRecruitmentDto> = await queue.getJob(jobId);
     const recruitmentProgress = await this.getRecruitmentProgress(
       job.data,
       job.id,
@@ -200,7 +204,7 @@ export class RecruitmentsService implements OnModuleInit {
   }
 
   public async getUnfinishedRecruitmentsBySettlementId(settlementId: string) {
-    const queue = new Queue<ResponseRecruitmentDto>(
+    const queue = new Queue<ResponseStartRecruitmentDto>(
       bullSettlementRecruitmentQueueName(settlementId),
       { connection: this.redis },
     );
@@ -220,7 +224,7 @@ export class RecruitmentsService implements OnModuleInit {
     return jobs;
   }
 
-  private recruitProcessor = async (job: Job<ResponseRecruitmentDto>) => {
+  private recruitProcessor = async (job: Job<ResponseStartRecruitmentDto>) => {
     const totalUnits = job.data.unitCount;
     const jobId = job.id;
     const unitRecruitTimeMs = job.data.unitRecruitmentTime;
@@ -251,7 +255,7 @@ export class RecruitmentsService implements OnModuleInit {
   };
 
   private async recruitUnit(
-    recruitDto: RequestRecruitmentDto,
+    recruitDto: StartRecruitmentDto,
     jobId: string,
   ): Promise<boolean> {
     const currentProgress = await this.getRecruitmentProgress(
@@ -279,7 +283,7 @@ export class RecruitmentsService implements OnModuleInit {
   }
 
   private async saveRecruitmentProgress(
-    recruitDto: RequestRecruitmentDto,
+    recruitDto: StartRecruitmentDto,
     jobId: number | string,
     progress: number,
   ): Promise<void> {
@@ -292,7 +296,7 @@ export class RecruitmentsService implements OnModuleInit {
   }
 
   private async getRecruitmentProgress(
-    recruitDto: RequestRecruitmentDto,
+    recruitDto: StartRecruitmentDto,
     jobId: number | string,
   ): Promise<number> {
     const key = settlementRecruitmentProgressKey(

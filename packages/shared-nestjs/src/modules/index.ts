@@ -4,5 +4,6 @@ export * from "./combats";
 export * from "./event-log";
 export * from "./fog-of-war";
 export * from "./habitable-zones";
+export * from "./recruitments";
 export * from "./settlements";
 export * from "./users";

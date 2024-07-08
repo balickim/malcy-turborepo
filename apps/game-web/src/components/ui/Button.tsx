@@ -8,7 +8,7 @@ interface IButton extends React.ComponentProps<typeof IonButton> {
 
 const Button: React.FC<IButton> = ({ children, isLoading, ...rest }) => {
   return (
-    <IonButton {...rest}>
+    <IonButton {...rest} disabled={isLoading}>
       {isLoading ? <IonSpinner name="crescent" /> : children}
     </IonButton>
   );
