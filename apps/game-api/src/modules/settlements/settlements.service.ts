@@ -5,6 +5,7 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -13,7 +14,7 @@ import {
   SharedSettlementTypesEnum,
   UnitType,
 } from 'shared-types';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { include, includeAll } from '~/common/utils';
 import { convertGeoJSONToPoint } from '~/common/utils/postgis';
@@ -48,6 +49,7 @@ export class SettlementsService {
     @Inject(forwardRef(() => ArmiesService))
     private armiesService: ArmiesService,
     private habitableZonesService: HabitableZonesService,
+    private dataSource: DataSource,
   ) {}
 
   async createSettlement(
@@ -144,102 +146,122 @@ export class SettlementsService {
     return this.toPublicSettlementDto(privateSettlement);
   }
 
-  async pickUpArmy(
-    pickUpArmyDto: TransferArmyDto,
+  async transferArmy(
+    transferArmyDto: TransferArmyDto,
     settlement: PrivateSettlementDto,
+    user: IJwtUser,
+    isPickUp: boolean,
   ) {
-    const areTroopsAvailable = this.armiesService.areTroopsAvailable(
-      settlement.army,
-      pickUpArmyDto,
-    );
-    if (!areTroopsAvailable)
-      throw new NotFoundException('Not enough troops in the settlement');
-
-    settlement.army[UnitType.SWORDSMAN] -= pickUpArmyDto[UnitType.SWORDSMAN];
-    settlement.army[UnitType.ARCHER] -= pickUpArmyDto[UnitType.ARCHER];
-    settlement.army[UnitType.KNIGHT] -= pickUpArmyDto[UnitType.KNIGHT];
-    settlement.army[UnitType.LUCHADOR] -= pickUpArmyDto[UnitType.LUCHADOR];
-    settlement.army[UnitType.ARCHMAGE] -= pickUpArmyDto[UnitType.ARCHMAGE];
-
-    const userArmy = await this.armyEntityRepository.findOne({
-      where: { userId: settlement.user.id },
-    });
-
-    userArmy[UnitType.SWORDSMAN] += pickUpArmyDto[UnitType.SWORDSMAN];
-    userArmy[UnitType.ARCHER] += pickUpArmyDto[UnitType.ARCHER];
-    userArmy[UnitType.KNIGHT] += pickUpArmyDto[UnitType.KNIGHT];
-    userArmy[UnitType.LUCHADOR] += pickUpArmyDto[UnitType.LUCHADOR];
-    userArmy[UnitType.ARCHMAGE] += pickUpArmyDto[UnitType.ARCHMAGE];
-
-    await this.armyEntityRepository.save(settlement.army);
-    await this.armyEntityRepository.save(userArmy);
-
-    return {
-      userArmy: {
-        [UnitType.SWORDSMAN]: userArmy[UnitType.SWORDSMAN],
-        [UnitType.ARCHER]: userArmy[UnitType.ARCHER],
-        [UnitType.KNIGHT]: userArmy[UnitType.KNIGHT],
-        [UnitType.LUCHADOR]: userArmy[UnitType.LUCHADOR],
-        [UnitType.ARCHMAGE]: userArmy[UnitType.ARCHMAGE],
-      },
-      settlementArmy: {
-        [UnitType.SWORDSMAN]: settlement.army[UnitType.SWORDSMAN],
-        [UnitType.ARCHER]: settlement.army[UnitType.ARCHER],
-        [UnitType.KNIGHT]: settlement.army[UnitType.KNIGHT],
-        [UnitType.LUCHADOR]: settlement.army[UnitType.LUCHADOR],
-        [UnitType.ARCHMAGE]: settlement.army[UnitType.ARCHMAGE],
-      },
-    };
-  }
-
-  async putDownArmy(
-    putDownArmyDto: TransferArmyDto,
-    settlement: PrivateSettlementDto,
-  ) {
-    const userArmy = await this.armyEntityRepository.findOne({
-      where: { userId: settlement.user.id },
-    });
-
-    if (
-      userArmy[UnitType.SWORDSMAN] < putDownArmyDto[UnitType.SWORDSMAN] ||
-      userArmy[UnitType.ARCHER] < putDownArmyDto[UnitType.ARCHER] ||
-      userArmy[UnitType.KNIGHT] < putDownArmyDto[UnitType.KNIGHT] ||
-      userArmy[UnitType.LUCHADOR] < putDownArmyDto[UnitType.LUCHADOR] ||
-      userArmy[UnitType.ARCHMAGE] < putDownArmyDto[UnitType.ARCHMAGE]
-    ) {
-      throw new NotFoundException('Not enough troops in the user army');
+    if (settlement.user.id !== user.id) {
+      throw new ForbiddenException('This is not your settlement');
     }
 
-    userArmy[UnitType.SWORDSMAN] -= putDownArmyDto[UnitType.SWORDSMAN];
-    userArmy[UnitType.ARCHER] -= putDownArmyDto[UnitType.ARCHER];
-    userArmy[UnitType.KNIGHT] -= putDownArmyDto[UnitType.KNIGHT];
-    userArmy[UnitType.LUCHADOR] -= putDownArmyDto[UnitType.LUCHADOR];
-    userArmy[UnitType.ARCHMAGE] -= putDownArmyDto[UnitType.ARCHMAGE];
+    const userArmy = await this.armyEntityRepository.findOne({
+      where: { userId: settlement.user.id },
+    });
 
-    settlement.army[UnitType.SWORDSMAN] += putDownArmyDto[UnitType.SWORDSMAN];
-    settlement.army[UnitType.ARCHER] += putDownArmyDto[UnitType.ARCHER];
-    settlement.army[UnitType.KNIGHT] += putDownArmyDto[UnitType.KNIGHT];
-    settlement.army[UnitType.LUCHADOR] += putDownArmyDto[UnitType.LUCHADOR];
-    settlement.army[UnitType.ARCHMAGE] += putDownArmyDto[UnitType.ARCHMAGE];
+    const sourceArmy = isPickUp ? settlement.army : userArmy;
+    const targetArmy = isPickUp ? userArmy : settlement.army;
 
-    await this.armyEntityRepository.save(settlement.army);
-    await this.armyEntityRepository.save(userArmy);
+    const areTroopsAvailable = this.armiesService.areTroopsAvailable(
+      sourceArmy,
+      transferArmyDto,
+    );
+    if (!areTroopsAvailable) {
+      throw new NotFoundException(
+        isPickUp
+          ? 'Not enough troops in the settlement'
+          : 'Not enough troops in the user army',
+      );
+    }
+
+    const updateArmy = (army: any, dto: TransferArmyDto, factor: number) => {
+      return Object.keys(dto).reduce(
+        (updatedArmy, unitType) => {
+          if (unitType === 'settlementId') return updatedArmy;
+          return {
+            ...updatedArmy,
+            [unitType]: army[unitType] + dto[unitType] * factor,
+          };
+        },
+        { ...army },
+      );
+    };
+
+    const updatedSourceArmy = updateArmy(sourceArmy, transferArmyDto, -1);
+    const updatedTargetArmy = updateArmy(targetArmy, transferArmyDto, 1);
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      if (isPickUp) {
+        // Transferring from settlement to user
+        await queryRunner.manager.update(
+          this.armyEntityRepository.target,
+          { settlementId: settlement.id },
+          {
+            [UnitType.SWORDSMAN]: updatedSourceArmy[UnitType.SWORDSMAN],
+            [UnitType.ARCHER]: updatedSourceArmy[UnitType.ARCHER],
+            [UnitType.KNIGHT]: updatedSourceArmy[UnitType.KNIGHT],
+            [UnitType.LUCHADOR]: updatedSourceArmy[UnitType.LUCHADOR],
+            [UnitType.ARCHMAGE]: updatedSourceArmy[UnitType.ARCHMAGE],
+          },
+        );
+        await queryRunner.manager.update(
+          this.armyEntityRepository.target,
+          { userId: settlement.user.id },
+          {
+            [UnitType.SWORDSMAN]: updatedTargetArmy[UnitType.SWORDSMAN],
+            [UnitType.ARCHER]: updatedTargetArmy[UnitType.ARCHER],
+            [UnitType.KNIGHT]: updatedTargetArmy[UnitType.KNIGHT],
+            [UnitType.LUCHADOR]: updatedTargetArmy[UnitType.LUCHADOR],
+            [UnitType.ARCHMAGE]: updatedTargetArmy[UnitType.ARCHMAGE],
+          },
+        );
+      } else {
+        await queryRunner.manager.update(
+          this.armyEntityRepository.target,
+          { settlementId: settlement.id },
+          {
+            [UnitType.SWORDSMAN]: updatedTargetArmy[UnitType.SWORDSMAN],
+            [UnitType.ARCHER]: updatedTargetArmy[UnitType.ARCHER],
+            [UnitType.KNIGHT]: updatedTargetArmy[UnitType.KNIGHT],
+            [UnitType.LUCHADOR]: updatedTargetArmy[UnitType.LUCHADOR],
+            [UnitType.ARCHMAGE]: updatedTargetArmy[UnitType.ARCHMAGE],
+          },
+        );
+        await queryRunner.manager.update(
+          this.armyEntityRepository.target,
+          { userId: settlement.user.id },
+          {
+            [UnitType.SWORDSMAN]: updatedSourceArmy[UnitType.SWORDSMAN],
+            [UnitType.ARCHER]: updatedSourceArmy[UnitType.ARCHER],
+            [UnitType.KNIGHT]: updatedSourceArmy[UnitType.KNIGHT],
+            [UnitType.LUCHADOR]: updatedSourceArmy[UnitType.LUCHADOR],
+            [UnitType.ARCHMAGE]: updatedSourceArmy[UnitType.ARCHMAGE],
+          },
+        );
+      }
+
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+
+    const getArmyDetails = (army: any) => {
+      return Object.keys(transferArmyDto).reduce((acc, unitType) => {
+        acc[unitType] = army[unitType];
+        return acc;
+      }, {});
+    };
 
     return {
-      userArmy: {
-        [UnitType.SWORDSMAN]: userArmy[UnitType.SWORDSMAN],
-        [UnitType.ARCHER]: userArmy[UnitType.ARCHER],
-        [UnitType.KNIGHT]: userArmy[UnitType.KNIGHT],
-        [UnitType.LUCHADOR]: userArmy[UnitType.LUCHADOR],
-        [UnitType.ARCHMAGE]: userArmy[UnitType.ARCHMAGE],
-      },
-      settlementArmy: {
-        [UnitType.SWORDSMAN]: settlement.army[UnitType.SWORDSMAN],
-        [UnitType.ARCHER]: settlement.army[UnitType.ARCHER],
-        [UnitType.KNIGHT]: settlement.army[UnitType.KNIGHT],
-        [UnitType.LUCHADOR]: settlement.army[UnitType.LUCHADOR],
-        [UnitType.ARCHMAGE]: settlement.army[UnitType.ARCHMAGE],
-      },
+      userArmy: getArmyDetails(updatedTargetArmy),
+      settlementArmy: getArmyDetails(updatedSourceArmy),
     };
   }
 

@@ -41,9 +41,14 @@ export class SettlementsController {
   @ResponseMessage('Army transferred successfully')
   async pickUpArmy(
     @Request() req: IExpressRequestWithUserAndSettlement,
-    @Body() pickUpArmyDto: TransferArmyDto,
+    @Body() transferArmyDto: TransferArmyDto,
   ) {
-    return this.settlementsService.pickUpArmy(pickUpArmyDto, req.settlement);
+    return this.settlementsService.transferArmy(
+      transferArmyDto,
+      req.settlement,
+      req.user,
+      true,
+    );
   }
 
   @Post('/put-down-army')
@@ -51,8 +56,13 @@ export class SettlementsController {
   @ResponseMessage('Army transferred successfully')
   async putDownArmy(
     @Request() req: IExpressRequestWithUserAndSettlement,
-    @Body() putDownArmyDto: TransferArmyDto,
+    @Body() transferArmyDto: TransferArmyDto,
   ) {
-    return this.settlementsService.putDownArmy(putDownArmyDto, req.settlement);
+    return this.settlementsService.transferArmy(
+      transferArmyDto,
+      req.settlement,
+      req.user,
+      false,
+    );
   }
 }
