@@ -133,43 +133,52 @@ export class CombatsService {
   }
 
   private siegeProcessor = async (job: Job<ISiegeJob>) => {
-    let breakthroughChance = 0;
-    let success = false;
-    const gameConfig = await this.configService.gameConfig();
+    try {
+      let breakthroughChance = await this.getSiegeProgress(job);
+      let success = false;
+      const gameConfig = await this.configService.gameConfig();
 
-    while (!success) {
-      await sleep(gameConfig.COMBAT.SIEGE.TIME_TICK_MS);
-      breakthroughChance += this.getBreakthroughChance();
-      if (breakthroughChance > 100) breakthroughChance = 100;
+      while (!success) {
+        await sleep(gameConfig.COMBAT.SIEGE.TIME_TICK_MS);
+        breakthroughChance += this.getBreakthroughChance();
+        if (breakthroughChance > 100) breakthroughChance = 100;
 
-      success = this.tryBreakthrough(breakthroughChance);
+        success = this.tryBreakthrough(breakthroughChance);
 
-      await job.updateProgress(breakthroughChance);
+        await job.updateProgress(breakthroughChance);
+        await this.saveSiegeProgress(job, breakthroughChance);
 
-      if (success) {
-        const defenderArmy = await this.armyRepository.findOne({
-          where: { id: job.data.defenderSettlement.army.id },
-        });
-        const battleOutcome = await this.calculateBattleOutcome(job.data.army, {
-          [UnitType.SWORDSMAN]: defenderArmy[UnitType.SWORDSMAN],
-          [UnitType.ARCHER]: defenderArmy[UnitType.ARCHER],
-          [UnitType.KNIGHT]: defenderArmy[UnitType.KNIGHT],
-          [UnitType.LUCHADOR]: defenderArmy[UnitType.LUCHADOR],
-          [UnitType.ARCHMAGE]: defenderArmy[UnitType.ARCHMAGE],
-        });
-        this.logger.log(
-          `BATTLE OF ${job.data.defenderSettlement.name} OUTCOME IS: ${battleOutcome.result}`,
-        );
-        if (battleOutcome.result === 'Attacker wins') {
-          await this.handleAttackerWin(job, battleOutcome);
+        if (success) {
+          const defenderArmy = await this.armyRepository.findOne({
+            where: { id: job.data.defenderSettlement.army.id },
+          });
+          const battleOutcome = await this.calculateBattleOutcome(
+            job.data.army,
+            {
+              [UnitType.SWORDSMAN]: defenderArmy[UnitType.SWORDSMAN],
+              [UnitType.ARCHER]: defenderArmy[UnitType.ARCHER],
+              [UnitType.KNIGHT]: defenderArmy[UnitType.KNIGHT],
+              [UnitType.LUCHADOR]: defenderArmy[UnitType.LUCHADOR],
+              [UnitType.ARCHMAGE]: defenderArmy[UnitType.ARCHMAGE],
+            },
+          );
+          this.logger.log(
+            `BATTLE OF ${job.data.defenderSettlement.name} OUTCOME IS: ${battleOutcome.result}`,
+          );
+          if (battleOutcome.result === 'Attacker wins') {
+            await this.handleAttackerWin(job, battleOutcome);
+          }
+          if (battleOutcome.result === 'Defender wins') {
+            await this.handleDefenderWin(job, battleOutcome);
+          }
+          break;
         }
-        if (battleOutcome.result === 'Defender wins') {
-          await this.handleDefenderWin(job, battleOutcome);
-        }
-        break;
       }
+      return 'Siege completed';
+    } catch (error) {
+      this.logger.error(`Siege processing failed: ${error}`);
+      throw error;
     }
-    return 'Siege completed';
   };
 
   public async startSiege(
@@ -273,14 +282,16 @@ export class CombatsService {
 
     for (const unitType in attackerArmy) {
       const unitCount = attackerArmy[unitType as UnitType];
-      const unitStats = gameConfig.COMBAT.UNITS[unitType as UnitType];
+      const unitStats =
+        gameConfig.COMBAT.UNITS[unitType.toUpperCase() as UnitType];
       attackerPower +=
         unitCount * (unitStats.ATTACK + unitStats.DEFENSE + unitStats.HEALTH);
     }
 
     for (const unitType in defenderArmy) {
       const unitCount = defenderArmy[unitType as UnitType];
-      const unitStats = gameConfig.COMBAT.UNITS[unitType as UnitType];
+      const unitStats =
+        gameConfig.COMBAT.UNITS[unitType.toUpperCase() as UnitType];
       defenderPower +=
         unitCount * (unitStats.ATTACK + unitStats.DEFENSE + unitStats.HEALTH);
     }
@@ -326,5 +337,19 @@ export class CombatsService {
     }
 
     return { result, remainingAttackerArmy, remainingDefenderArmy };
+  }
+
+  private async saveSiegeProgress(
+    job: Job<ISiegeJob>,
+    progress: number,
+  ): Promise<void> {
+    const key = `siegeProgress:${job.data.defenderSettlement.id}:${job.id}`;
+    await this.redis.set(key, progress.toString(), 'EX', 60 * 60 * 24 * 7); // Expire after a week
+  }
+
+  private async getSiegeProgress(job: Job<ISiegeJob>): Promise<number> {
+    const key = `siegeProgress:${job.data.defenderSettlement.id}:${job.id}`;
+    const progress = await this.redis.get(key);
+    return progress ? parseInt(progress, 10) : 0;
   }
 }

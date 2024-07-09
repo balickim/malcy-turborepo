@@ -62,41 +62,39 @@ const StartSiege = memo(({ settlementId, refetch }: IStartSiege) => {
       }}
     >
       {({ values, setFieldValue, handleSubmit }) => (
-        <>
-          <form onSubmit={handleSubmit}>
-            {Object.values(UnitType).map((unitType) => {
-              const max = userStore.user.army[unitType];
-              return (
-                <div key={unitType} className={"flex items-center mx-20"}>
-                  <UnitSlider
-                    unitType={unitType}
-                    unitCount={values[unitType]}
-                    setUnitCount={(unitCount) =>
-                      setFieldValue(unitType, unitCount)
-                    }
-                    min={0}
-                    max={max}
-                    disabled={max === 0}
-                  />
-                  <p
-                    className={
-                      "text-cyan-300 hover:cursor-pointer hover:text-cyan-500"
-                    }
-                    onClick={() =>
-                      setFieldValue(unitType, max - values[unitType])
-                    }
-                  >
-                    ({max - values[unitType]})
-                  </p>
-                </div>
-              );
-            })}
+        <form onSubmit={handleSubmit}>
+          {Object.values(UnitType).map((unitType) => {
+            const max = userStore.user.army[unitType];
+            return (
+              <div key={unitType} className={"flex items-center mx-20"}>
+                <UnitSlider
+                  unitType={unitType}
+                  unitCount={values[unitType]}
+                  setUnitCount={(unitCount) =>
+                    setFieldValue(unitType, unitCount)
+                  }
+                  min={0}
+                  max={max}
+                  disabled={max === 0}
+                />
+                <p
+                  className={
+                    "text-cyan-300 hover:cursor-pointer hover:text-cyan-500"
+                  }
+                  onClick={() =>
+                    setFieldValue(unitType, max - values[unitType])
+                  }
+                >
+                  ({max - values[unitType]})
+                </p>
+              </div>
+            );
+          })}
 
-            <IonButton fill="clear" expand="block" type="submit">
-              Rozpocznij
-            </IonButton>
-          </form>
-        </>
+          <IonButton fill="clear" expand="block" type="submit">
+            Rozpocznij
+          </IonButton>
+        </form>
       )}
     </Formik>
   );
