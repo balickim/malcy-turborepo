@@ -1,6 +1,5 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 
 import { AppModule } from '~/app.module';
@@ -44,13 +43,27 @@ async function bootstrap() {
 
   const port = configService.get().PORT;
 
-  const config = new DocumentBuilder().build();
-
   const environment = configService.get().NODE_ENV;
   if (environment === 'development') {
+    const { DocumentBuilder, SwaggerModule } = await import('@nestjs/swagger');
+    const config = new DocumentBuilder().build();
+
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('docs', app, document);
+
+    // Uncomment this to generate nestjs modules dependency graph
+
+    // const { SpelunkerModule } = await import('nestjs-spelunker');
+    // const tree = SpelunkerModule.explore(app);
+    // const root = SpelunkerModule.graph(tree);
+    // const edges = SpelunkerModule.findGraphEdges(root);
+    // console.log('graph LR');
+    // const mermaidEdges = edges.map(
+    //   ({ from, to }) => `  ${from.module.name}-->${to.module.name}`,
+    // );
+    // console.log(mermaidEdges.join('\n'));
   }
+
   if (environment === 'production') {
     Logger.overrideLogger(['warn', 'error']);
   }
