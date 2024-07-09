@@ -19,12 +19,6 @@ export interface IPublicSettlementDto {
   user: TBasicUser;
 }
 
-export interface IPublicSettlementDtoWithConvertedLocation
-  extends IPublicSettlementDto {
-  lat: number;
-  lng: number;
-}
-
 export interface IPrivateSettlementDto extends IPublicSettlementDto {
   gold: number;
   wood: number;
@@ -59,24 +53,6 @@ export interface ISettlementDto {
 }
 
 export interface ISettlementDetailsDto {
-  [UnitType.SWORDSMAN]: number;
-  [UnitType.ARCHER]: number;
-  [UnitType.KNIGHT]: number;
-  [UnitType.LUCHADOR]: number;
-  [UnitType.ARCHMAGE]: number;
-}
-
-export interface IRequestPickUpArmyDto {
-  settlementId?: string;
-  [UnitType.SWORDSMAN]: number;
-  [UnitType.ARCHER]: number;
-  [UnitType.KNIGHT]: number;
-  [UnitType.LUCHADOR]: number;
-  [UnitType.ARCHMAGE]: number;
-}
-
-export interface IRequestPutDownArmyDto {
-  settlementId?: string;
   [UnitType.SWORDSMAN]: number;
   [UnitType.ARCHER]: number;
   [UnitType.KNIGHT]: number;

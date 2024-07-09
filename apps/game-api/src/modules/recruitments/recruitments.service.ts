@@ -1,6 +1,7 @@
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -86,33 +87,37 @@ export class RecruitmentsService implements OnModuleInit {
   }
 
   public async startRecruitment(
-    recruitDto: StartRecruitmentDto,
+    startRecruitmentDto: StartRecruitmentDto,
     settlement: PrivateSettlementDto,
   ) {
     const gameConfig = await this.configService.gameConfig();
 
     const unitRecruitmentTime =
-      gameConfig.SETTLEMENT[settlement.type].RECRUITMENT[recruitDto.unitType]
-        .TIME_MS ?? undefined;
+      gameConfig.SETTLEMENT[settlement.type].RECRUITMENT[
+        startRecruitmentDto.unitType
+      ].TIME_MS ?? undefined;
 
     if (unitRecruitmentTime === undefined) {
       throw new BadRequestException(
-        `Unit type ${recruitDto.unitType} cannot be recruited in this settlement type.`,
+        `Unit type ${startRecruitmentDto.unitType} cannot be recruited in this settlement type.`,
       );
     }
 
     const unitCost =
-      gameConfig.SETTLEMENT[settlement.type].RECRUITMENT[recruitDto.unitType]
-        .COST ?? undefined;
-    const goldCost = unitCost[ResourceTypeEnum.gold] * recruitDto.unitCount;
-    const woodCost = unitCost[ResourceTypeEnum.wood] * recruitDto.unitCount;
+      gameConfig.SETTLEMENT[settlement.type].RECRUITMENT[
+        startRecruitmentDto.unitType
+      ].COST ?? undefined;
+    const goldCost =
+      unitCost[ResourceTypeEnum.gold] * startRecruitmentDto.unitCount;
+    const woodCost =
+      unitCost[ResourceTypeEnum.wood] * startRecruitmentDto.unitCount;
 
     if (settlement.gold < goldCost || settlement.wood < woodCost) {
       throw new BadRequestException('You dont have enough resources');
     }
 
     const unfinishedJobs = await this.getUnfinishedRecruitmentsBySettlementId(
-      recruitDto.settlementId,
+      startRecruitmentDto.settlementId,
     );
     let totalDelayMs = 0;
     for (const job of unfinishedJobs) {
@@ -128,26 +133,28 @@ export class RecruitmentsService implements OnModuleInit {
       [ResourceTypeEnum.wood]: Math.max(-woodCost),
     };
     const finishesOn = new Date(
-      Date.now() + recruitDto.unitCount * unitRecruitmentTime + totalDelayMs,
+      Date.now() +
+        startRecruitmentDto.unitCount * unitRecruitmentTime +
+        totalDelayMs,
     );
     const data: ResponseStartRecruitmentDto = {
-      ...recruitDto,
+      ...startRecruitmentDto,
       unitRecruitmentTime,
       finishesOn,
       lockedResources,
     };
 
     await this.settlementsService.changeResources(
-      recruitDto.settlementId,
+      startRecruitmentDto.settlementId,
       lockedResources,
     );
 
     const queue = new Queue<ResponseStartRecruitmentDto>(
-      bullSettlementRecruitmentQueueName(recruitDto.settlementId),
+      bullSettlementRecruitmentQueueName(startRecruitmentDto.settlementId),
       { connection: this.redis },
     );
     new Worker(
-      bullSettlementRecruitmentQueueName(recruitDto.settlementId),
+      bullSettlementRecruitmentQueueName(startRecruitmentDto.settlementId),
       this.recruitProcessor,
       { connection: this.redis },
     );
@@ -159,7 +166,7 @@ export class RecruitmentsService implements OnModuleInit {
       },
     );
     this.logger.log(
-      `Job added to queue for settlement ${recruitDto.settlementId} with ID: ${job.id}`,
+      `Job added to queue for settlement ${startRecruitmentDto.settlementId} with ID: ${job.id}`,
     );
     return job;
   }

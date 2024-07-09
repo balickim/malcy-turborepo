@@ -1,8 +1,8 @@
+import { TransferArmyDto } from "shared-nestjs";
+
 import { fetchWrapper } from "~/api/fetch";
 import {
   IPrivateSettlementDto,
-  IRequestPickUpArmyDto,
-  IRequestPutDownArmyDto,
   ISettlementDetailsDto,
 } from "~/api/settlements/dtos";
 import { IApiResponse } from "~/types/common";
@@ -17,7 +17,7 @@ export default class SettlementsApi {
   };
 
   pickUpArmy = async (
-    body: IRequestPickUpArmyDto,
+    body: TransferArmyDto,
   ): Promise<IApiResponse<ISettlementDetailsDto>> => {
     return fetchWrapper(`${this.basePath}/pick-up-army`, {
       body: JSON.stringify(body),
@@ -26,7 +26,7 @@ export default class SettlementsApi {
   };
 
   putDownArmy = async (
-    body: IRequestPutDownArmyDto,
+    body: TransferArmyDto,
   ): Promise<IApiResponse<ISettlementDetailsDto>> => {
     return fetchWrapper(`${this.basePath}/put-down-army`, {
       body: JSON.stringify(body),

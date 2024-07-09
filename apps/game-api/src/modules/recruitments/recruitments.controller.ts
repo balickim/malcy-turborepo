@@ -10,7 +10,8 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { StartRecruitmentDto } from 'shared-nestjs';
 
-import { EnsureWithinLocation } from '~/common/decorators/ensure-within-location.decorator';
+import { EnsureSettlementBelongsToUserDecorator } from '~/common/decorators/ensure-settlement-belongs-to-user.decorator';
+import { EnsureUserIsWithinLocation } from '~/common/decorators/ensure-user-is-within-location.decorator';
 import { IExpressRequestWithUser } from '~/modules/auth/guards/jwt.guard';
 import { RecruitmentsService } from '~/modules/recruitments/recruitments.service';
 import { IExpressRequestWithUserAndSettlement } from '~/modules/user-location/guards/near-settlement-location.guard';
@@ -22,16 +23,20 @@ export class RecruitmentsController {
   constructor(private readonly recruitService: RecruitmentsService) {}
 
   @Post('/')
-  @EnsureWithinLocation('settlementId', 'mark')
-  // TODO create decorator that ensures only settlement owner can start recruitment
+  @EnsureUserIsWithinLocation('settlementId', 'mark')
+  @EnsureSettlementBelongsToUserDecorator('settlementId')
   async startRecruitment(
     @Request() req: IExpressRequestWithUserAndSettlement,
-    @Body() recruitDto: StartRecruitmentDto,
+    @Body() startRecruitmentDto: StartRecruitmentDto,
   ) {
-    return this.recruitService.startRecruitment(recruitDto, req.settlement);
+    return this.recruitService.startRecruitment(
+      startRecruitmentDto,
+      req.settlement,
+    );
   }
 
   @Get(':settlementId')
+  @EnsureSettlementBelongsToUserDecorator('settlementId')
   async getUnfinishedJobs(@Param('settlementId') settlementId: string) {
     return this.recruitService.getUnfinishedRecruitmentsBySettlementId(
       settlementId,
@@ -39,6 +44,7 @@ export class RecruitmentsController {
   }
 
   @Delete(':settlementId/:jobId')
+  @EnsureSettlementBelongsToUserDecorator('settlementId')
   async cancelRecruitment(
     @Request() req: IExpressRequestWithUser<IJwtUser>,
     @Param('settlementId') settlementId: string,

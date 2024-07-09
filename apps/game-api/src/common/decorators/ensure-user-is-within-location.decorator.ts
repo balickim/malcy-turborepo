@@ -2,7 +2,7 @@ import { applyDecorators, UseGuards, SetMetadata } from '@nestjs/common';
 
 import { NearSettlementLocationGuard } from '~/modules/user-location/guards/near-settlement-location.guard';
 
-export function EnsureWithinLocation(
+export function EnsureUserIsWithinLocation(
   settlementIdParam: string,
   mode: 'block' | 'mark' = 'block',
 ) {

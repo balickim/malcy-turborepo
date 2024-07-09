@@ -5,9 +5,9 @@ import {
   Injectable,
   Logger,
   NotFoundException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TransferArmyDto } from 'shared-nestjs';
 import {
   IResource,
   ResourceTypeEnum,
@@ -29,7 +29,6 @@ import {
   PrivateSettlementDto,
   PublicSettlementDto,
 } from '~/modules/settlements/dtos/settlements.dto';
-import TransferArmyDto from '~/modules/settlements/dtos/transferArmyDto';
 import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 import { UserLocationService } from '~/modules/user-location/user-location.service';
 import { IJwtUser } from '~/modules/users/dtos/users.dto';
@@ -149,13 +148,8 @@ export class SettlementsService {
   async transferArmy(
     transferArmyDto: TransferArmyDto,
     settlement: PrivateSettlementDto,
-    user: IJwtUser,
     isPickUp: boolean,
   ) {
-    if (settlement.user.id !== user.id) {
-      throw new ForbiddenException('This is not your settlement');
-    }
-
     const userArmy = await this.armyEntityRepository.findOne({
       where: { userId: settlement.user.id },
     });

@@ -1,11 +1,12 @@
 import { Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { TransferArmyDto } from 'shared-nestjs';
 
-import { EnsureWithinLocation } from '~/common/decorators/ensure-within-location.decorator';
-import { ResponseMessage } from '~/common/decorators/response_message.decorator';
+import { EnsureSettlementBelongsToUserDecorator } from '~/common/decorators/ensure-settlement-belongs-to-user.decorator';
+import { EnsureUserIsWithinLocation } from '~/common/decorators/ensure-user-is-within-location.decorator';
+import { ResponseMessage } from '~/common/decorators/response-message.decorator';
 import { IExpressRequestWithUser } from '~/modules/auth/guards/jwt.guard';
 import { CreateSettlementDto } from '~/modules/settlements/dtos/createSettlementDto';
-import TransferArmyDto from '~/modules/settlements/dtos/transferArmyDto';
 import { IExpressRequestWithUserAndSettlement } from '~/modules/user-location/guards/near-settlement-location.guard';
 import { IJwtUser } from '~/modules/users/dtos/users.dto';
 
@@ -37,7 +38,8 @@ export class SettlementsController {
   }
 
   @Post('/pick-up-army')
-  @EnsureWithinLocation('settlementId', 'block')
+  @EnsureUserIsWithinLocation('settlementId', 'block')
+  @EnsureSettlementBelongsToUserDecorator('settlementId')
   @ResponseMessage('Army transferred successfully')
   async pickUpArmy(
     @Request() req: IExpressRequestWithUserAndSettlement,
@@ -46,13 +48,13 @@ export class SettlementsController {
     return this.settlementsService.transferArmy(
       transferArmyDto,
       req.settlement,
-      req.user,
       true,
     );
   }
 
   @Post('/put-down-army')
-  @EnsureWithinLocation('settlementId', 'block')
+  @EnsureUserIsWithinLocation('settlementId', 'block')
+  @EnsureSettlementBelongsToUserDecorator('settlementId')
   @ResponseMessage('Army transferred successfully')
   async putDownArmy(
     @Request() req: IExpressRequestWithUserAndSettlement,
@@ -61,7 +63,6 @@ export class SettlementsController {
     return this.settlementsService.transferArmy(
       transferArmyDto,
       req.settlement,
-      req.user,
       false,
     );
   }

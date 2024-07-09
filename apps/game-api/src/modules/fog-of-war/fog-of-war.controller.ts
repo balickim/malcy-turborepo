@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { ResponseMessage } from '~/common/decorators/response_message.decorator';
+import { ResponseMessage } from '~/common/decorators/response-message.decorator';
 import { IExpressRequestWithUser } from '~/modules/auth/guards/jwt.guard';
 import { FogOfWarService } from '~/modules/fog-of-war/fog-of-war.service';
 import { IJwtUser } from '~/modules/users/dtos/users.dto';
