@@ -20,7 +20,7 @@ import useMapBounds from "~/utils/useViewBounds.ts";
 
 const Settlements = () => {
   const fogOfWarApi = new FogOfWarApi();
-  const { userStore } = store;
+  const { userStore, serverConfigStore } = store;
   const map = useMap();
   const bounds = useMapBounds(map);
   const startSiegeModalRef = useRef<IModalHandle>(null);
@@ -128,9 +128,12 @@ const Settlements = () => {
           <MemoizedMarker
             key={settlement.id}
             settlement={settlement}
+            radius={
+              serverConfigStore.config
+                ?.MAX_RADIUS_TO_TAKE_ACTION_METERS as number
+            }
             onMarkerClick={(event) => {
               if (settlement.siege) {
-                console.log(settlement.siege);
                 setLookUpModalData(settlement);
                 return;
               }

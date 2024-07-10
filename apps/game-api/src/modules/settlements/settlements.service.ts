@@ -84,6 +84,16 @@ export class SettlementsService {
       throw new BadRequestException('You are too far');
     }
 
+    const gameConfig = await this.configService.gameConfig();
+    const nearbySettlements = await this.findWithinRadius(
+      locationGeoJSON,
+      gameConfig.MAX_RADIUS_TO_TAKE_ACTION_METERS,
+    );
+
+    if (nearbySettlements.length > 0) {
+      throw new BadRequestException('A settlement already exists nearby');
+    }
+
     const newSettlement = this.settlementsEntityRepository.create({
       name: createSettlementDto.name,
       location: locationGeoJSON,
@@ -368,5 +378,15 @@ export class SettlementsService {
     await this.settlementsEntityRepository.save(settlement);
 
     return this.getPrivateSettlementById(settlementId);
+  }
+
+  private async findWithinRadius(location: GeoJSON.Point, radius: number) {
+    return this.settlementsEntityRepository
+      .createQueryBuilder('settlement')
+      .where(
+        'ST_DWithin(settlement.location::geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography, :radius)',
+        { lng: location.coordinates[0], lat: location.coordinates[1], radius },
+      )
+      .getMany();
   }
 }

@@ -69,7 +69,7 @@ export const RecruitUnit: React.FC<IRecruitUnitProps> = ({
 
   return (
     <IonGrid className="mx-auto border-b-2">
-      <IonRow class="ion-align-items-center">
+      <IonRow className="ion-align-items-center">
         <IonCol size="2">
           <IonPopover
             trigger={`trigger-${unitType.toLowerCase()}`}
@@ -106,7 +106,7 @@ export const RecruitUnit: React.FC<IRecruitUnitProps> = ({
             className="w-full hidden md:relative"
           />
 
-          <IonRow class="ion-align-items-center">
+          <IonRow className="ion-align-items-center">
             <IonCol size="8">
               <IonInput
                 type="number"
