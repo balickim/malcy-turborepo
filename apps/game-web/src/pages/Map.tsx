@@ -1,12 +1,5 @@
 import { Capacitor } from "@capacitor/core";
-import {
-  IonCol,
-  IonGrid,
-  IonProgressBar,
-  IonRow,
-  IonText,
-  isPlatform,
-} from "@ionic/react";
+import { isPlatform } from "@ionic/react";
 import L from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import { DndProvider } from "react-dnd";
@@ -16,6 +9,7 @@ import { MapContainer, TileLayer } from "react-leaflet";
 
 import ChatWindowOnMap from "~/components/Chat/ChatWindowOnMap";
 import DropTarget from "~/components/DropTarget";
+import AppLoading from "~/components/Map/AppLoading.tsx";
 import Buttons from "~/components/Map/Buttons";
 import FogOfWar from "~/components/Map/FogOfWar";
 import HabitableZones from "~/components/Map/HabitableZones.tsx";
@@ -68,23 +62,7 @@ const Map = () => {
     const part1 = playerLocation ? 50 : 0;
     const part2 = !worldConfig.isFetching ? 50 : 0;
 
-    const ionProgressBarValue = part1 + part2;
-    return (
-      <PageContainer>
-        <div className="flex justify-center items-end h-5/6">
-          <IonGrid>
-            <IonRow className="ion-align-items-center ion-justify-content-center">
-              <IonCol>
-                <IonText color={"light"} className="text-2xl animate-pulse">
-                  Ładowanie...
-                </IonText>
-                <IonProgressBar value={ionProgressBarValue}></IonProgressBar>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        </div>
-      </PageContainer>
-    );
+    return <AppLoading ionProgressBarValue={part1 + part2} />;
   }
 
   const cityBounds = worldConfig.data!.data.WORLD_BOUNDS!;
