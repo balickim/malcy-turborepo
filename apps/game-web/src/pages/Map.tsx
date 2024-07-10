@@ -62,7 +62,12 @@ const Map = () => {
     const part1 = playerLocation ? 50 : 0;
     const part2 = !worldConfig.isFetching ? 50 : 0;
 
-    return <AppLoading ionProgressBarValue={part1 + part2} />;
+    const ionProgressBarValue = part1 + part2;
+    return (
+      <PageContainer>
+        <AppLoading ionProgressBarValue={ionProgressBarValue} />
+      </PageContainer>
+    );
   }
 
   const cityBounds = worldConfig.data!.data.WORLD_BOUNDS!;
