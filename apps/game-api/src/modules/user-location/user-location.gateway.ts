@@ -87,7 +87,7 @@ export class UserLocationGateway {
     }
     this.userUpdateTimestamps.set(payload.userId, currentTime);
 
-    this.updatePlayerLocation(payload);
+    await this.updatePlayerLocation(payload);
 
     this.getNearbyUsers(payload).then((nearbyUsers) => {
       client.emit('otherPlayersPositions', nearbyUsers);
