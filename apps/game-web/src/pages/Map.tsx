@@ -14,6 +14,7 @@ import Buttons from "~/components/Map/Buttons";
 import FogOfWar from "~/components/Map/FogOfWar";
 import HabitableZones from "~/components/Map/HabitableZones.tsx";
 import { LocationFinderDummy } from "~/components/Map/LocationFinderDummy";
+import MapLegend from "~/components/Map/MapLegend.tsx";
 import { OtherPlayersLocationMarker } from "~/components/Map/OtherPlayersLocationsMarkers";
 import { UserLocationMarker } from "~/components/Map/UserLocationMarker";
 import UserStatsOnMap from "~/components/Map/UserStatsOnMap";
@@ -106,6 +107,7 @@ const Map = () => {
           <Buttons mapRef={mapRef} playerLocation={playerLocation} />
           <UserStatsOnMap />
           <ChatWindowOnMap />
+          <MapLegend />
 
           <FogOfWar cityBounds={cityBounds} />
           <HabitableZones />
