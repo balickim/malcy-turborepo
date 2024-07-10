@@ -1,4 +1,4 @@
-import { TransferArmyDto } from "shared-nestjs";
+import { CreateSettlementDto, TransferArmyDto } from "shared-nestjs";
 
 import { fetchWrapper } from "~/api/fetch";
 import {
@@ -9,6 +9,15 @@ import { IApiResponse } from "~/types/common";
 
 export default class SettlementsApi {
   private readonly basePath = `${import.meta.env.VITE_API_URL}/settlements`;
+
+  createSettlement = async (
+    body: CreateSettlementDto,
+  ): Promise<IApiResponse<IPrivateSettlementDto>> => {
+    return fetchWrapper(`${this.basePath}`, {
+      body: JSON.stringify(body),
+      method: "POST",
+    });
+  };
 
   getSettlementById = async (
     id: string,

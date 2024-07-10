@@ -86,8 +86,6 @@ export class HabitableZonesService implements OnModuleInit {
       )
       .getOne();
 
-    console.log(result);
-
     return !!result;
   }
 }

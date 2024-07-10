@@ -26,6 +26,9 @@ import UserStatsOnMap from "~/components/Map/UserStatsOnMap";
 import PageContainer from "~/components/PageContainer";
 import Settlements from "~/components/Settlements";
 import CreateSettlement from "~/components/Settlements/CreateSettlement";
+import BasicModalContainer, {
+  IModalHandle,
+} from "~/components/ui/BasicModalContainer.tsx";
 import store from "~/store";
 import { startBackgroundGeolocation } from "~/utils/backgroundGeolocation";
 import { useOthersPlayersPositionsWatcher } from "~/utils/useOtherPlayersPositionsWatcher";
@@ -48,7 +51,7 @@ const Map = () => {
   }, []);
 
   const mapRef = useRef<L.Map>(null);
-  const modalAddSettlementRef = useRef<HTMLIonModalElement>(null);
+  const modalAddSettlementRef = useRef<IModalHandle>(null);
   const [dropCoords, setDropCoords] = useState<{
     lat: number;
     lng: number;
@@ -57,7 +60,7 @@ const Map = () => {
   const handleDrop = (coords: { lat: number; lng: number }) => {
     if (modalAddSettlementRef.current) {
       setDropCoords(coords);
-      modalAddSettlementRef.current.present();
+      modalAddSettlementRef.current.open();
     }
   };
 
@@ -87,7 +90,16 @@ const Map = () => {
   const cityBounds = worldConfig.data!.data.WORLD_BOUNDS!;
   return (
     <PageContainer ionContentProps={{ scrollY: false }}>
-      <CreateSettlement modalRef={modalAddSettlementRef} coords={dropCoords} />
+      <BasicModalContainer
+        ref={modalAddSettlementRef}
+        head={"Stwórz osadę"}
+        body={
+          <CreateSettlement
+            modalRef={modalAddSettlementRef}
+            coords={dropCoords!}
+          />
+        }
+      />
 
       <DndProvider backend={isPlatform("mobile") ? TouchBackend : HTML5Backend}>
         <MapContainer

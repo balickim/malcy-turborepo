@@ -75,7 +75,7 @@ export class UserLocationGateway {
     client: Socket,
     payload: IUpdateLocationParams,
   ) {
-    const debounceTime = 1000; // 1 seconds
+    const debounceTime = 1000; // 1 second
     const currentTime = Date.now();
     const lastUpdateTime = this.userUpdateTimestamps.get(payload.userId) || 0;
 
@@ -87,25 +87,31 @@ export class UserLocationGateway {
     }
     this.userUpdateTimestamps.set(payload.userId, currentTime);
 
-    await this.updatePlayerLocation(payload);
+    this.updatePlayerLocation(payload);
 
-    const nearbyUsers = await this.getNearbyUsers(payload);
-    client.emit('otherPlayersPositions', nearbyUsers);
+    this.getNearbyUsers(payload).then((nearbyUsers) => {
+      client.emit('otherPlayersPositions', nearbyUsers);
+    });
 
-    const nearbySettlements = await this.getNearbySettlements(payload);
-    await this.discoverSettlements(payload.userId, nearbySettlements);
+    this.getNearbySettlements(payload).then((nearbySettlements) => {
+      this.discoverSettlements(payload.userId, nearbySettlements);
+    });
 
-    const nearbyHabitableZones = await this.getNearbyHabitableZones(payload);
-    await this.discoverHabitableZones(payload.userId, nearbyHabitableZones);
+    this.getNearbyHabitableZones(payload).then((nearbyHabitableZones) => {
+      this.discoverHabitableZones(payload.userId, nearbyHabitableZones);
+    });
 
-    client.emit(
-      'allDiscoveredByUser',
-      await this.fogOfWarService.findAllDiscoveredByUser(payload.userId),
-    );
-    client.emit(
-      'allVisibleByUser',
-      await this.fogOfWarService.findAllVisibleByUser(payload.userId),
-    );
+    this.fogOfWarService
+      .findAllDiscoveredByUser(payload.userId)
+      .then((discovered) => {
+        client.emit('allDiscoveredByUser', discovered);
+      });
+
+    this.fogOfWarService
+      .findAllVisibleByUser(payload.userId)
+      .then((visible) => {
+        client.emit('allVisibleByUser', visible);
+      });
   }
 
   private async updatePlayerLocation(payload: IUpdateLocationParams) {

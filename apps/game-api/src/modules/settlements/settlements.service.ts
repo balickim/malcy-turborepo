@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TransferArmyDto } from 'shared-nestjs';
+import { CreateSettlementDto, TransferArmyDto } from 'shared-nestjs';
 import {
   IResource,
   ResourceTypeEnum,
@@ -24,7 +24,6 @@ import { ConfigService } from '~/modules/config/config.service';
 import { ActionType } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { HabitableZonesService } from '~/modules/habitable-zones/habitable-zones.service';
-import { CreateSettlementDto } from '~/modules/settlements/dtos/createSettlementDto';
 import {
   PrivateSettlementDto,
   PublicSettlementDto,

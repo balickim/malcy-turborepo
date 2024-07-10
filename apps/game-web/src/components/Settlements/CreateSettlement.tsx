@@ -1,72 +1,68 @@
-import {
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonInput,
-  IonItem,
-  IonList,
-  IonModal,
-  IonTitle,
-  IonToolbar,
-} from "@ionic/react";
-import { RefObject, useState } from "react";
+import { IonButton, IonInput } from "@ionic/react";
+import { useMutation } from "@tanstack/react-query";
+import { Formik } from "formik";
+import { RefObject } from "react";
+import toast from "react-hot-toast";
 
-import { fetchWrapper } from "~/api/fetch";
+import SettlementsApi from "~/api/settlements";
+import BasicModalBodyWrapper from "~/components/ui/BasicModalBodyWrapper.tsx";
+import { IModalHandle } from "~/components/ui/BasicModalContainer.tsx";
+import Tile from "~/components/ui/Tile.tsx";
 
 interface ICreateSettlement {
-  modalRef: RefObject<HTMLIonModalElement>;
-  coords: { lat: number; lng: number } | null;
+  modalRef: RefObject<IModalHandle>;
+  coords: { lat: number; lng: number };
 }
 
 export default function CreateSettlement({
   modalRef,
   coords,
 }: ICreateSettlement) {
-  const [values, setValues] = useState({ name: "" });
+  const settlementsApi = new SettlementsApi();
 
-  async function confirm() {
-    await fetchWrapper(`${import.meta.env.VITE_API_URL}/settlements`, {
-      method: "POST",
-      body: JSON.stringify({ ...values, position: coords }),
-    });
-
-    modalRef.current?.dismiss();
-  }
+  const createSettlementMutation = useMutation({
+    mutationFn: settlementsApi.createSettlement,
+  });
 
   return (
-    <IonModal ref={modalRef} trigger="open-modal">
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonButton onClick={() => modalRef.current?.dismiss()}>
-              Cancel
-            </IonButton>
-          </IonButtons>
-          <IonTitle>Welcome</IonTitle>
-          <IonButtons slot="end">
-            <IonButton strong={true} onClick={() => confirm()}>
-              Confirm
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent className="ion-padding">
-        <IonList>
-          <IonItem>
-            <IonInput
-              label="Name"
-              value={values.name}
-              onIonChange={(event) =>
-                setValues((prevState) => ({
-                  ...prevState,
-                  name: event.detail.value,
-                }))
-              }
-            />
-          </IonItem>
-        </IonList>
-      </IonContent>
-    </IonModal>
+    <Formik
+      initialValues={{
+        name: "",
+      }}
+      onSubmit={async (values, formikHelpers) => {
+        createSettlementMutation
+          .mutateAsync({
+            ...values,
+            position: coords,
+          })
+          .then(() => {
+            formikHelpers.resetForm();
+            toast.success("Stworzyłeś osadę");
+            modalRef.current?.close();
+          });
+      }}
+    >
+      {({ values, setFieldValue, handleSubmit }) => (
+        <BasicModalBodyWrapper>
+          <Tile>
+            <form onSubmit={handleSubmit}>
+              <IonInput
+                label={"Nazwa osady"}
+                value={values.name}
+                clearInput={true}
+                onIonInput={(e) =>
+                  setFieldValue("name", e.target.value as string)
+                }
+                className="w-full !pl-1 text-start border-2 rounded-lg h-2"
+              />
+
+              <IonButton fill="clear" expand="block" type="submit">
+                Stwórz
+              </IonButton>
+            </form>
+          </Tile>
+        </BasicModalBodyWrapper>
+      )}
+    </Formik>
   );
 }
