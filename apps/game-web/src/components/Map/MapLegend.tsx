@@ -64,7 +64,7 @@ const MapLegend = () => {
   };
 
   return (
-    <OnMapItemContainer position="topleft" className={"mt-32"}>
+    <OnMapItemContainer position="topleft" className={"mt-24"}>
       <Button className="m-0" onClick={toggleVisibility}>
         Legenda
       </Button>
