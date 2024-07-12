@@ -52,6 +52,7 @@ export default function Buttons({ mapRef, playerLocation }: IButtons) {
         onTouchEnd={enableMapDragging}
       >
         <IonButton
+          size={"small"}
           className={"m-0 min-h-8 min-w-16"}
           onMouseDown={disableMapDragging}
           onMouseUp={enableMapDragging}
@@ -62,6 +63,7 @@ export default function Buttons({ mapRef, playerLocation }: IButtons) {
         </IonButton>
       </div>
       <IonButton
+        size={"small"}
         onClick={() => centerMapOnPlayer(mapRef, playerLocation)}
         className={
           "min-h-8 min-w-16 z-[1500] leaflet-control-attribution leaflet-control p-0 flex flex-col !m-0 !bg-inherit"

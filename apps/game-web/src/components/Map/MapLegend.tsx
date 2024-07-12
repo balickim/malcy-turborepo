@@ -6,6 +6,7 @@ import {
   IonText,
 } from "@ionic/react";
 import { useEffect, useRef, useState } from "react";
+import { cn } from "shared-ui";
 
 import { SettlementTypesEnum } from "~/api/settlements/dtos.ts";
 import OnMapItemContainer from "~/components/Map/OnMapItemContainer";
@@ -65,14 +66,15 @@ const MapLegend = () => {
 
   return (
     <OnMapItemContainer position="topleft" className={"mt-24"}>
-      <Button className="m-0" onClick={toggleVisibility}>
+      <Button size={"small"} className="m-0" onClick={toggleVisibility}>
         Legenda
       </Button>
       <div
         ref={bodyRef}
-        className={`bg-gray-800 bg-opacity-40 ${
-          !isVisible && !isAnimating ? "hidden" : ""
-        }`}
+        className={cn(
+          "bg-gray-800 bg-opacity-40 h-[300px] overflow-y-auto",
+          !isVisible && !isAnimating ? "hidden" : "",
+        )}
       >
         <IonGrid>
           <IonRow className="ion-align-items-center">
@@ -85,7 +87,7 @@ const MapLegend = () => {
             </IonCol>
             <IonCol size={"6"} className={"text-nowrap"}>
               <IonText color={"light"} className={"font-bold"}>
-                Gracz
+                Pozycja Gracza
               </IonText>
             </IonCol>
           </IonRow>
@@ -103,7 +105,7 @@ const MapLegend = () => {
             </IonCol>
             <IonCol size={"6"} className={"text-nowrap"}>
               <IonText color={"light"} className={"font-bold"}>
-                Zasięg działań gracza
+                Zasięg działań Gracza
               </IonText>
             </IonCol>
           </IonRow>
@@ -180,7 +182,7 @@ const MapLegend = () => {
             </IonCol>
             <IonCol size={"6"} className={"text-nowrap"}>
               <IonText color={"light"} className={"font-bold"}>
-                Teren zajęty przez osadę
+                Teren kontrolowany przez osadę
               </IonText>
             </IonCol>
           </IonRow>

@@ -11,6 +11,7 @@ const ChatWindowOnMap = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const chatRef = useRef(null);
+  const animationDurationMS = 100;
 
   const toggleChatVisibility = () => {
     if (isVisible) {
@@ -23,7 +24,7 @@ const ChatWindowOnMap = () => {
     if (chatRef.current) {
       const animation = createAnimation()
         .addElement(chatRef.current)
-        .duration(100)
+        .duration(animationDurationMS)
         .fromTo("transform", "translateY(100%)", "translateY(0)");
 
       if (isVisible) {
@@ -44,7 +45,7 @@ const ChatWindowOnMap = () => {
     if (!isVisible && isAnimating) {
       const timer = setTimeout(() => {
         setIsAnimating(false);
-      }, 500); // Match the animation duration
+      }, animationDurationMS); // Match the animation duration
 
       return () => clearTimeout(timer);
     }
@@ -54,7 +55,7 @@ const ChatWindowOnMap = () => {
 
   return (
     <OnMapItemContainer position="bottomleft">
-      <Button className="m-0" onClick={toggleChatVisibility}>
+      <Button size={"small"} className="m-0" onClick={toggleChatVisibility}>
         <IonIcon icon={newspaper} />
       </Button>
       <div
