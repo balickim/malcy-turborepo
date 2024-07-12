@@ -21,7 +21,7 @@ import store from "~/store";
 import { loginSchema, registerSchema } from "~/validation/auth";
 
 interface IAuthFormValues extends FormikValues {
-  nick?: string;
+  username?: string;
   email: string;
   password: string;
 }
@@ -51,7 +51,7 @@ export default observer(function Auth() {
       </IonHeader>
       <Formik
         initialValues={
-          isLoggingIn ? initialValues : { ...initialValues, nick: "" }
+          isLoggingIn ? initialValues : { ...initialValues, username: "" }
         }
         validationSchema={isLoggingIn ? loginSchema : registerSchema}
         onSubmit={async (values) => {
@@ -80,16 +80,18 @@ export default observer(function Auth() {
                 <>
                   <IonItem>
                     <IonInput
-                      name={"nick"}
-                      onIonBlur={() => setFieldTouched("nick")}
-                      label={"Nick"}
-                      value={values.nick}
-                      onIonChange={(e) => setFieldValue("nick", e.detail.value)}
+                      name={"Username"}
+                      onIonBlur={() => setFieldTouched("username")}
+                      label={"username"}
+                      value={values.username}
+                      onIonChange={(e) =>
+                        setFieldValue("username", e.detail.value)
+                      }
                     />
                   </IonItem>
-                  {touched.nick && errors.nick ? (
+                  {touched.username && errors.username ? (
                     <IonNote className={"text-red-600 pl-4"}>
-                      {errors.nick}
+                      {errors.username}
                     </IonNote>
                   ) : null}
                 </>
@@ -139,7 +141,7 @@ export default observer(function Auth() {
                 setTouched(
                   isLoggingIn
                     ? {}
-                    : { nick: false, email: false, password: false },
+                    : { username: false, email: false, password: false },
                 );
               }}
             >

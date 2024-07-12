@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { RegisterUserDto } from 'shared-nestjs';
 
-import { RegisterRequestDto } from '~/modules/auth/dtos/register-request.dto';
 import { Tokens } from '~/modules/auth/types/Tokens';
 import { AppConfig } from '~/modules/config/appConfig';
 import { ActionType } from '~/modules/event-log/entities/event-log.entity';
@@ -48,20 +48,26 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async register(user: RegisterRequestDto): Promise<Tokens> {
-    this.logger.log(`REGISTERING USER EMAIL ${user.email}`);
-
-    const existingUser = await this.usersService.findOneByEmail(user.email);
+  async registerUser(registerUserDto: RegisterUserDto): Promise<string> {
+    this.logger.log(`REGISTERING USER EMAIL ${registerUserDto.email}`);
+    const existingUser = await this.usersService.findOneByEmail(
+      registerUserDto.email,
+    );
     if (existingUser) {
-      this.logger.error(`EMAIL ALREADE EXISTS USER EMAIL ${user.email}`);
+      this.logger.error(
+        `EMAIL ALREADY EXISTS USER EMAIL ${registerUserDto.email}`,
+      );
       throw new BadRequestException('email already exists');
     }
-    const hashedPassword = await bcrypt.hash(user.password, 10);
+
+    const hashedPassword = await bcrypt.hash(registerUserDto.password, 10);
     const newUser = new UsersEntity();
-    newUser.username = user.username;
-    newUser.email = user.email;
+    newUser.username = registerUserDto.username;
+    newUser.email = registerUserDto.email;
     newUser.password = hashedPassword;
+
     await this.usersService.create(newUser);
+
     this.logger.log(`USER REGISTERED id: ${newUser.id}`);
     this.eventLogService
       .logEvent({
@@ -69,7 +75,7 @@ export class AuthService {
         actionByUserId: newUser.id,
       })
       .catch((error) => this.logger.error(`FAILED TO LOG EVENT --${error}--`));
-    return this.login(newUser);
+    return 'success';
   }
 
   async refreshToken(user: UsersEntity): Promise<Tokens> {

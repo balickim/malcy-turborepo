@@ -4,5 +4,5 @@ export interface ILoginDto {
 }
 
 export interface IRegisterDto extends ILoginDto {
-  nick: string;
+  username: string;
 }

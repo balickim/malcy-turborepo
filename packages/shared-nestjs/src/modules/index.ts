@@ -1,4 +1,5 @@
 export * from "./armies";
+export * from "./auth";
 export * from "./chat";
 export * from "./combats";
 export * from "./event-log";

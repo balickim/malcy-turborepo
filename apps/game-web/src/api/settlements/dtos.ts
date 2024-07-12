@@ -40,7 +40,7 @@ export interface ISettlementDto {
     deletedAt: string | null;
     email: string;
     id: string;
-    nick: string;
+    username: string;
     updatedAt: string;
   };
   army: TArmy;

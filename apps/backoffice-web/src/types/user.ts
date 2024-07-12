@@ -5,7 +5,7 @@ export interface IUser {
   deletedAt: Date | null;
   email: string;
   id: string;
-  nick: string;
+  username: string;
   wood?: number;
   gold?: number;
   updatedAt: Date;

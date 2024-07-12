@@ -12,9 +12,9 @@ export const loginSchema = yup.object({
 });
 
 export const registerSchema = yup.object({
-  nick: yup
+  username: yup
     .string()
-    .min(5, "Nick musi mieć co najmniej 5 znaków")
+    .min(5, "username musi mieć co najmniej 5 znaków")
     .required("Pole jest wymagane"),
   email: yup
     .string()

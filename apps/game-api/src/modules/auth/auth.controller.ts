@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Post,
@@ -11,11 +10,10 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { Response as ExpressResponse } from 'express';
+import { RegisterUserDto } from 'shared-nestjs';
 
 import { AuthService } from '~/modules/auth/auth.service';
 import { Public } from '~/modules/auth/decorators/public.decorator';
-import { RegisterRequestDto } from '~/modules/auth/dtos/register-request.dto';
-import { RegisterResponseDTO } from '~/modules/auth/dtos/register-response.dto';
 import {
   IExpressRequestWithUser,
   RefreshTokenGuard,
@@ -49,10 +47,8 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(
-    @Body() registerBody: RegisterRequestDto,
-  ): Promise<RegisterResponseDTO | BadRequestException> {
-    return await this.authService.register(registerBody);
+  async register(@Body() registerUserDto: RegisterUserDto): Promise<string> {
+    return this.authService.registerUser(registerUserDto);
   }
 
   @UseGuards(RefreshTokenGuard)

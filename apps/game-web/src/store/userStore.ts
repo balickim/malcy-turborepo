@@ -12,7 +12,7 @@ const userReset = (): IUser => {
   return {
     id: "",
     email: "",
-    nick: "",
+    username: "",
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
