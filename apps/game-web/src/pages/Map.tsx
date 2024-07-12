@@ -53,10 +53,8 @@ const Map = () => {
   } | null>(null);
 
   const handleDrop = (coords: { lat: number; lng: number }) => {
-    if (modalAddSettlementRef.current) {
-      setDropCoords(coords);
-      modalAddSettlementRef.current.open();
-    }
+    setDropCoords(coords);
+    modalAddSettlementRef.current?.open();
   };
 
   if (!playerLocation || worldConfig.isFetching) {

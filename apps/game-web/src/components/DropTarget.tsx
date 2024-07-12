@@ -10,7 +10,7 @@ const DropTarget: React.FC<IDropTargetProps> = ({ onDrop }) => {
   const map = useMapEvents({});
 
   const [, drop] = useDrop(() => ({
-    accept: "SETTLER",
+    accept: "SETTLEMENT",
     drop: (_item, monitor) => {
       const offset = monitor.getClientOffset();
       if (offset) {

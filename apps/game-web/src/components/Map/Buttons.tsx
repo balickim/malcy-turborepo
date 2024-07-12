@@ -13,7 +13,7 @@ interface IButtons {
 
 export default function Buttons({ mapRef, playerLocation }: IButtons) {
   const [, drag] = useDrag(() => ({
-    type: "SETTLER",
+    type: "SETTLEMENT",
     item: { name: "Settler" },
   }));
 
