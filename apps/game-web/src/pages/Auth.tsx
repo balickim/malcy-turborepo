@@ -13,9 +13,10 @@ import { useMutation } from "@tanstack/react-query";
 import { Formik, FormikValues } from "formik";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
+import { RegisterUserDto, LoginUserDto } from "shared-nestjs";
 
-import { ILoginDto, IRegisterDto } from "~/api/auth/dtos";
-import { logIn, register } from "~/api/auth/routes";
+import AuthApi from "~/api/auth/routes";
 import PageContainer from "~/components/PageContainer";
 import store from "~/store";
 import { loginSchema, registerSchema } from "~/validation/auth";
@@ -29,11 +30,12 @@ interface IAuthFormValues extends FormikValues {
 export default observer(function Auth() {
   const { userStore } = store;
   const [isLoggingIn, setIsLoggingIn] = useState(true);
+  const authApi = new AuthApi();
 
   const mutation = useMutation({
     mutationFn: isLoggingIn
-      ? (data: ILoginDto) => logIn(data)
-      : (data: IRegisterDto) => register(data),
+      ? (data: LoginUserDto) => authApi.login(data)
+      : (data: RegisterUserDto) => authApi.register(data),
   });
 
   const initialValues: IAuthFormValues = {
@@ -58,10 +60,15 @@ export default observer(function Auth() {
           // @ts-expect-error blah
           const res = await mutation.mutateAsync(values);
 
-          if (res) {
+          if (res && isLoggingIn) {
             userStore.logIn(res.data);
             const event = new CustomEvent("login");
             window.dispatchEvent(event);
+          }
+          if (res && !isLoggingIn) {
+            toast.success(
+              "Konto utworzono pomyślnie. Możesz się teraz zalogować.",
+            );
           }
         }}
       >

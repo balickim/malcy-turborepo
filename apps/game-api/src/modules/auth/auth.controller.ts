@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Req,
   Request,
@@ -67,5 +68,18 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     return { access_token: tokenResponse.access_token, user };
+  }
+
+  @Get('logout')
+  async logout(@Res({ passthrough: true }) res: ExpressResponse) {
+    res.cookie('refresh_token', '', {
+      httpOnly: true,
+      path: '/',
+      secure: false,
+      sameSite: 'strict',
+      expires: new Date(0),
+    });
+
+    return 'success';
   }
 }

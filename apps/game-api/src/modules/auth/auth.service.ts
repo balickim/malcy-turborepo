@@ -50,13 +50,14 @@ export class AuthService {
 
   async registerUser(registerUserDto: RegisterUserDto): Promise<string> {
     this.logger.log(`REGISTERING USER EMAIL ${registerUserDto.email}`);
-    const existingUser = await this.usersService.findOneByEmail(
+    const existingUser = await this.usersService.findOne(
       registerUserDto.email,
+      registerUserDto.username,
     );
-    if (existingUser) {
-      this.logger.error(
-        `EMAIL ALREADY EXISTS USER EMAIL ${registerUserDto.email}`,
-      );
+    if (existingUser && existingUser.username === registerUserDto.username) {
+      throw new BadRequestException('username already exists');
+    }
+    if (existingUser && existingUser.email === registerUserDto.email) {
       throw new BadRequestException('email already exists');
     }
 

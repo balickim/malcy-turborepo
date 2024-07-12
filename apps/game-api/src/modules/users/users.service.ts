@@ -21,8 +21,8 @@ export class UsersService {
     private configService: ConfigService,
   ) {}
 
-  findOneByEmail(email: string): Promise<UsersEntity | null> {
-    return this.usersRepository.findOneBy({ email });
+  findOne(email: string, username: string): Promise<UsersEntity | null> {
+    return this.usersRepository.findOne({ where: [{ email }, { username }] });
   }
 
   findOneWithPasswordByEmail(email: string): Promise<UsersEntity | null> {
