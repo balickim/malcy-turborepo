@@ -36,7 +36,7 @@ export class AuthController {
       httpOnly: true,
       path: '/',
       secure: false,
-      sameSite: 'none',
+      sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     delete user.password;
@@ -65,7 +65,7 @@ export class AuthController {
       httpOnly: true,
       path: '/',
       secure: false,
-      sameSite: 'none',
+      sameSite: 'strict',
       expires: new Date(0),
     });
 
