@@ -5,6 +5,9 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
@@ -33,7 +36,9 @@ import {
   },
   namespace: '/user-location',
 })
-export class UserLocationGateway {
+export class UserLocationGateway
+  implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
+{
   private readonly logger = new Logger(UserLocationGateway.name);
   private userUpdateTimestamps: Map<string, number> = new Map();
   @WebSocketServer()
@@ -48,6 +53,19 @@ export class UserLocationGateway {
     private wsSessionGuard: WsSessionGuard,
   ) {}
 
+  afterInit() {
+    this.logger.log('WebSocket server initialized');
+  }
+
+  handleConnection(client: Socket) {
+    this.logger.log(`Client connected: ${client.id}`);
+    this.logger.log(`Handshake data: ${JSON.stringify(client.handshake)}`);
+  }
+
+  handleDisconnect(client: Socket) {
+    this.logger.log(`Client disconnected: ${client.id}`);
+  }
+
   @SubscribeMessage('playerPosition')
   async handleMessage(
     @ConnectedSocket() client: Socket,
@@ -55,6 +73,7 @@ export class UserLocationGateway {
   ) {
     const canActivateClient = await this.canActivateClient(client);
     if (!canActivateClient) {
+      this.logger.warn(`Client not authorized: ${client.id}`);
       client.disconnect();
       return;
     }
@@ -66,10 +85,16 @@ export class UserLocationGateway {
     }
   }
 
-  private canActivateClient(client: Socket) {
-    return this.wsSessionGuard.canActivate({
+  private async canActivateClient(client: Socket): Promise<boolean> {
+    const isAuthorized = await this.wsSessionGuard.canActivate({
       switchToWs: () => ({ getClient: () => client }),
     } as any);
+
+    if (!isAuthorized) {
+      this.logger.warn(`Client session invalid or expired: ${client.id}`);
+    }
+
+    return isAuthorized;
   }
 
   private async processPlayerPosition(
