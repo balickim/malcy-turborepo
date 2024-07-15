@@ -6,10 +6,11 @@ import { Repository } from 'typeorm';
 
 import { include } from '~/common/utils';
 import { ConfigService } from '~/modules/config/config.service';
-import { IJwtUser } from '~/modules/users/dtos/users.dto';
+import { ISessionUser } from '~/modules/users/dtos/users.dto';
 import { UsersEntity } from '~/modules/users/entities/users.entity';
 
-export const userLastActionRedisKey = (id: string) => `user:last_action:${id}`;
+export const userLastActionRedisKey = (id: string) => `user:${id}:last_action`;
+
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
@@ -33,7 +34,14 @@ export class UsersService {
       .getOne();
   }
 
-  findOneById(id: string, relations?: string[]): Promise<UsersEntity | null> {
+  findOneById(id: string): Promise<UsersEntity | null> {
+    return this.usersRepository.findOne({ where: { id } });
+  }
+
+  findOneUseByRelations(
+    id: string,
+    relations?: string[],
+  ): Promise<UsersEntity | null> {
     return this.usersRepository.findOne({
       select: include(this.usersRepository, ['gold', 'wood']),
       where: { id },
@@ -54,7 +62,7 @@ export class UsersService {
     return res;
   }
 
-  public setActionTimestamp(user: IJwtUser | UsersEntity) {
+  public setActionTimestamp(user: ISessionUser | UsersEntity) {
     this.redis.set(userLastActionRedisKey(user.id), new Date().getTime());
   }
 

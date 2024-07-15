@@ -30,7 +30,7 @@ import {
 } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 import { UserLocationService } from '~/modules/user-location/user-location.service';
-import { IJwtUser } from '~/modules/users/dtos/users.dto';
+import { ISessionUser } from '~/modules/users/dtos/users.dto';
 
 @Injectable()
 export class SettlementsService {
@@ -52,7 +52,7 @@ export class SettlementsService {
 
   async createSettlement(
     createSettlementDto: CreateSettlementDto,
-    user: IJwtUser,
+    user: ISessionUser,
   ) {
     const locationGeoJSON: GeoJSON.Point = {
       type: 'Point',
@@ -144,7 +144,7 @@ export class SettlementsService {
 
   async getSettlementById(
     id: string,
-    user: IJwtUser,
+    user: ISessionUser,
   ): Promise<PublicSettlementDto | PrivateSettlementDto> {
     const privateSettlement = await this.getPrivateSettlementById(id);
     if (privateSettlement.user.id === user.id) {

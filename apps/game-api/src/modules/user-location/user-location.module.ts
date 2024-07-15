@@ -1,9 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { WsJwtGuard } from '~/modules/chat/guards/ws-jwt.guard';
-import { AppConfig } from '~/modules/config/appConfig';
+import { WsSessionGuard } from '~/modules/chat/guards/ws-session.guard';
 import { ConfigModule } from '~/modules/config/config.module';
 import { EventLogEntity } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
@@ -24,22 +22,12 @@ import { CacheRedisProviderModule } from '~/providers/cache/redis/provider.modul
     forwardRef(() => FogOfWarModule),
     forwardRef(() => SettlementsModule),
     HabitableZonesModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (appConfig: AppConfig) => ({
-        secret: appConfig.get().JWT_SECRET,
-        signOptions: {
-          expiresIn: parseInt(appConfig.get().JWT_ACCESS_TOKEN_EXPIRES_IN),
-        },
-      }),
-      inject: [AppConfig],
-    }),
   ],
   providers: [
     UserLocationService,
     UserLocationGateway,
     EventLogService,
-    WsJwtGuard,
+    WsSessionGuard,
   ],
   exports: [UserLocationService],
 })

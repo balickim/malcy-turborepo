@@ -12,10 +12,10 @@ import { StartRecruitmentDto } from 'shared-nestjs';
 
 import { EnsureSettlementBelongsToUserDecorator } from '~/common/decorators/ensure-settlement-belongs-to-user.decorator';
 import { EnsureUserIsWithinLocation } from '~/common/decorators/ensure-user-is-within-location.decorator';
-import { IExpressRequestWithUser } from '~/modules/auth/guards/jwt.guard';
+import { IExpressRequestWithUser } from '~/modules/auth/guards/session.guard';
 import { RecruitmentsService } from '~/modules/recruitments/recruitments.service';
 import { IExpressRequestWithUserAndSettlement } from '~/modules/user-location/guards/near-settlement-location.guard';
-import { IJwtUser } from '~/modules/users/dtos/users.dto';
+import { ISessionUser } from '~/modules/users/dtos/users.dto';
 
 @ApiTags('recruitments')
 @Controller('recruitments')
@@ -46,7 +46,7 @@ export class RecruitmentsController {
   @Delete(':settlementId/:jobId')
   @EnsureSettlementBelongsToUserDecorator('settlementId')
   async cancelRecruitment(
-    @Request() req: IExpressRequestWithUser<IJwtUser>,
+    @Request() req: IExpressRequestWithUser<ISessionUser>,
     @Param('settlementId') settlementId: string,
     @Param('jobId') jobId: string,
   ) {

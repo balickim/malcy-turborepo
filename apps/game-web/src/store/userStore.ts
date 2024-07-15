@@ -6,7 +6,6 @@ import {
 } from "mobx-persist-store";
 
 import { IUser } from "~/types/user";
-import { removeAccessToken, setAccessToken } from "~/utils/cookies";
 
 const userReset = (): IUser => {
   return {
@@ -38,13 +37,11 @@ class UserStore {
   }
 
   logIn(userData: { access_token: string; user: IUser }) {
-    setAccessToken(userData.access_token);
     this.isLoggedIn = true;
     this.setUser({ ...userData.user, army: userReset().army });
   }
 
   logOut() {
-    removeAccessToken();
     this.isLoggedIn = false;
     this.user = userReset();
   }

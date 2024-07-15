@@ -1,11 +1,11 @@
-import { IJwtUser } from "~/types/user";
+import { ISessionUser } from "~/types/user";
 
 export interface IMessageDto {
   userId: number;
   content: string;
   conversationId: number;
   createdAt: Date;
-  user: IJwtUser;
+  user: ISessionUser;
 }
 
 export interface IChatMessageDto {

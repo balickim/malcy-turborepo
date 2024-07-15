@@ -8,7 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { WsJwtGuard } from '~/modules/chat/guards/ws-jwt.guard';
+import { WsSessionGuard } from '~/modules/chat/guards/ws-session.guard';
 import { ConfigService } from '~/modules/config/config.service';
 import { FogOfWarService } from '~/modules/fog-of-war/fog-of-war.service';
 import { HabitableZonesService } from '~/modules/habitable-zones/habitable-zones.service';
@@ -45,7 +45,7 @@ export class UserLocationGateway {
     private habitableZonesService: HabitableZonesService,
     private configService: ConfigService,
     private fogOfWarService: FogOfWarService,
-    private wsJwtGuard: WsJwtGuard,
+    private wsSessionGuard: WsSessionGuard,
   ) {}
 
   @SubscribeMessage('playerPosition')
@@ -53,7 +53,8 @@ export class UserLocationGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: IUpdateLocationParams,
   ) {
-    if (!this.canActivateClient(client)) {
+    const canActivateClient = await this.canActivateClient(client);
+    if (!canActivateClient) {
       client.disconnect();
       return;
     }
@@ -65,8 +66,8 @@ export class UserLocationGateway {
     }
   }
 
-  private canActivateClient(client: Socket): boolean {
-    return this.wsJwtGuard.canActivate({
+  private canActivateClient(client: Socket) {
+    return this.wsSessionGuard.canActivate({
       switchToWs: () => ({ getClient: () => client }),
     } as any);
   }

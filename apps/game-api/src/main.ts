@@ -4,7 +4,8 @@ import cookieParser from 'cookie-parser';
 
 import { AppModule } from '~/app.module';
 import { TransformInterceptor } from '~/common/interceptors/response.interceptor';
-import { JwtGuard } from '~/modules/auth/guards/jwt.guard';
+import { AuthService } from '~/modules/auth/auth.service';
+import { SessionGuard } from '~/modules/auth/guards/session.guard';
 import { AppConfig } from '~/modules/config/appConfig';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -37,7 +38,9 @@ async function bootstrap() {
   );
 
   app.use(cookieParser());
-  app.useGlobalGuards(new JwtGuard(app.get(Reflector)));
+  app.useGlobalGuards(
+    new SessionGuard(app.get(AuthService), app.get(Reflector)),
+  );
   app.useGlobalInterceptors(new TransformInterceptor(new Reflector()));
   app.useGlobalPipes(new ValidationPipe());
 

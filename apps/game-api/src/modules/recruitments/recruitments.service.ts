@@ -1,7 +1,6 @@
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import {
   BadRequestException,
-  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -24,7 +23,7 @@ import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
 import { ConfigService } from '~/modules/config/config.service';
 import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
-import { IJwtUser } from '~/modules/users/dtos/users.dto';
+import { ISessionUser } from '~/modules/users/dtos/users.dto';
 
 const bullSettlementRecruitmentQueueName = (settlementId: string) =>
   `recruitment:settlement_${settlementId}`;
@@ -32,7 +31,7 @@ const settlementRecruitmentProgressKey = (
   settlementId: string,
   unitType: UnitType,
   jobId: number | string,
-) => `recruitmentProgress:${settlementId}:${unitType}:${jobId}`;
+) => `recruitment_progress:${settlementId}:${unitType}:${jobId}`;
 
 @Injectable()
 export class RecruitmentsService implements OnModuleInit {
@@ -174,7 +173,7 @@ export class RecruitmentsService implements OnModuleInit {
   public async cancelRecruitment(
     settlementId: string,
     jobId: string,
-    user: IJwtUser,
+    user: ISessionUser,
   ) {
     const settlement =
       await this.settlementsService.getPublicSettlementById(settlementId);

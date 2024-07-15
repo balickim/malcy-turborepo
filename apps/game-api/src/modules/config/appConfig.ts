@@ -17,10 +17,6 @@ export class AppConfig {
     PORT: port({ devDefault: 8090 }),
     WORLD_NAME: str(),
 
-    JWT_SECRET: str({ devDefault: 'secret' }),
-    JWT_ACCESS_TOKEN_EXPIRES_IN: str({ devDefault: '1h' }),
-    JWT_REFRESH_TOKEN_EXPIRES_IN: str({ devDefault: '31d' }),
-
     GAME_DB_HOST: str(),
     GAME_DB_PORT: num(),
     GAME_DB_DATABASE: str(),

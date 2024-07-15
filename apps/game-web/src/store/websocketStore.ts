@@ -1,41 +1,32 @@
 import { makeAutoObservable } from "mobx";
 import { io, Socket } from "socket.io-client";
 
-import { tryRefreshToken } from "~/api/fetch";
-import { getAccessToken } from "~/utils/cookies";
-
 const URL = import.meta.env.VITE_API_URL || "";
 
 class WebSocketStore<T> {
   socket: Socket | null = null;
-  accessToken: string | undefined = undefined;
   private unsentMessageQueue: { event: string; data: T }[] = [];
   private readonly namespace: string;
 
   constructor(namespace: string = "") {
     this.namespace = namespace;
     makeAutoObservable(this);
-    this.initialize();
   }
 
   async initialize() {
-    this.accessToken = getAccessToken();
-    if (!this.accessToken) {
-      await this.refreshAccessToken();
-    }
     this.initializeSocket();
     this.setupVisibilityChangeListener();
   }
 
   initializeSocket() {
-    if (this.socket || !this.accessToken) return;
+    if (this.socket) return;
 
     this.socket = io(`${URL}/${this.namespace}`, {
       transports: ["websocket"],
       extraHeaders: {
         "X-Capacitor-HTTP-Plugin": "true",
       },
-      auth: { token: this.accessToken },
+      withCredentials: true,
     });
 
     this.socket.on("connect", () => {
@@ -56,24 +47,8 @@ class WebSocketStore<T> {
         `Connection to WebSocket ${this.namespace} error: ${err.message}`,
       );
       this.socket?.disconnect();
-      setTimeout(() => this.refreshAccessToken(), 5000);
+      setTimeout(() => this.reconnect(), 5000);
     });
-  }
-
-  async refreshAccessToken() {
-    try {
-      const newAccessToken = await tryRefreshToken();
-      if (newAccessToken) {
-        this.accessToken = newAccessToken;
-        this.reconnect();
-      } else {
-        console.error("Failed to refresh access token");
-        this.socket?.disconnect();
-      }
-    } catch (error) {
-      console.error("Error refreshing access token:", error);
-      this.socket?.disconnect();
-    }
   }
 
   async sendMessage(event: string, data: T) {

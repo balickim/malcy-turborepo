@@ -1,13 +1,13 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { IExpressRequestWithUser } from '~/modules/auth/guards/jwt.guard';
+import { IExpressRequestWithUser } from '~/modules/auth/guards/session.guard';
 import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
-import { IJwtUser } from '~/modules/users/dtos/users.dto';
+import { ISessionUser } from '~/modules/users/dtos/users.dto';
 
 export interface IExpressRequestWithUserAndSettlement
-  extends IExpressRequestWithUser<IJwtUser> {
+  extends IExpressRequestWithUser<ISessionUser> {
   settlement: PrivateSettlementDto;
 }
 

@@ -5,9 +5,9 @@ import { CreateSettlementDto, TransferArmyDto } from 'shared-nestjs';
 import { EnsureSettlementBelongsToUserDecorator } from '~/common/decorators/ensure-settlement-belongs-to-user.decorator';
 import { EnsureUserIsWithinLocation } from '~/common/decorators/ensure-user-is-within-location.decorator';
 import { ResponseMessage } from '~/common/decorators/response-message.decorator';
-import { IExpressRequestWithUser } from '~/modules/auth/guards/jwt.guard';
+import { IExpressRequestWithUser } from '~/modules/auth/guards/session.guard';
 import { IExpressRequestWithUserAndSettlement } from '~/modules/user-location/guards/near-settlement-location.guard';
-import { IJwtUser } from '~/modules/users/dtos/users.dto';
+import { ISessionUser } from '~/modules/users/dtos/users.dto';
 
 import { SettlementsService } from './settlements.service';
 
@@ -18,7 +18,7 @@ export class SettlementsController {
 
   @Post('/')
   async createSettlement(
-    @Request() req: IExpressRequestWithUser<IJwtUser>,
+    @Request() req: IExpressRequestWithUser<ISessionUser>,
     @Body() createSettlementDto: CreateSettlementDto,
   ) {
     return this.settlementsService.createSettlement(
@@ -29,7 +29,7 @@ export class SettlementsController {
 
   @Get(':id')
   async getSettlementById(
-    @Request() req: IExpressRequestWithUser<IJwtUser>,
+    @Request() req: IExpressRequestWithUser<ISessionUser>,
     @Param() params: { id: string },
   ) {
     return this.settlementsService.getSettlementById(params.id, req.user);

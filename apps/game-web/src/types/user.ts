@@ -12,9 +12,7 @@ export interface IUser {
   army: TArmy;
 }
 
-export interface IJwtUser {
+export interface ISessionUser {
   id: string;
   username: string;
-  iat: number;
-  exp: number;
 }

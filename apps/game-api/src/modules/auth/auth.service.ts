@@ -1,14 +1,14 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { RegisterUserDto } from 'shared-nestjs';
+import Redis from 'ioredis';
+import { ActionType, RegisterUserDto } from 'shared-nestjs';
 
-import { Tokens } from '~/modules/auth/types/Tokens';
-import { AppConfig } from '~/modules/config/appConfig';
-import { ActionType } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { UsersEntity } from '~/modules/users/entities/users.entity';
 import { UsersService } from '~/modules/users/users.service';
+
+const userSessionKey = (userId: string) => `user:${userId}:session`;
 
 @Injectable()
 export class AuthService {
@@ -16,8 +16,7 @@ export class AuthService {
 
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService,
-    private appConfig: AppConfig,
+    @InjectRedis() private readonly redis: Redis,
     private eventLogService: EventLogService,
   ) {}
 
@@ -33,19 +32,49 @@ export class AuthService {
     return user;
   }
 
-  private async generateToken(user: UsersEntity): Promise<Tokens> {
-    const payload = { id: user.id, email: user.email, username: user.username };
-    const accessToken = this.jwtService.sign(payload, {
-      expiresIn: this.appConfig.get().JWT_ACCESS_TOKEN_EXPIRES_IN,
+  async createSession(user: UsersEntity): Promise<string> {
+    const sessionId = `session_${user.id}_${new Date().getTime()}`;
+    const sessionData = JSON.stringify({
+      sessionId,
+      userId: user.id,
+      username: user.username,
     });
-    const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: this.appConfig.get().JWT_REFRESH_TOKEN_EXPIRES_IN,
-    });
-    return { access_token: accessToken, refresh_token: refreshToken };
+    await this.redis.set(
+      userSessionKey(user.id),
+      sessionData,
+      'EX',
+      31 * 24 * 60 * 60,
+    ); // 31 days expiry
+    return sessionId;
   }
 
-  async login(user: UsersEntity): Promise<Tokens> {
-    return this.generateToken(user);
+  async invalidateSession(userId: string) {
+    await this.redis.del(userSessionKey(userId));
+  }
+
+  async getUserFromSession(
+    sessionId: string,
+  ): Promise<{ userId: string; username: string } | null> {
+    const keys = await this.redis.keys('user:*:session');
+    for (const key of keys) {
+      const sessionData = await this.redis.get(key);
+      if (sessionData) {
+        const parsedData = JSON.parse(sessionData);
+        if (parsedData.sessionId === sessionId) {
+          return { userId: parsedData.userId, username: parsedData.username };
+        }
+      }
+    }
+    return null;
+  }
+
+  async validateSession(sessionId: string, userId: string): Promise<boolean> {
+    const sessionData = await this.redis.get(userSessionKey(userId));
+    if (sessionData) {
+      const parsedData = JSON.parse(sessionData);
+      return parsedData.sessionId === sessionId;
+    }
+    return false;
   }
 
   async registerUser(registerUserDto: RegisterUserDto): Promise<string> {
@@ -77,22 +106,5 @@ export class AuthService {
       })
       .catch((error) => this.logger.error(`FAILED TO LOG EVENT --${error}--`));
     return 'success';
-  }
-
-  async refreshToken(user: UsersEntity): Promise<Tokens> {
-    this.logger.log(`REFRESHING TOKEN USER ID ${user.id}`);
-    return this.generateToken(user);
-  }
-
-  async validateUserById(id: string) {
-    return this.usersService.findOneById(id);
-  }
-
-  verifyRefreshToken(refreshToken: string): any {
-    try {
-      return this.jwtService.verify(refreshToken);
-    } catch (error) {
-      throw new BadRequestException('Invalid token');
-    }
   }
 }

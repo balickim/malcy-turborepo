@@ -23,6 +23,8 @@ import { SettlementsService } from '~/modules/settlements/settlements.service';
 
 const bullSettlementSiegeQueueName = (settlementId: string) =>
   `combat:siege:settlement_${settlementId}`;
+const bullSiegeProgressKey = (settlementId: string, jobId: string) =>
+  `siege_progress:${settlementId}:${jobId}`;
 
 @Injectable()
 export class CombatsService {
@@ -343,13 +345,18 @@ export class CombatsService {
     job: Job<ISiegeJob>,
     progress: number,
   ): Promise<void> {
-    const key = `siegeProgress:${job.data.defenderSettlement.id}:${job.id}`;
-    await this.redis.set(key, progress.toString(), 'EX', 60 * 60 * 24 * 7); // Expire after a week
+    await this.redis.set(
+      bullSiegeProgressKey(job.data.defenderSettlement.id, job.id),
+      progress.toString(),
+      'EX',
+      60 * 60 * 24 * 7,
+    ); // Expire after a week
   }
 
   private async getSiegeProgress(job: Job<ISiegeJob>): Promise<number> {
-    const key = `siegeProgress:${job.data.defenderSettlement.id}:${job.id}`;
-    const progress = await this.redis.get(key);
+    const progress = await this.redis.get(
+      bullSiegeProgressKey(job.data.defenderSettlement.id, job.id),
+    );
     return progress ? parseInt(progress, 10) : 0;
   }
 }

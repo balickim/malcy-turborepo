@@ -11,68 +11,57 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { Response as ExpressResponse } from 'express';
-import { RegisterUserDto } from 'shared-nestjs';
+import { RegisterUserDto, UsersEntity } from 'shared-nestjs';
 
 import { AuthService } from '~/modules/auth/auth.service';
 import { Public } from '~/modules/auth/decorators/public.decorator';
-import {
-  IExpressRequestWithUser,
-  RefreshTokenGuard,
-} from '~/modules/auth/guards/jwt.guard';
-import { UsersEntity } from '~/modules/users/entities/users.entity';
+import { IExpressRequestWithUser } from '~/modules/auth/guards/session.guard';
 
-@Public()
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @UseGuards(AuthGuard('local'))
   @Post('login')
   async login(
     @Request() req: IExpressRequestWithUser<UsersEntity>,
     @Res({ passthrough: true }) res: ExpressResponse,
   ) {
-    const tokenResponse = await this.authService.login(req.user);
+    const user = req.user;
+    const sessionId = await this.authService.createSession(user);
 
-    res.cookie('refresh_token', tokenResponse.refresh_token, {
+    res.cookie('session_id', sessionId, {
       httpOnly: true,
       path: '/',
       secure: false,
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    delete req.user.password;
+    delete user.password;
 
-    return { access_token: tokenResponse.access_token, user: req.user };
+    return { user };
   }
 
+  @Public()
   @Post('register')
   async register(@Body() registerUserDto: RegisterUserDto): Promise<string> {
     return this.authService.registerUser(registerUserDto);
   }
 
-  @UseGuards(RefreshTokenGuard)
-  @Post('refresh')
-  async refresh(
-    @Req() req: IExpressRequestWithUser<UsersEntity>,
+  @Get('logout')
+  async logout(
+    @Req() req: any,
     @Res({ passthrough: true }) res: ExpressResponse,
   ) {
-    const user = req.user;
-    const tokenResponse = await this.authService.refreshToken(user);
-    res.cookie('refresh_token', tokenResponse.refresh_token, {
-      httpOnly: true,
-      path: '/',
-      secure: false,
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-    return { access_token: tokenResponse.access_token, user };
-  }
+    const userId = req.user?.id;
 
-  @Get('logout')
-  async logout(@Res({ passthrough: true }) res: ExpressResponse) {
-    res.cookie('refresh_token', '', {
+    if (userId) {
+      await this.authService.invalidateSession(userId);
+    }
+
+    res.cookie('session_id', '', {
       httpOnly: true,
       path: '/',
       secure: false,

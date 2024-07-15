@@ -12,7 +12,7 @@ import { DiscoveredHabitableZonesEntity } from '~/modules/habitable-zones/entiti
 import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';
 import { PublicSettlementDtoWithConvertedLocation } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
-import { IJwtUser } from '~/modules/users/dtos/users.dto';
+import { ISessionUser } from '~/modules/users/dtos/users.dto';
 
 @Injectable()
 export class FogOfWarService {
@@ -312,7 +312,7 @@ export class FogOfWarService {
     }
   }
 
-  async getDiscoveredSettlementById(id: string, user: IJwtUser) {
+  async getDiscoveredSettlementById(id: string, user: ISessionUser) {
     const discoveredSettlementsEntity =
       await this.discoveredSettlementsEntityRepository.findOne({
         select: [
