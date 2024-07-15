@@ -9,18 +9,14 @@ export class WsSessionGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const client = context.switchToWs().getClient();
-    const cookies = client.handshake?.headers?.cookie;
-    console.log('canActivate() cookies', cookies);
 
-    if (!cookies) {
-      return false;
+    // Handle client.handshake?.headers?.cookie being different format from client.handshake.auth.cookie
+    let sessionId: string;
+    if (client.handshake?.headers?.cookie) {
+      sessionId = cookie.parse(client.handshake.headers.cookie)['session_id'];
+    } else if (client.handshake?.auth?.cookie) {
+      sessionId = client.handshake.auth.cookie;
     }
-
-    const parsedCookies = cookie.parse(cookies);
-    console.log('canActivate() parsedCookies', cookies);
-
-    const sessionId = parsedCookies['session_id'];
-    console.log('canActivate() sessionId', cookies);
 
     if (!sessionId) {
       return false;

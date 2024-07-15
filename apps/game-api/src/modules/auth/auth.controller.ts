@@ -30,18 +30,19 @@ export class AuthController {
     @Res({ passthrough: true }) res: ExpressResponse,
   ) {
     const user = req.user;
-    const sessionId = await this.authService.createSession(user);
+    const session_id = await this.authService.createSession(user);
 
-    res.cookie('session_id', sessionId, {
+    res.cookie('session_id', session_id, {
       httpOnly: true,
       path: '/',
       secure: false,
-      sameSite: 'lax',
+      sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     delete user.password;
 
-    return { user };
+    // TODO fix that: Sending session_id here is a workaround for mobile, where the credentials are not correctly added in the handshake object
+    return { user, session_id };
   }
 
   @Public()
@@ -65,7 +66,7 @@ export class AuthController {
       httpOnly: true,
       path: '/',
       secure: false,
-      sameSite: 'lax',
+      sameSite: 'strict',
       expires: new Date(0),
     });
 
