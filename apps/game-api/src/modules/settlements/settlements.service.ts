@@ -389,4 +389,11 @@ export class SettlementsService {
       )
       .getMany();
   }
+
+  public async updateSiegeStatus(settlementId: string, isBesieged: boolean) {
+    return this.settlementsEntityRepository.update(
+      { id: settlementId },
+      { isBesieged },
+    );
+  }
 }

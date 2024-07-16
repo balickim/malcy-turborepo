@@ -173,6 +173,10 @@ export class CombatsService {
           if (battleOutcome.result === 'Defender wins') {
             await this.handleDefenderWin(job, battleOutcome);
           }
+          await this.settlementsService.updateSiegeStatus(
+            job.data.defenderSettlement.id,
+            false,
+          );
           break;
         }
       }
@@ -238,6 +242,10 @@ export class CombatsService {
       defenderSettlement,
       attackerUserId,
     });
+    await this.settlementsService.updateSiegeStatus(
+      defenderSettlement.id,
+      true,
+    );
 
     const deductedArmy = this.armiesService.deductUnits(
       userArmy,

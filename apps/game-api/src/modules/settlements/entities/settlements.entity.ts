@@ -45,6 +45,9 @@ export class SettlementsEntity extends AuditableBaseEntity {
   })
   type: SettlementTypesEnum;
 
+  @Column({ type: 'boolean', default: false })
+  isBesieged: boolean;
+
   @Column({ select: false, default: 0 })
   @Min(0)
   gold: number;
