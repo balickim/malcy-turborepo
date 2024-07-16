@@ -18,6 +18,7 @@ def capacitor_pods
   pod 'CapacitorKeyboard', :path => '../../../../node_modules/.pnpm/@capacitor+keyboard@5.0.8_@capacitor+core@6.1.0/node_modules/@capacitor/keyboard'
   pod 'CapacitorLocalNotifications', :path => '../../../../node_modules/.pnpm/@capacitor+local-notifications@6.0.0_@capacitor+core@6.1.0/node_modules/@capacitor/local-notifications'
   pod 'CapacitorStatusBar', :path => '../../../../node_modules/.pnpm/@capacitor+status-bar@5.0.7_@capacitor+core@6.1.0/node_modules/@capacitor/status-bar'
+  pod 'CapacitorStorage', :path => '../../../../node_modules/.pnpm/@capacitor+storage@1.2.5_@capacitor+core@6.1.0/node_modules/@capacitor/storage'
 end
 
 target 'App' do

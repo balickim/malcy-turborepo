@@ -1,7 +1,7 @@
 {
   "name": "game-web",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.5.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -29,6 +29,7 @@
     "@capacitor/keyboard": "5.0.8",
     "@capacitor/local-notifications": "^6.0.0",
     "@capacitor/status-bar": "5.0.7",
+    "@capacitor/storage": "^1.2.5",
     "@ionic/react": "^7.0.0",
     "@ionic/react-router": "^7.0.0",
     "@tanstack/react-query": "^5.25.0",

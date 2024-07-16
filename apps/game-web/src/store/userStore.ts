@@ -1,3 +1,5 @@
+import { Storage } from "@capacitor/storage";
+import { isPlatform } from "@ionic/react";
 import { makeAutoObservable } from "mobx";
 import {
   makePersistable,
@@ -36,14 +38,26 @@ class UserStore {
     });
   }
 
-  logIn(userData: { access_token: string; user: IUser }) {
+  async logIn(userData: { session_id: string; user: IUser } | string) {
     this.isLoggedIn = true;
-    this.setUser({ ...userData.user, army: userReset().army });
+    if (typeof userData !== "string") {
+      this.setUser({ ...userData.user, army: userReset().army });
+      if (isPlatform("mobile")) {
+        await Storage.set({
+          key: "session_id",
+          value: userData.session_id,
+        });
+      }
+    }
   }
 
-  logOut() {
+  async logOut() {
     this.isLoggedIn = false;
     this.user = userReset();
+
+    if (isPlatform("mobile")) {
+      await Storage.remove({ key: "session_id" });
+    }
   }
 
   setUser(user: IUser) {

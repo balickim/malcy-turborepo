@@ -33,6 +33,7 @@ export default observer(function Auth() {
   const authApi = new AuthApi();
 
   const mutation = useMutation({
+    // @ts-expect-error blah
     mutationFn: isLoggingIn
       ? (data: LoginUserDto) => authApi.login(data)
       : (data: RegisterUserDto) => authApi.register(data),
@@ -61,7 +62,7 @@ export default observer(function Auth() {
           const res = await mutation.mutateAsync(values);
 
           if (res && isLoggingIn) {
-            userStore.logIn(res.data);
+            await userStore.logIn(res.data);
             const event = new CustomEvent("login");
             window.dispatchEvent(event);
           }

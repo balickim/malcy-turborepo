@@ -16,6 +16,8 @@ PODS:
     - Capacitor
   - CapacitorStatusBar (5.0.7):
     - Capacitor
+  - CapacitorStorage (1.2.5):
+    - Capacitor
 
 DEPENDENCIES:
   - "Capacitor (from `../../../../node_modules/.pnpm/@capacitor+ios@5.7.5_@capacitor+core@6.1.0/node_modules/@capacitor/ios`)"
@@ -27,6 +29,7 @@ DEPENDENCIES:
   - "CapacitorKeyboard (from `../../../../node_modules/.pnpm/@capacitor+keyboard@5.0.8_@capacitor+core@6.1.0/node_modules/@capacitor/keyboard`)"
   - "CapacitorLocalNotifications (from `../../../../node_modules/.pnpm/@capacitor+local-notifications@6.0.0_@capacitor+core@6.1.0/node_modules/@capacitor/local-notifications`)"
   - "CapacitorStatusBar (from `../../../../node_modules/.pnpm/@capacitor+status-bar@5.0.7_@capacitor+core@6.1.0/node_modules/@capacitor/status-bar`)"
+  - "CapacitorStorage (from `../../../../node_modules/.pnpm/@capacitor+storage@1.2.5_@capacitor+core@6.1.0/node_modules/@capacitor/storage`)"
 
 EXTERNAL SOURCES:
   Capacitor:
@@ -47,6 +50,8 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/.pnpm/@capacitor+local-notifications@6.0.0_@capacitor+core@6.1.0/node_modules/@capacitor/local-notifications"
   CapacitorStatusBar:
     :path: "../../../../node_modules/.pnpm/@capacitor+status-bar@5.0.7_@capacitor+core@6.1.0/node_modules/@capacitor/status-bar"
+  CapacitorStorage:
+    :path: "../../../../node_modules/.pnpm/@capacitor+storage@1.2.5_@capacitor+core@6.1.0/node_modules/@capacitor/storage"
 
 SPEC CHECKSUMS:
   Capacitor: 7d42085cb786b2d3ea9ac8a17ebd7e3305be7b72
@@ -58,7 +63,8 @@ SPEC CHECKSUMS:
   CapacitorKeyboard: aec619a578235c6ce279075009a2689c2cf5c42c
   CapacitorLocalNotifications: 4ab68f0be5f697a579558fadd307d823a9ec1c26
   CapacitorStatusBar: f390fbb49b82ffb754ea4b3cf71dc8b048baf3e7
+  CapacitorStorage: 63255170c2f7e9f7363b3e5e015584e6d18f2969
 
-PODFILE CHECKSUM: 27ed200d0ac9b48c3d7c461da6a445e619ad4db6
+PODFILE CHECKSUM: 1874d47b2ba0fd6cef3ef097abd6533bb6f8b542
 
 COCOAPODS: 1.15.2

@@ -9,7 +9,8 @@ export default class AuthApi {
 
   login = async (
     body: LoginUserDto,
-  ): Promise<IApiResponse<{ access_token: string; user: IUser }>> => {
+    // TODO fix that: Getting session_id here is a workaround for mobile, where the credentials are not correctly added in the handshake object
+  ): Promise<IApiResponse<{ session_id: string; user: IUser }>> => {
     return fetchWrapper(`${this.basePath}/login`, {
       body: JSON.stringify(body),
       method: "POST",
@@ -17,9 +18,7 @@ export default class AuthApi {
     });
   };
 
-  register = async (
-    body: RegisterUserDto,
-  ): Promise<IApiResponse<{ access_token: string; user: IUser }>> => {
+  register = async (body: RegisterUserDto): Promise<IApiResponse<string>> => {
     return fetchWrapper(`${this.basePath}/register`, {
       body: JSON.stringify(body),
       method: "POST",

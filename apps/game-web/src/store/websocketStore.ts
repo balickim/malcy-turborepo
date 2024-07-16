@@ -1,3 +1,5 @@
+import { Storage } from "@capacitor/storage";
+import { isPlatform } from "@ionic/react";
 import { makeAutoObservable } from "mobx";
 import { io, Socket } from "socket.io-client";
 
@@ -14,19 +16,22 @@ class WebSocketStore<T> {
   }
 
   async initialize() {
-    this.initializeSocket();
+    await this.initializeSocket();
     this.setupVisibilityChangeListener();
   }
 
-  initializeSocket() {
+  async initializeSocket() {
     if (this.socket) return;
 
     this.socket = io(`${URL}/${this.namespace}`, {
       transports: ["websocket"],
+      withCredentials: true,
       extraHeaders: {
         "X-Capacitor-HTTP-Plugin": "true",
       },
-      withCredentials: true,
+      auth: isPlatform("mobile")
+        ? { cookie: (await Storage.get({ key: "session_id" })).value }
+        : {},
     });
 
     this.socket.on("connect", () => {
