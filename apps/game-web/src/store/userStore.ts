@@ -1,4 +1,4 @@
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { isPlatform } from "@ionic/react";
 import { makeAutoObservable } from "mobx";
 import {
@@ -43,7 +43,7 @@ class UserStore {
     if (typeof userData !== "string") {
       this.setUser({ ...userData.user, army: userReset().army });
       if (isPlatform("mobile")) {
-        await Storage.set({
+        await Preferences.set({
           key: "session_id",
           value: userData.session_id,
         });
@@ -56,7 +56,7 @@ class UserStore {
     this.user = userReset();
 
     if (isPlatform("mobile")) {
-      await Storage.remove({ key: "session_id" });
+      await Preferences.remove({ key: "session_id" });
     }
   }
 

@@ -1,4 +1,4 @@
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { isPlatform } from "@ionic/react";
 import { makeAutoObservable } from "mobx";
 import { io, Socket } from "socket.io-client";
@@ -30,7 +30,7 @@ class WebSocketStore<T> {
         "X-Capacitor-HTTP-Plugin": "true",
       },
       auth: isPlatform("mobile")
-        ? { cookie: (await Storage.get({ key: "session_id" })).value }
+        ? { cookie: (await Preferences.get({ key: "session_id" })).value }
         : {},
     });
 
