@@ -7,7 +7,9 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import FogOfWarApi from "~/api/fog-of-war/routes";
 import { ISettlementDto } from "~/api/settlements/dtos";
 import ContextMenu from "~/components/ContextMenu";
+import DropTarget from "~/components/DropTarget.tsx";
 import ArmyDeployment from "~/components/Settlements/ArmyDeployment";
+import CreateSettlement from "~/components/Settlements/CreateSettlement.tsx";
 import SettlementInfo from "~/components/Settlements/SettlementInfo";
 import SiegeInfo from "~/components/Settlements/SiegeInfo";
 import StartSiege from "~/components/Settlements/StartSiege";
@@ -27,6 +29,16 @@ const Settlements = () => {
   const settlementInfoModalRef = useRef<IModalHandle>(null);
   const siegeInfoModalRef = useRef<IModalHandle>(null);
   const armyDeploymentModalRef = useRef<IModalHandle>(null);
+  const modalAddSettlementRef = useRef<IModalHandle>(null);
+  const [dropCoords, setDropCoords] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+
+  const handleDrop = (coords: { lat: number; lng: number }) => {
+    setDropCoords(coords);
+    modalAddSettlementRef.current?.open();
+  };
 
   const [lookUpModalData, setLookUpModalData] = useState<
     ISettlementDto | undefined
@@ -149,6 +161,18 @@ const Settlements = () => {
   return (
     <>
       {memoizedMarkerClusterGroup}
+      <DropTarget onDrop={handleDrop} />
+
+      <BasicModalContainer
+        ref={modalAddSettlementRef}
+        head={"Stwórz osadę"}
+        body={
+          <CreateSettlement
+            modalRef={modalAddSettlementRef}
+            coords={dropCoords!}
+          />
+        }
+      />
 
       <BasicModalContainer
         ref={settlementInfoModalRef}

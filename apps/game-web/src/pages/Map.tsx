@@ -2,14 +2,13 @@ import { Capacitor } from "@capacitor/core";
 import { PushNotifications } from "@capacitor/push-notifications";
 import { isPlatform } from "@ionic/react";
 import L from "leaflet";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { MapContainer, TileLayer } from "react-leaflet";
 
 import ChatWindowOnMap from "~/components/Chat/ChatWindowOnMap";
-import DropTarget from "~/components/DropTarget";
 import AppLoading from "~/components/Map/AppLoading.tsx";
 import Buttons from "~/components/Map/Buttons";
 import FogOfWar from "~/components/Map/FogOfWar";
@@ -21,10 +20,6 @@ import { UserLocationMarker } from "~/components/Map/UserLocationMarker";
 import UserStatsOnMap from "~/components/Map/UserStatsOnMap";
 import PageContainer from "~/components/PageContainer";
 import Settlements from "~/components/Settlements";
-import CreateSettlement from "~/components/Settlements/CreateSettlement";
-import BasicModalContainer, {
-  IModalHandle,
-} from "~/components/ui/BasicModalContainer.tsx";
 import store from "~/store";
 import { startBackgroundGeolocation } from "~/utils/backgroundGeolocation";
 import { useOthersPlayersPositionsWatcher } from "~/utils/useOtherPlayersPositionsWatcher";
@@ -53,16 +48,6 @@ const Map = () => {
   }, []);
 
   const mapRef = useRef<L.Map>(null);
-  const modalAddSettlementRef = useRef<IModalHandle>(null);
-  const [dropCoords, setDropCoords] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
-
-  const handleDrop = (coords: { lat: number; lng: number }) => {
-    setDropCoords(coords);
-    modalAddSettlementRef.current?.open();
-  };
 
   if (!playerLocation || worldConfig.isFetching) {
     const part1 = playerLocation ? 50 : 0;
@@ -79,17 +64,6 @@ const Map = () => {
   const cityBounds = worldConfig.data!.data.WORLD_BOUNDS!;
   return (
     <PageContainer ionContentProps={{ scrollY: false }}>
-      <BasicModalContainer
-        ref={modalAddSettlementRef}
-        head={"Stwórz osadę"}
-        body={
-          <CreateSettlement
-            modalRef={modalAddSettlementRef}
-            coords={dropCoords!}
-          />
-        }
-      />
-
       <DndProvider backend={isPlatform("mobile") ? TouchBackend : HTML5Backend}>
         <MapContainer
           ref={mapRef}
@@ -120,7 +94,6 @@ const Map = () => {
           <UserLocationMarker location={playerLocation} />
           <OtherPlayersLocationMarker locations={otherPlayersPositions} />
           <Settlements />
-          <DropTarget onDrop={handleDrop} />
 
           {import.meta.env.DEV ? <LocationFinderDummy /> : null}
         </MapContainer>
