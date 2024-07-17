@@ -14,17 +14,17 @@ export abstract class AuditableBaseEntity {
   updatedBy: string;
 
   @Column({ select: false, nullable: true })
-  deletedBy?: string;
+  deletedBy: string;
 
   @Index()
-  @Column({ select: false })
+  @Column()
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ select: false })
+  @Column()
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @DeleteDateColumn({ select: false })
-  deletedAt?: Date;
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

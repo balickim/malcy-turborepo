@@ -33,21 +33,21 @@ export class UserLocationService {
     private fogOfWarService: FogOfWarService,
   ) {}
 
-  public async updateLocation(params: IUpdateLocationParams) {
-    const isUserSpeedWithinLimit = await this.isUserSpeedWithinLimit({
+  public async updatePlayerLocation(params: IUpdateLocationParams) {
+    this.isUserSpeedWithinLimit({
       userId: params.userId,
       location: { lat: params.location.lat, lng: params.location.lng },
       limitMetresPerSec: 30,
+    }).then((isUserSpeedWithinLimit) => {
+      if (!isUserSpeedWithinLimit) {
+        this.logger.warn(`USER MOVED TOO FAR TOO QUICKLY ID: ${params.userId}`);
+        this.eventLogService.logEvent({
+          actionType: ActionType.securityIncident,
+          actionByUserId: params.userId,
+          description: 'User moved too far too quickly',
+        });
+      }
     });
-
-    if (!isUserSpeedWithinLimit) {
-      this.logger.warn(`USER MOVED TOO FAR TOO QUICKLY ID: ${params.userId}`);
-      await this.eventLogService.logEvent({
-        actionType: ActionType.securityIncident,
-        actionByUserId: params.userId,
-        description: 'User moved too far too quickly',
-      });
-    }
 
     await this.redis.geoadd(
       userLocationsKey,
@@ -62,12 +62,20 @@ export class UserLocationService {
     ); // change old location timestamp to new one
 
     const gameConfig = await this.configService.gameConfig();
-    return await this.fogOfWarService.updateDiscoveredArea(
+    const updateDiscoveredArea = this.fogOfWarService.updateDiscoveredArea(
       params.userId,
       params.location.lat,
       params.location.lng,
       gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
     );
+    const updateVisibleArea = this.fogOfWarService.updateVisibleArea(
+      params.userId,
+      params.location.lat,
+      params.location.lng,
+      gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
+    );
+
+    return Promise.all([updateDiscoveredArea, updateVisibleArea]);
   }
 
   public async getUserLocation(params: { userId: string }) {

@@ -337,7 +337,7 @@ export class SettlementsService {
     };
   }
 
-  public async findSettlementsInRadius(
+  public async findSettlementsInRadiusWithDeleted(
     location: { lat: number; lng: number },
     radius: number,
   ): Promise<SettlementsEntity[]> {
@@ -355,6 +355,7 @@ export class SettlementsService {
           distance: radius,
         },
       )
+      .withDeleted()
       .getMany();
   }
 

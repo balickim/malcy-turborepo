@@ -82,8 +82,6 @@ export class FogOfWarService {
     lng: number,
     radiusInMeters: number,
   ) {
-    await this.updateVisibleArea(userId, lat, lng, radiusInMeters);
-
     const newPolygon = () =>
       `ST_Buffer(ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326)::geography, ${radiusInMeters})::geometry`;
 
@@ -153,6 +151,7 @@ export class FogOfWarService {
       userId: settlement.user.id,
       settlementId: settlement.id,
       type: settlement.type,
+      deletedAt: settlement.deletedAt,
       [UnitType.SWORDSMAN]: settlement.army[UnitType.SWORDSMAN],
       [UnitType.ARCHER]: settlement.army[UnitType.ARCHER],
       [UnitType.KNIGHT]: settlement.army[UnitType.KNIGHT],

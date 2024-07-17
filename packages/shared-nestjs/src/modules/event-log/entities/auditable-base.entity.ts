@@ -4,27 +4,27 @@ import {
   DeleteDateColumn,
   Index,
   UpdateDateColumn,
-} from 'typeorm';
+} from "typeorm";
 
 export abstract class AuditableBaseEntity {
-  @Column({ select: false, default: 'system' })
+  @Column({ select: false, default: "system" })
   createdBy: string;
 
-  @Column({ select: false, default: 'system' })
+  @Column({ select: false, default: "system" })
   updatedBy: string;
 
   @Column({ select: false, nullable: true })
-  deletedBy?: string;
+  deletedBy: string;
 
   @Index()
-  @Column({ select: false })
+  @Column()
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ select: false })
+  @Column()
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @DeleteDateColumn({ select: false })
-  deletedAt?: Date;
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

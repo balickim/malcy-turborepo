@@ -113,7 +113,7 @@ export class UserLocationGateway
     }
     this.userUpdateTimestamps.set(payload.userId, currentTime);
 
-    await this.updatePlayerLocation(payload);
+    await this.userLocationService.updatePlayerLocation(payload);
 
     this.getNearbyUsers(payload).then((nearbyUsers) => {
       client.emit('otherPlayersPositions', nearbyUsers);
@@ -140,10 +140,6 @@ export class UserLocationGateway
       });
   }
 
-  private async updatePlayerLocation(payload: IUpdateLocationParams) {
-    await this.userLocationService.updateLocation(payload);
-  }
-
   private async getNearbyUsers(payload: IUpdateLocationParams) {
     const gameConfig = await this.configService.gameConfig();
     return this.userLocationService.getOnlineUsersInRadius(
@@ -157,7 +153,7 @@ export class UserLocationGateway
 
   private async getNearbySettlements(payload: IUpdateLocationParams) {
     const gameConfig = await this.configService.gameConfig();
-    return this.settlementsService.findSettlementsInRadius(
+    return this.settlementsService.findSettlementsInRadiusWithDeleted(
       payload.location,
       gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
     );

@@ -32,7 +32,7 @@ describe('UserLocationService', () => {
     it('should return true if there is no previous location', async () => {
       redisMock.hget.mockResolvedValue('1712246951753');
 
-      const result = await service.updateLocation({
+      const result = await service.updatePlayerLocation({
         userId: 'testUserId',
         location: { lat: 1.0, lng: 1.0 },
       });
@@ -44,7 +44,7 @@ describe('UserLocationService', () => {
       // redisMock.geopos.mockResolvedValue([[1.0, 2.0]]);
       redisMock.hget.mockResolvedValue('1234567890');
       redisMock.geodist.mockResolvedValue('100');
-      await service.updateLocation({
+      await service.updatePlayerLocation({
         userId: 'testUserId',
         location: { lat: 1.0, lng: 1.0 },
       });
