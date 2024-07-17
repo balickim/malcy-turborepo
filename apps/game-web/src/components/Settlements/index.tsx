@@ -170,6 +170,7 @@ const Settlements = () => {
           <CreateSettlement
             modalRef={modalAddSettlementRef}
             coords={dropCoords!}
+            refetch={refetchSettlementsInBounds}
           />
         }
       />

@@ -12,11 +12,13 @@ import Tile from "~/components/ui/Tile.tsx";
 interface ICreateSettlement {
   modalRef: RefObject<IModalHandle>;
   coords: { lat: number; lng: number };
+  refetch: () => void;
 }
 
 export default function CreateSettlement({
   modalRef,
   coords,
+  refetch,
 }: ICreateSettlement) {
   const settlementsApi = new SettlementsApi();
 
@@ -38,6 +40,7 @@ export default function CreateSettlement({
           .then(() => {
             formikHelpers.resetForm();
             toast.success("Stworzyłeś osadę");
+            refetch();
             modalRef.current?.close();
           });
       }}
