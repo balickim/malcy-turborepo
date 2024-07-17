@@ -5,7 +5,10 @@ import { memo } from "react";
 
 import CombatsApi from "~/api/combats/routes";
 import FogOfWarApi from "~/api/fog-of-war/routes";
+import { ArmyInfo } from "~/components/ArmyInfo.tsx";
 import { UnitSlider } from "~/components/Settlements/UnitSlider";
+import BasicModalBodyWrapper from "~/components/ui/BasicModalBodyWrapper.tsx";
+import Tile from "~/components/ui/Tile.tsx";
 import store from "~/store";
 import { TArmy, UnitType } from "~/types/army";
 import { useUser } from "~/utils/useUser";
@@ -45,7 +48,6 @@ const StartSiege = memo(({ settlementId, refetch }: IStartSiege) => {
   };
 
   if (!settlementData) return null;
-
   return (
     <Formik
       initialValues={{
@@ -62,39 +64,46 @@ const StartSiege = memo(({ settlementId, refetch }: IStartSiege) => {
       }}
     >
       {({ values, setFieldValue, handleSubmit }) => (
-        <form onSubmit={handleSubmit}>
-          {Object.values(UnitType).map((unitType) => {
-            const max = userStore.user.army[unitType];
-            return (
-              <div key={unitType} className={"flex items-center mx-20"}>
-                <UnitSlider
-                  unitType={unitType}
-                  unitCount={values[unitType]}
-                  setUnitCount={(unitCount) =>
-                    setFieldValue(unitType, unitCount)
-                  }
-                  min={0}
-                  max={max}
-                  disabled={max === 0}
-                />
-                <p
-                  className={
-                    "text-cyan-300 hover:cursor-pointer hover:text-cyan-500"
-                  }
-                  onClick={() =>
-                    setFieldValue(unitType, max - values[unitType])
-                  }
-                >
-                  ({max - values[unitType]})
-                </p>
-              </div>
-            );
-          })}
+        <>
+          <div className="flex justify-end bg-gray-800 bg-opacity-40 p-2 text-white">
+            <ArmyInfo
+              army={{
+                swordsman: settlementData[UnitType.SWORDSMAN],
+                archer: settlementData[UnitType.ARCHER],
+                knight: settlementData[UnitType.KNIGHT],
+                luchador: settlementData[UnitType.LUCHADOR],
+                archmage: settlementData[UnitType.ARCHMAGE],
+              }}
+            />
+          </div>
 
-          <IonButton fill="clear" expand="block" type="submit">
-            Rozpocznij
-          </IonButton>
-        </form>
+          <BasicModalBodyWrapper>
+            <Tile>
+              <form onSubmit={handleSubmit}>
+                {Object.values(UnitType).map((unitType) => {
+                  const max = userStore.user.army[unitType];
+                  return (
+                    <UnitSlider
+                      key={unitType}
+                      unitType={unitType}
+                      unitCount={values[unitType]}
+                      setUnitCount={(unitCount) =>
+                        setFieldValue(unitType, unitCount)
+                      }
+                      min={0}
+                      max={max}
+                      disabled={max === 0}
+                    />
+                  );
+                })}
+
+                <IonButton fill="clear" expand="block" type="submit">
+                  Rozpocznij
+                </IonButton>
+              </form>
+            </Tile>
+          </BasicModalBodyWrapper>
+        </>
       )}
     </Formik>
   );

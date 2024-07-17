@@ -115,7 +115,7 @@ const MapLegend = () => {
               <img
                 src={"assets/settlements/types/mining_town.webp"}
                 alt={"player"}
-                className="w-7 h-7"
+                className="w-7 h-7 rounded-full"
               />
             </IonCol>
             <IonCol size={"6"} className={"text-nowrap"}>
@@ -130,7 +130,7 @@ const MapLegend = () => {
               <img
                 src={"assets/settlements/types/castle_town.webp"}
                 alt={"player"}
-                className="w-7 h-7"
+                className="w-7 h-7 rounded-full"
               />
             </IonCol>
             <IonCol size={"6"} className={"text-nowrap"}>
@@ -145,7 +145,7 @@ const MapLegend = () => {
               <img
                 src={"assets/settlements/types/fortified_settlement.webp"}
                 alt={"player"}
-                className="w-7 h-7"
+                className="w-7 h-7 rounded-full"
               />
             </IonCol>
             <IonCol size={"6"} className={"text-nowrap"}>
@@ -160,12 +160,70 @@ const MapLegend = () => {
               <img
                 src={"assets/settlements/types/capitol_settlement.webp"}
                 alt={"player"}
-                className="w-7 h-7"
+                className="w-7 h-7 rounded-full"
               />
             </IonCol>
             <IonCol size={"6"} className={"text-nowrap"}>
               <IonText color={"light"} className={"font-bold"}>
                 {settlementTypeName[SettlementTypesEnum.CAPITOL_SETTLEMENT]}
+              </IonText>
+            </IonCol>
+          </IonRow>
+
+          <IonRow className="ion-align-items-center">
+            <IonCol size={"auto"}>
+              <div className="w-7 h-7">
+                <img
+                  src={"assets/settlements/types/capitol_settlement.webp"}
+                  alt={"player"}
+                  className="w-7 h-7 rounded-full"
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "0",
+                    left: "65%",
+                    width: "10px",
+                    height: "10px",
+                    backgroundColor: "yellow",
+                    borderRadius: "50%",
+                    transform: "translate(50%, 0%)",
+                  }}
+                />
+              </div>
+            </IonCol>
+            <IonCol size={"6"} className={"text-nowrap"}>
+              <IonText color={"light"} className={"font-bold"}>
+                Osada należąca do gracza
+              </IonText>
+            </IonCol>
+          </IonRow>
+
+          <IonRow className="ion-align-items-center">
+            <IonCol size={"auto"}>
+              <div className="w-7 h-7">
+                <img
+                  src={"assets/settlements/types/capitol_settlement.webp"}
+                  alt={"player"}
+                  className="w-7 h-7 rounded-full"
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "0",
+                    left: "65%",
+                    width: "10px",
+                    height: "10px",
+                    backgroundColor: "red",
+                    borderRadius: "50%",
+                    transform: "translate(50%, 0%)",
+                  }}
+                />
+              </div>
+            </IonCol>
+            <IonCol size={"6"} className={"text-nowrap"}>
+              <IonText color={"light"} className={"font-bold"}>
+                Osada nie należąca do gracza
               </IonText>
             </IonCol>
           </IonRow>

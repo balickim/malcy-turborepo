@@ -1,7 +1,10 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HabitableZonesTypesEnum, UnitType } from 'shared-types';
-import { IDTOResponseFindHabitableZonesInBounds } from 'shared-types';
+import {
+  HabitableZonesTypesEnum,
+  IDTOResponseFindHabitableZonesInBounds,
+  UnitType,
+} from 'shared-types';
 import { Repository } from 'typeorm';
 
 import { CombatsService } from '~/modules/combats/combats.service';
@@ -313,26 +316,20 @@ export class FogOfWarService {
   }
 
   async getDiscoveredSettlementById(id: string, user: ISessionUser) {
-    const discoveredSettlementsEntity =
-      await this.discoveredSettlementsEntityRepository.findOne({
-        select: [
-          'settlementId',
-          'discoveredByUserId',
-          'userId',
-          'type',
-          'user',
-          UnitType.SWORDSMAN,
-          UnitType.ARCHER,
-          UnitType.KNIGHT,
-          UnitType.LUCHADOR,
-          UnitType.ARCHMAGE,
-        ],
-        where: { settlementId: id },
-      });
-
-    if (discoveredSettlementsEntity.discoveredByUserId === user.id) {
-      return discoveredSettlementsEntity;
-    }
-    return null;
+    return this.discoveredSettlementsEntityRepository.findOne({
+      select: [
+        'settlementId',
+        'discoveredByUserId',
+        'userId',
+        'type',
+        'user',
+        UnitType.SWORDSMAN,
+        UnitType.ARCHER,
+        UnitType.KNIGHT,
+        UnitType.LUCHADOR,
+        UnitType.ARCHMAGE,
+      ],
+      where: { settlementId: id, discoveredByUserId: user.id },
+    });
   }
 }

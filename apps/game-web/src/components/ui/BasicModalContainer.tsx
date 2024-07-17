@@ -43,11 +43,11 @@ const BasicModalContainer = forwardRef<IModalHandle, IBasicModalContainerProps>(
                   className="transition-transform duration-300 ease-in-out transform hover:scale-110 active:scale-125"
                 />
               </IonCol>
-              <IonCol>
-                {head ? (
+              {head ? (
+                <IonCol>
                   <IonTitle className="flex justify-center">{head}</IonTitle>
-                ) : null}
-              </IonCol>
+                </IonCol>
+              ) : null}
             </IonRow>
           </IonGrid>
         </IonHeader>

@@ -5,6 +5,8 @@ import { memo } from "react";
 
 import SettlementsApi from "~/api/settlements";
 import { UnitSlider } from "~/components/Settlements/UnitSlider";
+import BasicModalBodyWrapper from "~/components/ui/BasicModalBodyWrapper.tsx";
+import Tile from "~/components/ui/Tile.tsx";
 import store from "~/store";
 import { UnitType } from "~/types/army";
 import { useUser } from "~/utils/useUser";
@@ -54,16 +56,17 @@ const ArmyDeployment = memo(({ settlementId, type }: IArmyDeployment) => {
       }}
     >
       {({ values, setFieldValue, handleSubmit }) => (
-        <>
-          <form onSubmit={handleSubmit}>
-            {Object.values(UnitType).map((unitType) => {
-              const max =
-                type === "put_down"
-                  ? userStore.user.army[unitType]
-                  : settlementData.army[unitType];
-              return (
-                <div key={unitType} className={"flex items-center mx-20"}>
+        <BasicModalBodyWrapper>
+          <Tile>
+            <form onSubmit={handleSubmit}>
+              {Object.values(UnitType).map((unitType) => {
+                const max =
+                  type === "put_down"
+                    ? userStore.user.army[unitType]
+                    : settlementData.army[unitType];
+                return (
                   <UnitSlider
+                    key={unitType}
                     unitType={unitType}
                     unitCount={values[unitType]}
                     setUnitCount={(unitCount) =>
@@ -73,30 +76,19 @@ const ArmyDeployment = memo(({ settlementId, type }: IArmyDeployment) => {
                     max={max}
                     disabled={max === 0}
                   />
-                  <p
-                    className={
-                      "text-cyan-300 hover:cursor-pointer hover:text-cyan-500"
-                    }
-                    onClick={() =>
-                      setFieldValue(unitType, max - values[unitType])
-                    }
-                  >
-                    ({max - values[unitType]})
-                  </p>
-                </div>
-              );
-            })}
+                );
+              })}
 
-            <IonButton fill="clear" expand="block" type="submit">
-              {type === "pick_up" ? <>Podnieś</> : <>Upuść</>}
-            </IonButton>
-          </form>
-        </>
+              <IonButton fill="clear" expand="block" type="submit">
+                {type === "pick_up" ? <>Podnieś</> : <>Upuść</>}
+              </IonButton>
+            </form>
+          </Tile>
+        </BasicModalBodyWrapper>
       )}
     </Formik>
   );
 });
-
 ArmyDeployment.displayName = "ArmyDeployment";
 
 export default ArmyDeployment;

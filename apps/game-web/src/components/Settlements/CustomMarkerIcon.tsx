@@ -25,20 +25,18 @@ export const CustomMarkerIcon = ({
         alt={`settlement ${settlement.name} image`}
         style={{ width: "30px", height: "30px", borderRadius: "50%" }}
       />
-      {isOwned && (
-        <div
-          style={{
-            position: "absolute",
-            top: "0",
-            left: "65%",
-            width: "10px",
-            height: "10px",
-            backgroundColor: "yellow",
-            borderRadius: "50%",
-            transform: "translate(50%, 0%)",
-          }}
-        />
-      )}
+      <div
+        style={{
+          position: "absolute",
+          top: "0",
+          left: "65%",
+          width: "10px",
+          height: "10px",
+          backgroundColor: isOwned ? "yellow" : "red",
+          borderRadius: "50%",
+          transform: "translate(50%, 0%)",
+        }}
+      />
       {isSiege && (
         <img
           src={siegeUrl}
