@@ -1,5 +1,5 @@
+import { Geolocation } from "@capacitor/geolocation";
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 
 import store from "~/store";
 import { websocketUserLocation } from "~/store/websocketStore";
@@ -16,12 +16,17 @@ export function usePlayerPositionWatcher() {
   );
 
   useEffect(() => {
-    let watchId: number | null = null;
+    let watchId: string | null = null;
 
-    const setupGeolocation = () => {
-      if ("geolocation" in navigator) {
-        watchId = navigator.geolocation.watchPosition(
-          (position) => {
+    const setupGeolocation = async () => {
+      watchId = await Geolocation.watchPosition(
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        },
+        (position) => {
+          if (position) {
             const location = {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
@@ -31,37 +36,16 @@ export function usePlayerPositionWatcher() {
               userId: userStore.user.id,
             });
             setPlayerPosition(location);
-          },
-          (error) => {
-            switch (error.code) {
-              case error.PERMISSION_DENIED:
-                toast.error("Access to location denied");
-                break;
-              case error.POSITION_UNAVAILABLE:
-                console.error("Location unavailable");
-                break;
-              case error.TIMEOUT:
-                toast.error("Location request timed out");
-                break;
-              default:
-                toast.error("An unknown error occurred");
-                break;
-            }
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0,
-          },
-        );
-      }
+          }
+        },
+      );
     };
 
-    setupGeolocation();
+    void setupGeolocation();
 
     return () => {
       if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
+        void Geolocation.clearWatch({ id: watchId });
       }
     };
   }, []);

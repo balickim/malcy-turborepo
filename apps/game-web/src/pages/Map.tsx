@@ -37,11 +37,11 @@ const Map = () => {
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
-      startBackgroundGeolocation(store.userStore.user.id);
+      void startBackgroundGeolocation(store.userStore.user.id);
 
       PushNotifications.checkPermissions().then((permStatus) => {
         if (permStatus.receive !== "granted") {
-          PushNotifications.requestPermissions();
+          void PushNotifications.requestPermissions();
         }
       });
     }
