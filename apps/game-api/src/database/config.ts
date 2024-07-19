@@ -22,7 +22,7 @@ const appConfig: AppConfig = new AppConfig();
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   logging: false,
-  synchronize: false,
+  synchronize: appConfig.get().GAME_DB_SYNCHRONIZE,
   host: appConfig.get().GAME_DB_HOST,
   port: appConfig.get().GAME_DB_PORT,
   username: appConfig.get().GAME_DB_USERNAME,
