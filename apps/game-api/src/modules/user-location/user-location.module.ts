@@ -1,9 +1,9 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventLogEntity } from 'shared-nestjs';
 
 import { WsSessionGuard } from '~/modules/chat/guards/ws-session.guard';
 import { ConfigModule } from '~/modules/config/config.module';
-import { EventLogEntity } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { FogOfWarModule } from '~/modules/fog-of-war/fog-of-war.module';
 import { HabitableZonesModule } from '~/modules/habitable-zones/habitable-zones.module';

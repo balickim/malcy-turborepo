@@ -1,9 +1,9 @@
 import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MessagesEntity } from 'shared-nestjs';
 import { Repository } from 'typeorm';
 
 import { ResponseMessageDto } from '~/modules/chat/dtos/response-message.dto';
-import { MessagesEntity } from '~/modules/chat/entities/messages.entity';
 import { ISessionUser } from '~/modules/users/dtos/users.dto';
 
 @Injectable()

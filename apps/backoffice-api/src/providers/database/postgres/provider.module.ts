@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
+import { EventLogEntity } from 'shared-nestjs';
 
 import { AppConfig } from '~/modules/config/appConfig';
 import { ConfigModule } from '~/modules/config/config.module';
-import { EventLogEntity } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogModule } from '~/modules/event-log/event-log.module';
 import { EventLogSubscriber } from '~/modules/event-log/event-log.subscriber';
 import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';

@@ -1,4 +1,6 @@
 import { Point } from 'geojson';
+import { ArmyEntity, SettlementsEntity } from 'shared-nestjs';
+import { UnitType } from 'shared-types';
 import {
   DataSource,
   EntitySubscriberInterface,
@@ -6,10 +8,7 @@ import {
   InsertEvent,
 } from 'typeorm';
 
-import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
-import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 import { SettlementsGateway } from '~/modules/settlements/settlements.gateway';
-import { UnitType } from 'shared-types';
 
 @EventSubscriber()
 export class ChatSubscriber

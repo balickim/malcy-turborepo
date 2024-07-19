@@ -8,6 +8,8 @@
     "outDir": "dist",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": false,
     "declaration": true,
     "baseUrl": ".",

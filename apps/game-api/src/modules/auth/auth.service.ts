@@ -2,10 +2,9 @@ import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import Redis from 'ioredis';
-import { ActionType, RegisterUserDto } from 'shared-nestjs';
+import { ActionType, RegisterUserDto, UsersEntity } from 'shared-nestjs';
 
 import { EventLogService } from '~/modules/event-log/event-log.service';
-import { UsersEntity } from '~/modules/users/entities/users.entity';
 import { UsersService } from '~/modules/users/users.service';
 
 const userSessionKey = (userId: string) => `user:${userId}:session`;

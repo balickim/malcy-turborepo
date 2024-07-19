@@ -1,5 +1,6 @@
 import { Max, Min } from 'class-validator';
 import { nanoid } from 'nanoid';
+import { AuditableBaseEntity } from 'shared-nestjs';
 import {
   BeforeInsert,
   Column,
@@ -8,7 +9,6 @@ import {
   PrimaryColumn,
 } from 'typeorm';
 
-import { AuditableBaseEntity } from '~/modules/event-log/entities/auditable-base.entity';
 import { WorldsConfigEntity } from '~/modules/worlds-config/entities/worlds-config.entity';
 
 export enum HabitableZonesTypesEnum {

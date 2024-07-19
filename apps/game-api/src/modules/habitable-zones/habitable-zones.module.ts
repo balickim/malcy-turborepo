@@ -1,12 +1,14 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import {
+  DiscoveredHabitableZonesEntity,
+  HabitableZonesEntity,
+} from 'shared-nestjs';
 
-import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';
 import { HabitableZonesService } from '~/modules/habitable-zones/habitable-zones.service';
 
 import { AppConfig } from '../config/appConfig';
-import { DiscoveredHabitableZonesEntity } from './entities/discovered-habitable-zones.entity';
 
 @Module({
   imports: [

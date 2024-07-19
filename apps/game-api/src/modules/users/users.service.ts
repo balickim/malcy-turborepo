@@ -2,12 +2,12 @@ import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Redis from 'ioredis';
+import { UsersEntity } from 'shared-nestjs';
 import { Repository } from 'typeorm';
 
 import { include } from '~/common/utils';
 import { ConfigService } from '~/modules/config/config.service';
 import { ISessionUser } from '~/modules/users/dtos/users.dto';
-import { UsersEntity } from '~/modules/users/entities/users.entity';
 
 export const userLastActionRedisKey = (id: string) => `user:${id}:last_action`;
 

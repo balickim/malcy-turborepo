@@ -1,9 +1,9 @@
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
+import { ActionType } from 'shared-nestjs';
 
 import { ConfigService } from '~/modules/config/config.service';
-import { ActionType } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { FogOfWarService } from '~/modules/fog-of-war/fog-of-war.service';
 import { UsersService } from '~/modules/users/users.service';

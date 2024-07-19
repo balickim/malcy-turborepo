@@ -1,7 +1,6 @@
+import { ArmyEntity, SettlementTypesEnum } from 'shared-nestjs';
 import { GeoJSON } from 'typeorm';
 
-import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
-import { SettlementTypesEnum } from '~/modules/settlements/entities/settlements.entity';
 import { TBasicUser } from '~/modules/users/types/users.types';
 
 export class PublicSettlementDto {

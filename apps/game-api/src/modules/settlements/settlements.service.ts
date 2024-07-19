@@ -7,7 +7,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateSettlementDto, TransferArmyDto } from 'shared-nestjs';
+import {
+  ActionType,
+  ArmyEntity,
+  CreateSettlementDto,
+  SettlementsEntity,
+  TransferArmyDto,
+} from 'shared-nestjs';
 import {
   IResource,
   ResourceTypeEnum,
@@ -19,16 +25,13 @@ import { DataSource, Repository } from 'typeorm';
 import { include, includeAll } from '~/common/utils';
 import { convertGeoJSONToPoint } from '~/common/utils/postgis';
 import { ArmiesService } from '~/modules/armies/armies.service';
-import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
 import { ConfigService } from '~/modules/config/config.service';
-import { ActionType } from '~/modules/event-log/entities/event-log.entity';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { HabitableZonesService } from '~/modules/habitable-zones/habitable-zones.service';
 import {
   PrivateSettlementDto,
   PublicSettlementDto,
 } from '~/modules/settlements/dtos/settlements.dto';
-import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 import { UserLocationService } from '~/modules/user-location/user-location.service';
 import { ISessionUser } from '~/modules/users/dtos/users.dto';
 

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SettlementsEntity } from 'shared-nestjs';
 import {
   WorldConfig,
   ResourceTypeEnum,
@@ -9,7 +10,6 @@ import {
 import { Repository } from 'typeorm';
 
 import { ConfigService } from '~/modules/config/config.service';
-import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 
 @Injectable()
 export class ResourcesService {

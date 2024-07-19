@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Job, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
 import {
+  ArmyEntity,
   ResponseStartRecruitmentDto,
   StartRecruitmentDto,
 } from 'shared-nestjs';
@@ -19,7 +20,6 @@ import { ResourceTypeEnum, UnitType } from 'shared-types';
 import { Repository } from 'typeorm';
 
 import { sleep } from '~/common/utils';
-import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
 import { ConfigService } from '~/modules/config/config.service';
 import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsService } from '~/modules/settlements/settlements.service';

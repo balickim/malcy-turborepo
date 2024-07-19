@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ArmyEntity } from 'shared-nestjs';
 import { UnitType } from 'shared-types';
 import { Repository } from 'typeorm';
-
-import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
 
 @Injectable()
 export class ArmiesService {

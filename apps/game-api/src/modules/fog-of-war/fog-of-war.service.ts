@@ -1,6 +1,14 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  DiscoveredAreaEntity,
+  DiscoveredHabitableZonesEntity,
+  DiscoveredSettlementsEntity,
+  HabitableZonesEntity,
+  SettlementsEntity,
+  VisibleAreaEntity,
+} from 'shared-nestjs';
+import {
   HabitableZonesTypesEnum,
   IDTOResponseFindHabitableZonesInBounds,
   UnitType,
@@ -8,13 +16,7 @@ import {
 import { Repository } from 'typeorm';
 
 import { CombatsService } from '~/modules/combats/combats.service';
-import { DiscoveredAreaEntity } from '~/modules/fog-of-war/entities/discovered-area.entity';
-import { DiscoveredSettlementsEntity } from '~/modules/fog-of-war/entities/discovered-settlements.entity';
-import { VisibleAreaEntity } from '~/modules/fog-of-war/entities/visible-area.entity';
-import { DiscoveredHabitableZonesEntity } from '~/modules/habitable-zones/entities/discovered-habitable-zones.entity';
-import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';
 import { PublicSettlementDtoWithConvertedLocation } from '~/modules/settlements/dtos/settlements.dto';
-import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 import { ISessionUser } from '~/modules/users/dtos/users.dto';
 
 @Injectable()

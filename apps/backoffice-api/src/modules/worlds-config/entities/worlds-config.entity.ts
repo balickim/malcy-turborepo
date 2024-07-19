@@ -1,7 +1,7 @@
+import { AuditableBaseEntity } from 'shared-nestjs';
 import { WorldConfig } from 'shared-types';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { AuditableBaseEntity } from '~/modules/event-log/entities/auditable-base.entity';
 import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';
 
 @Entity({ name: 'worldsConfig' })

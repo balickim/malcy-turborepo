@@ -1,6 +1,5 @@
+import { ConversationsEntity } from 'shared-nestjs';
 import { DataSource } from 'typeorm';
-
-import { ConversationsEntity } from '~/modules/chat/entities/conversations.entity';
 
 export async function seed(dataSource: DataSource): Promise<void> {
   process.env.PROCESS_ENV = 'seeding'; // turn off "afterInsert" in EventSubscribers

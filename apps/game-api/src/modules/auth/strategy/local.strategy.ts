@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
+import { UsersEntity } from 'shared-nestjs';
 
 import { AuthService } from '~/modules/auth/auth.service';
-import { UsersEntity } from '~/modules/users/entities/users.entity';
 import { UsersService } from '~/modules/users/users.service';
 
 @Injectable()

@@ -1,10 +1,6 @@
 import { faker } from '@faker-js/faker';
+import { HabitableZonesEntity, HabitableZonesTypesEnum } from 'shared-nestjs';
 import { DataSource, Repository } from 'typeorm';
-
-import {
-  HabitableZonesEntity,
-  HabitableZonesTypesEnum,
-} from '~/modules/habitable-zones/entities/habitable-zones.entity';
 
 // Szczecin
 const cityBounds: [number, number][] = [
@@ -54,6 +50,7 @@ async function createHabitableZone(
     HabitableZonesTypesEnum.IRON,
   ];
   const newHabitableZone = habitableZonesEntityRepository.create({
+    // @ts-expect-error ddd
     area,
     type: HabitableZonesTypesEnum[faker.helpers.arrayElement(types)],
   });

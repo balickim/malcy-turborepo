@@ -4,7 +4,6 @@ import {
   BeforeInsert,
   Column,
   Entity,
-  GeoJSON,
   OneToMany,
   PrimaryColumn,
 } from "typeorm";

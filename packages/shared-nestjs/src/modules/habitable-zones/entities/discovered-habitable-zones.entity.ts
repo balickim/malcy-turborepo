@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from "typeorm";
 import { AuditableBaseEntity } from "../../event-log/entities/auditable-base.entity";
 import {
@@ -13,11 +14,12 @@ import {
 
 // It is a snapshot of a habitable zone as user saw it walking by at that moment of time
 @Entity("discoveredHabitableZones")
+@Unique(["habitableZoneId", "discoveredByUserId"])
 export class DiscoveredHabitableZonesEntity extends AuditableBaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   habitableZoneId: string;
 
   @Column()

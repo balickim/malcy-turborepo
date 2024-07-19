@@ -1,13 +1,11 @@
+import { ArmyEntity, UsersEntity } from 'shared-nestjs';
+import { UnitType } from 'shared-types';
 import {
   DataSource,
   EntitySubscriberInterface,
   EventSubscriber,
   InsertEvent,
 } from 'typeorm';
-
-import { ArmyEntity } from '~/modules/armies/entities/armies.entity';
-import { UsersEntity } from '~/modules/users/entities/users.entity';
-import { UnitType } from 'shared-types';
 
 @EventSubscriber()
 export class UsersSubscriber implements EntitySubscriberInterface<UsersEntity> {

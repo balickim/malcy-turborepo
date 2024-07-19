@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { SettlementsEntity } from 'shared-nestjs';
 import { Repository } from 'typeorm';
-
-import { SettlementsEntity } from '~/modules/settlements/entities/settlements.entity';
 
 import { SettlementsService } from './settlements.service';
 

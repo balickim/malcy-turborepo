@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from "typeorm";
 
 import { UnitType } from "shared-types";
@@ -16,6 +17,7 @@ import { UsersEntity } from "../../users/entities/users.entity";
 
 // It is a snapshot of a settlement as user saw it walking by at that moment of time
 @Entity("discoveredSettlements")
+@Unique(["settlementId", "discoveredByUserId"])
 export class DiscoveredSettlementsEntity extends AuditableBaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -26,7 +28,7 @@ export class DiscoveredSettlementsEntity extends AuditableBaseEntity {
   @Column()
   userId: string;
 
-  @Column({ unique: true })
+  @Column()
   settlementId: string;
 
   @Column()

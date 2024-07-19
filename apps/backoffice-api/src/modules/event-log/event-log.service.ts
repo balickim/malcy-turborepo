@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EventLogEntity } from 'shared-nestjs';
 import { Repository } from 'typeorm';
-
-import { EventLogEntity } from '~/modules/event-log/entities/event-log.entity';
 
 @Injectable()
 export class EventLogService {

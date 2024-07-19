@@ -2,12 +2,13 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { catchError, firstValueFrom } from 'rxjs';
+import {
+  DiscoveredHabitableZonesEntity,
+  HabitableZonesEntity,
+} from 'shared-nestjs';
 import { Repository } from 'typeorm';
 
 import { AppConfig } from '~/modules/config/appConfig';
-import { HabitableZonesEntity } from '~/modules/habitable-zones/entities/habitable-zones.entity';
-
-import { DiscoveredHabitableZonesEntity } from './entities/discovered-habitable-zones.entity';
 
 @Injectable()
 export class HabitableZonesService implements OnModuleInit {
