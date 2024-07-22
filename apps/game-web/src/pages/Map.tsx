@@ -30,7 +30,7 @@ import { useWorldConfig } from "~/utils/useWorldConfig.ts";
 import "leaflet/dist/leaflet.css";
 
 const Map = () => {
-  const playerLocation = usePlayerPositionWatcher();
+  const playerPosition = usePlayerPositionWatcher();
   const otherPlayersPositions = useOthersPlayersPositionsWatcher();
   const worldConfig = useWorldConfig({ refetchOnWindowFocus: false });
   useUser({ refetchInterval: 5000 });
@@ -49,8 +49,8 @@ const Map = () => {
 
   const mapRef = useRef<L.Map>(null);
 
-  if (!playerLocation || worldConfig.isFetching) {
-    const part1 = playerLocation ? 50 : 0;
+  if (!playerPosition || worldConfig.isFetching) {
+    const part1 = playerPosition ? 50 : 0;
     const part2 = !worldConfig.isFetching ? 50 : 0;
 
     const ionProgressBarValue = part1 + part2;
@@ -71,7 +71,7 @@ const Map = () => {
             width: "100%",
             height: "100%",
           }}
-          center={[playerLocation.lat, playerLocation.lng]}
+          center={[playerPosition.lat, playerPosition.lng]}
           zoom={18}
           minZoom={13}
           maxZoom={18}
@@ -83,7 +83,7 @@ const Map = () => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
 
-          <Buttons mapRef={mapRef} playerLocation={playerLocation} />
+          <Buttons mapRef={mapRef} playerLocation={playerPosition} />
           <UserStatsOnMap />
           <ChatWindowOnMap />
           <MapLegend />
@@ -91,7 +91,7 @@ const Map = () => {
           <FogOfWar cityBounds={cityBounds} />
           <HabitableZones />
 
-          <UserLocationMarker location={playerLocation} />
+          <UserLocationMarker location={playerPosition} />
           <OtherPlayersLocationMarker locations={otherPlayersPositions} />
           <Settlements />
 

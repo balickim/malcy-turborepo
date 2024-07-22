@@ -155,7 +155,13 @@ const Settlements = () => {
         ))}
       </MarkerClusterGroup>
     ),
-    [settlements, handleMarkerClick, setLookUpModalData, MemoizedMarker],
+    [
+      settlements,
+      bounds,
+      handleMarkerClick,
+      setLookUpModalData,
+      MemoizedMarker,
+    ],
   );
 
   return (
