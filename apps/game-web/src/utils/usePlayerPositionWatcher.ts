@@ -23,7 +23,7 @@ export function usePlayerPositionWatcher() {
         {
           enableHighAccuracy: true,
           timeout: 5000,
-          maximumAge: 0,
+          maximumAge: 1000,
         },
         (position) => {
           if (position) {
