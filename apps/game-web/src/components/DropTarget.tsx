@@ -2,8 +2,10 @@ import React, { useEffect } from "react";
 import { useDrop } from "react-dnd";
 import { useMapEvents } from "react-leaflet";
 
+import { IGeoLocation } from "~/utils/usePlayerPositionWatcher.ts";
+
 interface IDropTargetProps {
-  onDrop: (coords: { lat: number; lng: number }) => void;
+  onDrop: (coords: IGeoLocation) => void;
 }
 
 const DropTarget: React.FC<IDropTargetProps> = ({ onDrop }) => {

@@ -6,8 +6,8 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 
 import FogOfWarApi from "~/api/fog-of-war/routes";
 import { ISettlementDto } from "~/api/settlements/dtos";
-import ContextMenu from "~/components/ContextMenu";
 import DropTarget from "~/components/DropTarget.tsx";
+import ContextMenuContainer from "~/components/Map/ContextMenuContainer.tsx";
 import ArmyDeployment from "~/components/Settlements/ArmyDeployment";
 import CreateSettlement from "~/components/Settlements/CreateSettlement.tsx";
 import SettlementInfo from "~/components/Settlements/SettlementInfo";
@@ -18,11 +18,12 @@ import BasicModalContainer, {
 } from "~/components/ui/BasicModalContainer";
 import MemoizedMarker from "~/components/ui/MemoizedMarker";
 import store from "~/store";
+import { IGeoLocation } from "~/utils/usePlayerPositionWatcher.ts";
 import useMapBounds from "~/utils/useViewBounds.ts";
 
 const Settlements = () => {
   const fogOfWarApi = new FogOfWarApi();
-  const { userStore, serverConfigStore } = store;
+  const { serverConfigStore } = store;
   const map = useMap();
   const bounds = useMapBounds(map);
   const startSiegeModalRef = useRef<IModalHandle>(null);
@@ -35,7 +36,7 @@ const Settlements = () => {
     lng: number;
   } | null>(null);
 
-  const handleDrop = (coords: { lat: number; lng: number }) => {
+  const handleDrop = (coords: IGeoLocation) => {
     setDropCoords(coords);
     modalAddSettlementRef.current?.open();
   };
@@ -86,52 +87,6 @@ const Settlements = () => {
     },
     [],
   );
-
-  const renderContextMenu = () => {
-    if (!contextMenuData || !contextMenuData.position) return null;
-
-    const isOwn = contextMenuData.settlement.user.id === userStore.user.id;
-    return (
-      <ContextMenu
-        setPosition={(position) =>
-          setContextMenuData({ ...contextMenuData, position })
-        }
-        position={contextMenuData.position}
-        items={[
-          {
-            icon: "assets/modal_info.png",
-            onClick: () => settlementInfoModalRef.current?.open(),
-          },
-          ...(isOwn
-            ? [
-                {
-                  icon: "assets/malcy_leap_off_hand.png",
-                  onClick: () => {
-                    armyDeploymentModalRef.current?.open();
-                    setOpenedModal("put_down");
-                  },
-                },
-                {
-                  icon: "assets/malcy_take_up.webp",
-                  onClick: () => {
-                    armyDeploymentModalRef.current?.open();
-                    setOpenedModal("pick_up");
-                  },
-                },
-              ]
-            : []),
-          ...(!isOwn
-            ? [
-                {
-                  icon: "assets/start_siege.webp",
-                  onClick: () => startSiegeModalRef.current?.open(),
-                },
-              ]
-            : []),
-        ]}
-      />
-    );
-  };
 
   const memoizedMarkerClusterGroup = useMemo(
     () => (
@@ -226,7 +181,14 @@ const Settlements = () => {
         }
       />
 
-      {renderContextMenu()}
+      <ContextMenuContainer
+        contextMenuData={contextMenuData}
+        setContextMenuData={setContextMenuData}
+        settlementInfoModalRef={settlementInfoModalRef}
+        armyDeploymentModalRef={armyDeploymentModalRef}
+        startSiegeModalRef={startSiegeModalRef}
+        setOpenedModal={setOpenedModal}
+      />
     </>
   );
 };
