@@ -6,7 +6,7 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 
 import FogOfWarApi from "~/api/fog-of-war/routes";
 import { ISettlementDto } from "~/api/settlements/dtos";
-import DropTarget from "~/components/DropTarget.tsx";
+import CreateSettlementDragAndDrop from "~/components/CreateSettlementDragAndDrop.tsx";
 import ContextMenuContainer from "~/components/Map/ContextMenuContainer.tsx";
 import ArmyDeployment from "~/components/Settlements/ArmyDeployment";
 import CreateSettlement from "~/components/Settlements/CreateSettlement.tsx";
@@ -122,7 +122,7 @@ const Settlements = () => {
   return (
     <>
       {memoizedMarkerClusterGroup}
-      <DropTarget onDrop={handleDrop} />
+      <CreateSettlementDragAndDrop onDrop={handleDrop} />
 
       <BasicModalContainer
         ref={modalAddSettlementRef}
