@@ -14,6 +14,8 @@ import useIsCoordinateInRadius from "~/utils/useIsCoordinateInRadius.ts";
 import { IGeoLocation } from "~/utils/usePlayerPositionWatcher";
 import useMapBounds from "~/utils/useViewBounds.ts";
 
+const offset = { x: -50, y: -50 };
+
 interface IDropTargetProps {
   onDrop: (coords: IGeoLocation) => void;
 }
@@ -59,8 +61,8 @@ const CreateSettlementDragAndDrop: React.FC<IDropTargetProps> = ({
       const sourceClientOffset = monitor.getSourceClientOffset();
       if (sourceClientOffset) {
         const point = map.containerPointToLatLng([
-          sourceClientOffset.x,
-          sourceClientOffset.y,
+          sourceClientOffset.x + offset.x,
+          sourceClientOffset.y + offset.y,
         ]);
         onDrop({ lat: point.lat, lng: point.lng });
         setIsDragging(false);
@@ -71,8 +73,8 @@ const CreateSettlementDragAndDrop: React.FC<IDropTargetProps> = ({
       const sourceClientOffset = monitor.getSourceClientOffset();
       if (sourceClientOffset) {
         const point = map.containerPointToLatLng([
-          sourceClientOffset.x,
-          sourceClientOffset.y,
+          sourceClientOffset.x + offset.x,
+          sourceClientOffset.y + offset.y,
         ]);
         setPreviewPosition(point);
         setIsDragging(true);
