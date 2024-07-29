@@ -112,6 +112,24 @@ const MapLegend = () => {
 
           <IonRow className="ion-align-items-center">
             <IonCol size={"auto"}>
+              <div
+                className={"w-7 h-7"}
+                style={{
+                  backgroundColor: "#9da574",
+                  borderRadius: "50%",
+                  border: "2px solid gold",
+                }}
+              />
+            </IonCol>
+            <IonCol size={"6"} className={"text-nowrap"}>
+              <IonText color={"light"} className={"font-bold"}>
+                Siedlisko malców ze zwiększoną produkcją złota
+              </IonText>
+            </IonCol>
+          </IonRow>
+
+          <IonRow className="ion-align-items-center">
+            <IonCol size={"auto"}>
               <img
                 src={"assets/settlements/types/mining_town.webp"}
                 alt={"player"}

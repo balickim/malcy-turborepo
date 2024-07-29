@@ -1,7 +1,7 @@
-import { HabitableZonesTypesEnum } from './habitable-zones';
+import { HabitableZonesTypesEnum } from "./habitable-zones";
 
 export interface IDTOResponseFindHabitableZonesInBounds {
-  id: string,
-  type: HabitableZonesTypesEnum,
-  area: number[]
+  id: string;
+  type: HabitableZonesTypesEnum;
+  area: [number, number][];
 }

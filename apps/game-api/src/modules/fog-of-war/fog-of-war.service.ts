@@ -295,7 +295,7 @@ export class FogOfWarService {
           return {
             id: result.id as string,
             type: result.type as HabitableZonesTypesEnum,
-            area: convertedCoordinates as number[],
+            area: convertedCoordinates,
           };
         } else {
           this.logger.warn('Unexpected GeoJSON type:', geoJson.type);
