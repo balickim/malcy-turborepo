@@ -55,6 +55,10 @@ export class SettlementsEntity extends AuditableBaseEntity {
   @Min(0)
   wood: number;
 
+  @Column({ select: false, default: 0 })
+  @Min(0)
+  iron: number;
+
   @Column({ default: 1, nullable: false })
   @Min(1)
   @Max(10)

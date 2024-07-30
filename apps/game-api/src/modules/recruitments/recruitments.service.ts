@@ -110,6 +110,8 @@ export class RecruitmentsService implements OnModuleInit {
       unitCost[ResourceTypeEnum.gold] * startRecruitmentDto.unitCount;
     const woodCost =
       unitCost[ResourceTypeEnum.wood] * startRecruitmentDto.unitCount;
+    const ironCost =
+      unitCost[ResourceTypeEnum.iron] * startRecruitmentDto.unitCount;
 
     if (settlement.gold < goldCost || settlement.wood < woodCost) {
       throw new BadRequestException('You dont have enough resources');
@@ -130,6 +132,7 @@ export class RecruitmentsService implements OnModuleInit {
     const lockedResources = {
       [ResourceTypeEnum.gold]: Math.max(-goldCost),
       [ResourceTypeEnum.wood]: Math.max(-woodCost),
+      [ResourceTypeEnum.iron]: Math.max(-ironCost),
     };
     const finishesOn = new Date(
       Date.now() +
@@ -197,12 +200,17 @@ export class RecruitmentsService implements OnModuleInit {
       const woodPerUnit =
         Math.abs(job.data.lockedResources[ResourceTypeEnum.wood]) /
         job.data.unitCount;
+      const ironPerUnit =
+        Math.abs(job.data.lockedResources[ResourceTypeEnum.iron]) /
+        job.data.unitCount;
 
       await this.settlementsService.changeResources(settlementId, {
         [ResourceTypeEnum.gold]:
           goldPerUnit * (job.data.unitCount - Number(job.progress)),
         [ResourceTypeEnum.wood]:
           woodPerUnit * (job.data.unitCount - Number(job.progress)),
+        [ResourceTypeEnum.iron]:
+          ironPerUnit * (job.data.unitCount - Number(job.progress)),
       });
     }
 

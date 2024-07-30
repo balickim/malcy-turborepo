@@ -35,92 +35,56 @@ export class ResourcesService {
   async updateResources() {
     const gameConfig = await this.configService.gameConfig();
 
-    const goldMiningTown = this.getBaseValue(
+    const resources = ['gold', 'wood', 'iron'];
+    const settlementTypes = [
       SharedSettlementTypesEnum.MINING_TOWN,
-      ResourceTypeEnum.gold,
-      gameConfig,
-    );
-    const goldCastleTown = this.getBaseValue(
       SharedSettlementTypesEnum.CASTLE_TOWN,
-      ResourceTypeEnum.gold,
-      gameConfig,
-    );
-    const goldFortifiedSettlement = this.getBaseValue(
       SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT,
-      ResourceTypeEnum.gold,
-      gameConfig,
-    );
-    const goldCapitolSettlement = this.getBaseValue(
       SharedSettlementTypesEnum.CAPITOL_SETTLEMENT,
-      ResourceTypeEnum.gold,
-      gameConfig,
-    );
+    ];
 
-    const woodMiningTown = this.getBaseValue(
-      SharedSettlementTypesEnum.MINING_TOWN,
-      ResourceTypeEnum.wood,
-      gameConfig,
-    );
-    const woodCastleTown = this.getBaseValue(
-      SharedSettlementTypesEnum.CASTLE_TOWN,
-      ResourceTypeEnum.wood,
-      gameConfig,
-    );
-    const woodFortifiedSettlement = this.getBaseValue(
-      SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT,
-      ResourceTypeEnum.wood,
-      gameConfig,
-    );
-    const woodCapitolSettlement = this.getBaseValue(
-      SharedSettlementTypesEnum.CAPITOL_SETTLEMENT,
-      ResourceTypeEnum.wood,
-      gameConfig,
-    );
+    const resourceValues = { gold: {}, wood: {}, iron: {} };
+    const maxResources = { gold: {}, wood: {}, iron: {} };
 
-    const maxGoldMiningTown =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.MINING_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.gold];
-    const maxGoldCastleTown =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CASTLE_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.gold];
-    const maxGoldFortifiedSettlement =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]
-        .RESOURCES_CAP[ResourceTypeEnum.gold];
-    const maxGoldCapitolSettlement =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
-        .RESOURCES_CAP[ResourceTypeEnum.gold];
-
-    const maxWoodMiningTown =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.MINING_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.wood];
-    const maxWoodCastleTown =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CASTLE_TOWN]
-        .RESOURCES_CAP[ResourceTypeEnum.wood];
-    const maxWoodFortifiedSettlement =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]
-        .RESOURCES_CAP[ResourceTypeEnum.wood];
-    const maxWoodCapitolSettlement =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
-        .RESOURCES_CAP[ResourceTypeEnum.wood];
+    for (const resource of resources) {
+      resourceValues[resource] = {};
+      maxResources[resource] = {};
+      for (const type of settlementTypes) {
+        resourceValues[resource][type] = this.getBaseValue(
+          type,
+          resource as ResourceTypeEnum,
+          gameConfig,
+        );
+        maxResources[resource][type] =
+          gameConfig.SETTLEMENT[type].RESOURCES_CAP[resource];
+      }
+    }
 
     const query = this.settlementsEntityRepository
       .createQueryBuilder()
       .update(SettlementsEntity)
       .set({
         gold: () => `CASE
-          WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' AND "isBesieged" = FALSE THEN LEAST("gold" + ${goldMiningTown} * "resourcesMultiplicator", ${maxGoldMiningTown})
-          WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' AND "isBesieged" = FALSE THEN LEAST("gold" + ${goldCastleTown} * "resourcesMultiplicator", ${maxGoldCastleTown})
-          WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' AND "isBesieged" = FALSE THEN LEAST("gold" + ${goldFortifiedSettlement} * "resourcesMultiplicator", ${maxGoldFortifiedSettlement})
-          WHEN "type" = '${SharedSettlementTypesEnum.CAPITOL_SETTLEMENT}' AND "isBesieged" = FALSE THEN LEAST("gold" + ${goldCapitolSettlement} * "resourcesMultiplicator", ${maxGoldCapitolSettlement})
-          ELSE "gold"
-        END`,
+        WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' AND "isBesieged" = FALSE THEN LEAST("gold" + ${resourceValues.gold[SharedSettlementTypesEnum.MINING_TOWN]} * "resourcesMultiplicator", ${maxResources.gold[SharedSettlementTypesEnum.MINING_TOWN]})
+        WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' AND "isBesieged" = FALSE THEN LEAST("gold" + ${resourceValues.gold[SharedSettlementTypesEnum.CASTLE_TOWN]} * "resourcesMultiplicator", ${maxResources.gold[SharedSettlementTypesEnum.CASTLE_TOWN]})
+        WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' AND "isBesieged" = FALSE THEN LEAST("gold" + ${resourceValues.gold[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]} * "resourcesMultiplicator", ${maxResources.gold[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]})
+        WHEN "type" = '${SharedSettlementTypesEnum.CAPITOL_SETTLEMENT}' AND "isBesieged" = FALSE THEN LEAST("gold" + ${resourceValues.gold[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]} * "resourcesMultiplicator", ${maxResources.gold[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]})
+        ELSE "gold"
+      END`,
         wood: () => `CASE
-          WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' AND "isBesieged" = FALSE THEN LEAST("wood" + ${woodMiningTown} * "resourcesMultiplicator", ${maxWoodMiningTown})
-          WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' AND "isBesieged" = FALSE THEN LEAST("wood" + ${woodCastleTown} * "resourcesMultiplicator", ${maxWoodCastleTown})
-          WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' AND "isBesieged" = FALSE THEN LEAST("wood" + ${woodFortifiedSettlement} * "resourcesMultiplicator", ${maxWoodFortifiedSettlement})
-          WHEN "type" = '${SharedSettlementTypesEnum.CAPITOL_SETTLEMENT}' AND "isBesieged" = FALSE THEN LEAST("wood" + ${woodCapitolSettlement} * "resourcesMultiplicator", ${maxWoodCapitolSettlement})
-          ELSE "wood"
-        END`,
+        WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' AND "isBesieged" = FALSE THEN LEAST("wood" + ${resourceValues.wood[SharedSettlementTypesEnum.MINING_TOWN]} * "resourcesMultiplicator", ${maxResources.wood[SharedSettlementTypesEnum.MINING_TOWN]})
+        WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' AND "isBesieged" = FALSE THEN LEAST("wood" + ${resourceValues.wood[SharedSettlementTypesEnum.CASTLE_TOWN]} * "resourcesMultiplicator", ${maxResources.wood[SharedSettlementTypesEnum.CASTLE_TOWN]})
+        WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' AND "isBesieged" = FALSE THEN LEAST("wood" + ${resourceValues.wood[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]} * "resourcesMultiplicator", ${maxResources.wood[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]})
+        WHEN "type" = '${SharedSettlementTypesEnum.CAPITOL_SETTLEMENT}' AND "isBesieged" = FALSE THEN LEAST("wood" + ${resourceValues.wood[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]} * "resourcesMultiplicator", ${maxResources.wood[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]})
+        ELSE "wood"
+      END`,
+        iron: () => `CASE
+        WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' AND "isBesieged" = FALSE THEN LEAST("iron" + ${resourceValues.iron[SharedSettlementTypesEnum.MINING_TOWN]} * "resourcesMultiplicator", ${maxResources.iron[SharedSettlementTypesEnum.MINING_TOWN]})
+        WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' AND "isBesieged" = FALSE THEN LEAST("iron" + ${resourceValues.iron[SharedSettlementTypesEnum.CASTLE_TOWN]} * "resourcesMultiplicator", ${maxResources.iron[SharedSettlementTypesEnum.CASTLE_TOWN]})
+        WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' AND "isBesieged" = FALSE THEN LEAST("iron" + ${resourceValues.iron[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]} * "resourcesMultiplicator", ${maxResources.iron[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]})
+        WHEN "type" = '${SharedSettlementTypesEnum.CAPITOL_SETTLEMENT}' AND "isBesieged" = FALSE THEN LEAST("iron" + ${resourceValues.iron[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]} * "resourcesMultiplicator", ${maxResources.iron[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]})
+        ELSE "iron"
+      END`,
       })
       .getQuery();
 

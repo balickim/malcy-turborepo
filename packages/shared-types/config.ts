@@ -1,17 +1,19 @@
-import { UnitType } from './armies';
-import { SharedSettlementTypesEnum } from './settlements';
+import { UnitType } from "./armies";
+import { SharedSettlementTypesEnum } from "./settlements";
 
 export const enum ResourceTypeEnum {
-  wood = 'wood',
-  gold = 'gold',
+  wood = "wood",
+  gold = "gold",
+  iron = "iron",
 }
 
 export interface IResource {
   [ResourceTypeEnum.gold]: number;
   [ResourceTypeEnum.wood]: number;
+  [ResourceTypeEnum.iron]: number;
 }
 
-interface UnitRecruitment {
+interface IBuy {
   COST: IResource;
   TIME_MS: number;
 }
@@ -31,8 +33,9 @@ interface UnitTypeMapper<T> {
 }
 
 interface SettlementConfig {
-  MAX: number | 'infinite';
-  RECRUITMENT: UnitTypeMapper<UnitRecruitment>;
+  MAX: number | "infinite";
+  UPGRADE: IBuy;
+  RECRUITMENT: UnitTypeMapper<IBuy>;
   RESOURCES_CAP: IResource;
   RESOURCE_GENERATION_BASE: IResource;
 }
