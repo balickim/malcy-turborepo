@@ -1,8 +1,11 @@
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import { validateOrReject, ValidationError } from 'class-validator';
 import Redis, { RedisKey } from 'ioredis';
-import { catchError, firstValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
+import { WorldConfigDto } from 'shared-nestjs/dist/modules/config';
 import { WorldConfig } from 'shared-types';
 
 import { AppConfig } from '~/modules/config/appConfig';
@@ -22,6 +25,7 @@ export class ConfigService implements OnModuleInit {
 
   async onModuleInit() {
     const gameConfig = await this.retrieveGameConfig();
+    await this.validateConfig(gameConfig);
     await this.setConfig(gameConfig);
   }
 
@@ -40,6 +44,39 @@ export class ConfigService implements OnModuleInit {
       ),
     );
     return response?.data.data;
+  }
+
+  private async validateConfig(config: WorldConfig) {
+    const instance = plainToInstance(WorldConfigDto, config);
+    try {
+      await validateOrReject(instance);
+    } catch (errors) {
+      if (errors instanceof Array) {
+        for (const error of errors) {
+          this.logValidationErrors(error);
+        }
+      }
+      throw new Error('Validation failed');
+    }
+  }
+
+  private logValidationErrors(error: ValidationError, prefix = '') {
+    if (error.children && error.children.length > 0) {
+      for (const child of error.children) {
+        this.logValidationErrors(child, `${prefix}${error.property}.`);
+      }
+    } else {
+      this.logger.error(
+        `${prefix}${error.property} has failed constraints: ${Object.keys(
+          error.constraints,
+        ).join(', ')}`,
+      );
+      if (error.constraints) {
+        for (const key in error.constraints) {
+          this.logger.error(`${key}: ${error.constraints[key]}`);
+        }
+      }
+    }
   }
 
   private async setConfig(worldConfig: WorldConfig) {
