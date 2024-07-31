@@ -8,6 +8,7 @@ export interface IUser {
   username: string;
   wood?: number;
   gold?: number;
+  iron?: number;
   updatedAt: Date;
   army: TArmy;
 }

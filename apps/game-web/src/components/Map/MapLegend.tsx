@@ -341,7 +341,7 @@ const MapLegend = () => {
           <IonRow className="ion-align-items-center">
             <IonCol size={"auto"}>
               <img
-                src={"assets/units/gold_icon.webp"}
+                src={"assets/gold_icon.webp"}
                 alt={"player"}
                 className="w-7 h-7 rounded-full"
               />
@@ -356,7 +356,7 @@ const MapLegend = () => {
           <IonRow className="ion-align-items-center">
             <IonCol size={"auto"}>
               <img
-                src={"assets/units/wood_icon.webp"}
+                src={"assets/wood_icon.webp"}
                 alt={"player"}
                 className="w-7 h-7 rounded-full"
               />
@@ -364,6 +364,21 @@ const MapLegend = () => {
             <IonCol size={"6"} className={"text-nowrap"}>
               <IonText color={"light"} className={"font-bold"}>
                 Ikona zasobu drewna
+              </IonText>
+            </IonCol>
+          </IonRow>
+
+          <IonRow className="ion-align-items-center">
+            <IonCol size={"auto"}>
+              <img
+                src={"assets/iron_icon.webp"}
+                alt={"player"}
+                className="w-7 h-7 rounded-full"
+              />
+            </IonCol>
+            <IonCol size={"6"} className={"text-nowrap"}>
+              <IonText color={"light"} className={"font-bold"}>
+                Ikona zasobu żelaza
               </IonText>
             </IonCol>
           </IonRow>

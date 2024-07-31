@@ -15,7 +15,11 @@ export default observer(function UserStatsOnMap() {
         <ArmyInfo army={userStore.user.army} />
       </div>
       <div className="bg-gray-800 bg-opacity-40 p-2 rounded-bl text-white">
-        <ResourcesInfo gold={userStore.user.gold} wood={userStore.user.wood} />
+        <ResourcesInfo
+          gold={userStore.user.gold}
+          wood={userStore.user.wood}
+          iron={userStore.user.iron}
+        />
       </div>
     </OnMapItemContainer>
   );

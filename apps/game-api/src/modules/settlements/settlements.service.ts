@@ -273,7 +273,11 @@ export class SettlementsService {
 
   changeResources = async (settlementId: string, resourcesUsed: IResource) => {
     const settlement = await this.settlementsEntityRepository.findOne({
-      select: include(this.settlementsEntityRepository, ['gold', 'wood']),
+      select: include(this.settlementsEntityRepository, [
+        'gold',
+        'wood',
+        'iron',
+      ]),
       where: {
         id: settlementId,
       },
@@ -404,4 +408,85 @@ export class SettlementsService {
   public async softDeleteSettlement(settlementId: string) {
     return this.settlementsEntityRepository.softDelete({ id: settlementId });
   }
+
+  // public async upgradeSettlementType(
+  //   startRecruitmentDto: StartRecruitmentDto,
+  //   settlement: PrivateSettlementDto,
+  // ) {
+  //   const gameConfig = await this.configService.gameConfig();
+  //
+  //   const settlementUpgradeTime =
+  //     gameConfig.SETTLEMENT[settlement.type].UPGRADE.TIME_MS;
+  //   const settlementUpgradeCost =
+  //     gameConfig.SETTLEMENT[settlement.type].UPGRADE.COST;
+  //
+  //   const goldCost =
+  //     settlementUpgradeCost[ResourceTypeEnum.gold] *
+  //     startRecruitmentDto.unitCount;
+  //   const woodCost =
+  //     settlementUpgradeCost[ResourceTypeEnum.wood] *
+  //     startRecruitmentDto.unitCount;
+  //   // const ironCost = // TODO implement iron
+  //   //   settlementUpgradeCost[ResourceTypeEnum.wood] *
+  //   //   startRecruitmentDto.unitCount;
+  //
+  //   if (settlement.gold < goldCost || settlement.wood < woodCost) {
+  //     throw new BadRequestException('You dont have enough resources');
+  //   }
+  //
+  //   const unfinishedJobs = await this.getUnfinishedRecruitmentsBySettlementId(
+  //     startRecruitmentDto.settlementId,
+  //   );
+  //   let totalDelayMs = 0;
+  //   for (const job of unfinishedJobs) {
+  //     const jobFinishTime = new Date(job.data.finishesOn).getTime();
+  //     const now = Date.now();
+  //     if (jobFinishTime > now) {
+  //       totalDelayMs += jobFinishTime - now;
+  //     }
+  //   }
+  //
+  //   const lockedResources = {
+  //     [ResourceTypeEnum.gold]: Math.max(-goldCost),
+  //     [ResourceTypeEnum.wood]: Math.max(-woodCost),
+  //     [ResourceTypeEnum.iron]: 0,
+  //   };
+  //   const finishesOn = new Date(
+  //     Date.now() +
+  //       startRecruitmentDto.unitCount * settlementUpgradeTime +
+  //       totalDelayMs,
+  //   );
+  //   const data: ResponseStartRecruitmentDto = {
+  //     ...startRecruitmentDto,
+  //     settlementUpgradeTime,
+  //     finishesOn,
+  //     lockedResources,
+  //   };
+  //
+  //   await this.settlementsService.changeResources(
+  //     startRecruitmentDto.settlementId,
+  //     lockedResources,
+  //   );
+  //
+  //   const queue = new Queue<ResponseStartRecruitmentDto>(
+  //     bullSettlementRecruitmentQueueName(startRecruitmentDto.settlementId),
+  //     { connection: this.redis },
+  //   );
+  //   new Worker(
+  //     bullSettlementRecruitmentQueueName(startRecruitmentDto.settlementId),
+  //     this.recruitProcessor,
+  //     { connection: this.redis },
+  //   );
+  //   const job: Job<ResponseStartRecruitmentDto> = await queue.add(
+  //     'recruit',
+  //     data,
+  //     {
+  //       delay: totalDelayMs,
+  //     },
+  //   );
+  //   this.logger.log(
+  //     `Job added to queue for settlement ${startRecruitmentDto.settlementId} with ID: ${job.id}`,
+  //   );
+  //   return job;
+  // }
 }

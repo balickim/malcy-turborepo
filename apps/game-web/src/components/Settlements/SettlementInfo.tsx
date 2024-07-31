@@ -70,6 +70,8 @@ const SettlementInfo = memo(({ settlementId }: ISettlementInfo) => {
                       goldMax={resourcesCap && resourcesCap.gold}
                       wood={settlementData.wood}
                       woodMax={resourcesCap && resourcesCap.wood}
+                      iron={settlementData.iron}
+                      ironMax={resourcesCap && resourcesCap.iron}
                     />
                   </div>
                 }

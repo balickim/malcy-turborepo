@@ -5,14 +5,25 @@ interface IResources {
   goldMax?: number;
   wood?: number;
   woodMax?: number;
+  iron?: number;
+  ironMax?: number;
 }
 
-export function ResourcesInfo({ gold, goldMax, wood, woodMax }: IResources) {
-  if (gold === undefined || wood === undefined) return null;
+export function ResourcesInfo({
+  gold,
+  goldMax,
+  wood,
+  woodMax,
+  iron,
+  ironMax,
+}: IResources) {
+  if (gold === undefined || wood === undefined || iron === undefined)
+    return null;
 
   const resources = [
     { type: ResourceTypeEnum.gold, value: gold, max: goldMax },
     { type: ResourceTypeEnum.wood, value: wood, max: woodMax },
+    { type: ResourceTypeEnum.iron, value: iron, max: ironMax },
   ];
 
   return (
@@ -20,7 +31,7 @@ export function ResourcesInfo({ gold, goldMax, wood, woodMax }: IResources) {
       {resources.map(({ type, value, max }) => (
         <div key={type} className={"flex items-center gap-0.5"}>
           <img
-            src={`assets/units/${type}_icon.webp`}
+            src={`assets/${type}_icon.webp`}
             alt={type}
             className={"w-4 h-4 rounded-full"}
           />

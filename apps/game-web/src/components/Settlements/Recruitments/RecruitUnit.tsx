@@ -65,7 +65,8 @@ export const RecruitUnit: React.FC<IRecruitUnitProps> = ({
     ]!.COST;
   const maxUnitsByGold = Math.floor(settlementData.gold / unitCost.gold);
   const maxUnitsByWood = Math.floor(settlementData.wood / unitCost.wood);
-  const maxUnits = Math.min(maxUnitsByGold, maxUnitsByWood);
+  const maxUnitsByIron = Math.floor(settlementData.iron / unitCost.iron);
+  const maxUnits = Math.min(maxUnitsByGold, maxUnitsByWood, maxUnitsByIron);
 
   return (
     <IonGrid className="mx-auto border-b-2">
@@ -96,6 +97,8 @@ export const RecruitUnit: React.FC<IRecruitUnitProps> = ({
             woodMax={settlementData.wood}
             gold={unitCost.gold * (unitCount || 0)}
             goldMax={settlementData.gold}
+            iron={unitCost.iron * (unitCount || 0)}
+            ironMax={settlementData.iron}
           />
           <IonRange
             min={0}

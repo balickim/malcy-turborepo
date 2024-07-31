@@ -22,6 +22,7 @@ export interface IPublicSettlementDto {
 export interface IPrivateSettlementDto extends IPublicSettlementDto {
   gold: number;
   wood: number;
+  iron: number;
   army: TArmy;
 }
 

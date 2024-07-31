@@ -43,7 +43,7 @@ export class UsersService {
     relations?: string[],
   ): Promise<UsersEntity | null> {
     return this.usersRepository.findOne({
-      select: include(this.usersRepository, ['gold', 'wood']),
+      select: include(this.usersRepository, ['gold', 'wood', 'iron']),
       where: { id },
       relations,
     });
