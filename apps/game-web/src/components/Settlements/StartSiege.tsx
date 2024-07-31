@@ -1,7 +1,9 @@
-import { IonButton } from "@ionic/react";
+import { IonButton, IonSelect, IonSelectOption } from "@ionic/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Formik } from "formik";
 import { memo } from "react";
+import { StartSiegeDto } from "shared-nestjs";
+import { UnitType as SharedUnitType, SiegeTypes } from "shared-types";
 
 import CombatsApi from "~/api/combats/routes";
 import FogOfWarApi from "~/api/fog-of-war/routes";
@@ -10,7 +12,7 @@ import { UnitSlider } from "~/components/Settlements/UnitSlider";
 import BasicModalBodyWrapper from "~/components/ui/BasicModalBodyWrapper.tsx";
 import Tile from "~/components/ui/Tile.tsx";
 import store from "~/store";
-import { TArmy, UnitType } from "~/types/army";
+import { UnitType } from "~/types/army";
 import { useUser } from "~/utils/useUser";
 
 interface IStartSiege {
@@ -35,17 +37,13 @@ const StartSiege = memo(({ settlementId, refetch }: IStartSiege) => {
   const settlementData = settlement?.data;
 
   const mutation = useMutation({
-    mutationFn: (data: TArmy) =>
+    mutationFn: (data: Omit<StartSiegeDto, "settlementId">) =>
       combatsApi.startSiege({
-        army: data,
+        army: data.army,
+        siegeType: data.siegeType,
         settlementId: settlementId!,
       }),
   });
-
-  const startSiege = async (data: TArmy) => {
-    await mutation.mutateAsync(data);
-    refetch();
-  };
 
   if (!settlementData) return null;
   return (
@@ -56,11 +54,17 @@ const StartSiege = memo(({ settlementId, refetch }: IStartSiege) => {
         [UnitType.KNIGHT]: 0,
         [UnitType.LUCHADOR]: 0,
         [UnitType.ARCHMAGE]: 0,
+        siegeType: SiegeTypes.DESTRUCTION,
       }}
       onSubmit={async (values, formikHelpers) => {
-        await startSiege(values);
+        const { siegeType, ...army } = values;
+        await mutation.mutateAsync({
+          army: army as unknown as Record<SharedUnitType, number>,
+          siegeType: siegeType,
+        });
         formikHelpers.resetForm();
-        await user.refetch();
+        void user.refetch();
+        void refetch();
       }}
     >
       {({ values, setFieldValue, handleSubmit }) => (
@@ -96,6 +100,22 @@ const StartSiege = memo(({ settlementId, refetch }: IStartSiege) => {
                     />
                   );
                 })}
+
+                <IonSelect
+                  interface="action-sheet"
+                  label="Rodzaj oblężenia"
+                  value={values.siegeType}
+                  onIonChange={(e) =>
+                    setFieldValue("siegeType", e.detail.value)
+                  }
+                >
+                  <IonSelectOption value={SiegeTypes.DESTRUCTION}>
+                    Zniszczenie
+                  </IonSelectOption>
+                  <IonSelectOption value={SiegeTypes.TAKE_OVER}>
+                    Przejęcie
+                  </IonSelectOption>
+                </IonSelect>
 
                 <IonButton fill="clear" expand="block" type="submit">
                   Rozpocznij

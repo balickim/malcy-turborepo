@@ -1,4 +1,5 @@
-import { StartSiegeDto } from '~/modules/combats/dtos/siege.dto';
+import { StartSiegeDto } from 'shared-nestjs';
+
 import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 
 export interface ISiegeJob extends StartSiegeDto {

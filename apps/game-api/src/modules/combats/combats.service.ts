@@ -9,13 +9,13 @@ import {
 } from '@nestjs/common';
 import { Job, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
+import { StartSiegeDto } from 'shared-nestjs';
 import { UnitType } from 'shared-types';
 
 import { IBattleOutcome } from '~/common/types/combats.types';
 import { sleep } from '~/common/utils';
 import { ArmyRepository } from '~/modules/armies/armies.repository';
 import { ArmiesService } from '~/modules/armies/armies.service';
-import { StartSiegeDto } from '~/modules/combats/dtos/siege.dto';
 import { ISiegeJob } from '~/modules/combats/types';
 import { ConfigService } from '~/modules/config/config.service';
 import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
@@ -103,25 +103,31 @@ export class CombatsService {
     job: Job<ISiegeJob>,
     battleOutcome: IBattleOutcome,
   ) {
-    const garrison = await this.armyRepository.findOne({
-      where: { settlementId: job.data.defenderSettlement.id },
-    });
-    await this.armyRepository.resetUnits(garrison.id);
-    await this.settlementsService.changeSettlementOwner(
-      job.data.defenderSettlement.id,
-      job.data.attackerUserId,
-    );
-    garrison[UnitType.SWORDSMAN] =
-      battleOutcome.remainingAttackerArmy[UnitType.SWORDSMAN];
-    garrison[UnitType.ARCHER] =
-      battleOutcome.remainingAttackerArmy[UnitType.ARCHER];
-    garrison[UnitType.KNIGHT] =
-      battleOutcome.remainingAttackerArmy[UnitType.KNIGHT];
-    garrison[UnitType.LUCHADOR] =
-      battleOutcome.remainingAttackerArmy[UnitType.LUCHADOR];
-    garrison[UnitType.ARCHMAGE] =
-      battleOutcome.remainingAttackerArmy[UnitType.ARCHMAGE];
-    return this.armyRepository.save(garrison);
+    if (job.data.siegeType === 'destruction') {
+      await this.settlementsService.softDeleteSettlement(job.data.settlementId);
+      return;
+    } else if (job.data.siegeType === 'take-over') {
+      const garrison = await this.armyRepository.findOne({
+        where: { settlementId: job.data.defenderSettlement.id },
+      });
+      await this.armyRepository.resetUnits(garrison.id);
+      await this.settlementsService.changeSettlementOwner(
+        job.data.defenderSettlement.id,
+        job.data.attackerUserId,
+      );
+      garrison[UnitType.SWORDSMAN] =
+        battleOutcome.remainingAttackerArmy[UnitType.SWORDSMAN];
+      garrison[UnitType.ARCHER] =
+        battleOutcome.remainingAttackerArmy[UnitType.ARCHER];
+      garrison[UnitType.KNIGHT] =
+        battleOutcome.remainingAttackerArmy[UnitType.KNIGHT];
+      garrison[UnitType.LUCHADOR] =
+        battleOutcome.remainingAttackerArmy[UnitType.LUCHADOR];
+      garrison[UnitType.ARCHMAGE] =
+        battleOutcome.remainingAttackerArmy[UnitType.ARCHMAGE];
+      void this.armyRepository.save(garrison);
+      return;
+    }
   }
 
   private async handleDefenderWin(
@@ -241,6 +247,8 @@ export class CombatsService {
       army: siegeDto.army,
       defenderSettlement,
       attackerUserId,
+      siegeType: siegeDto.siegeType,
+      settlementId: siegeDto.settlementId,
     });
     await this.settlementsService.updateSiegeStatus(
       defenderSettlement.id,

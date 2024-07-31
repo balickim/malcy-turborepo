@@ -400,4 +400,8 @@ export class SettlementsService {
       { isBesieged },
     );
   }
+
+  public async softDeleteSettlement(settlementId: string) {
+    return this.settlementsEntityRepository.softDelete({ id: settlementId });
+  }
 }

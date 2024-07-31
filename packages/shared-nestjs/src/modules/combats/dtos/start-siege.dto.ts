@@ -1,13 +1,12 @@
-import { UnitType } from "shared-types";
 import {
   IsString,
   IsEnum,
-  IsInt,
-  Min,
-  ValidateNested,
   IsObject,
+  registerDecorator,
+  ValidationOptions,
+  ValidationArguments,
 } from "class-validator";
-import { Type } from "class-transformer";
+import { UnitType } from "shared-types";
 
 export const SiegeTypes = {
   DESTRUCTION: "destruction",
@@ -15,10 +14,28 @@ export const SiegeTypes = {
 } as const;
 export type SiegeType = (typeof SiegeTypes)[keyof typeof SiegeTypes];
 
-export class ArmyUnit {
-  @IsInt()
-  @Min(1, { message: "Each unit value must be greater than 0." })
-  count: number;
+function IsValidArmy(validationOptions?: ValidationOptions) {
+  return function (object: Object, propertyName: string) {
+    registerDecorator({
+      name: "IsValidArmy",
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      validator: {
+        validate(value: any, args: ValidationArguments) {
+          if (typeof value !== "object" || value === null) {
+            return false;
+          }
+          return Object.values(value).every(
+            (v) => typeof v === "number" && Number.isInteger(v) && v >= 0
+          );
+        },
+        defaultMessage(args: ValidationArguments) {
+          return "Each unit count must be an integer 0 or greater.";
+        },
+      },
+    });
+  };
 }
 
 export class StartSiegeDto {
@@ -31,7 +48,8 @@ export class StartSiegeDto {
   siegeType: SiegeType;
 
   @IsObject()
-  @ValidateNested({ each: true })
-  @Type(() => ArmyUnit)
-  army: Record<UnitType, ArmyUnit>;
+  @IsValidArmy({
+    message: "Each unit count must be an integer 0 or greater.",
+  })
+  army: Record<UnitType, number>;
 }

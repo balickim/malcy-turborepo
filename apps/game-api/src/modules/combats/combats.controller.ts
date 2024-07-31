@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { StartSiegeDto } from 'shared-nestjs';
 
 import { EnsureUserIsWithinLocation } from '~/common/decorators/ensure-user-is-within-location.decorator';
 import { ResponseMessage } from '~/common/decorators/response-message.decorator';
 import { CombatsService } from '~/modules/combats/combats.service';
-import { StartSiegeDto } from '~/modules/combats/dtos/siege.dto';
 import { IExpressRequestWithUserAndSettlement } from '~/modules/user-location/guards/near-settlement-location.guard';
 
 @ApiTags('combats')
