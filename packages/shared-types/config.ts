@@ -38,6 +38,7 @@ interface SettlementConfig {
   RECRUITMENT: UnitTypeMapper<IBuy>;
   RESOURCES_CAP: IResource;
   RESOURCE_GENERATION_BASE: IResource;
+  NEXT_TYPE?: SharedSettlementTypesEnum;
 }
 
 export interface WorldConfig {

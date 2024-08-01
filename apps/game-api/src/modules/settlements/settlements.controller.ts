@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Request,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateSettlementDto, TransferArmyDto } from 'shared-nestjs';
 
@@ -63,5 +72,31 @@ export class SettlementsController {
       req.settlement,
       false,
     );
+  }
+
+  @Put('/upgrade')
+  @EnsureUserIsWithinLocation('settlementId', 'block')
+  @EnsureSettlementBelongsToUserDecorator('settlementId')
+  async upgradeSettlement(
+    @Request() req: IExpressRequestWithUserAndSettlement,
+  ) {
+    return this.settlementsService.upgradeSettlementType(req.settlement);
+  }
+
+  @Get('/upgrade/:settlementId')
+  @EnsureSettlementBelongsToUserDecorator('settlementId')
+  async getUnfinishedJobs(@Param('settlementId') settlementId: string) {
+    return this.settlementsService.getUnfinishedUpgradeBySettlementId(
+      settlementId,
+    );
+  }
+
+  @Delete('/upgrade/:settlementId/:jobId')
+  @EnsureSettlementBelongsToUserDecorator('settlementId')
+  async cancelRecruitment(
+    @Param('settlementId') settlementId: string,
+    @Param('jobId') jobId: string,
+  ) {
+    return this.settlementsService.cancelUpgrade(settlementId, jobId);
   }
 }

@@ -173,15 +173,7 @@ export class RecruitmentsService implements OnModuleInit {
     return job;
   }
 
-  public async cancelRecruitment(
-    settlementId: string,
-    jobId: string,
-    user: ISessionUser,
-  ) {
-    const settlement =
-      await this.settlementsService.getPublicSettlementById(settlementId);
-    if (settlement.user.id !== user.id) throw new UnauthorizedException();
-
+  public async cancelRecruitment(settlementId: string, jobId: string) {
     const queue = new Queue<ResponseStartRecruitmentDto>(
       bullSettlementRecruitmentQueueName(settlementId),
       { connection: this.redis },

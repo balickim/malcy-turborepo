@@ -123,6 +123,10 @@ class SettlementConfigDto {
   MAX: "infinite" | number;
 
   @ValidateNested()
+  @Type(() => BuyDto)
+  UPGRADE: BuyDto;
+
+  @ValidateNested()
   @Type(() => RecruitmentMapperDto)
   RECRUITMENT: RecruitmentMapperDto;
 
@@ -133,6 +137,15 @@ class SettlementConfigDto {
   @ValidateNested()
   @Type(() => ResourceDto)
   RESOURCE_GENERATION_BASE: ResourceDto;
+
+  @IsOptional()
+  @IsIn([
+    SharedSettlementTypesEnum.MINING_TOWN,
+    SharedSettlementTypesEnum.CASTLE_TOWN,
+    SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT,
+    SharedSettlementTypesEnum.CAPITOL_SETTLEMENT,
+  ])
+  NEXT_TYPE?: SharedSettlementTypesEnum;
 }
 
 class SiegeConfigDto {

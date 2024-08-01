@@ -24,5 +24,6 @@ export class PublicSettlementDtoWithConvertedLocation {
 export class PrivateSettlementDto extends PublicSettlementDto {
   gold: number;
   wood: number;
+  iron: number;
   army: ArmyEntity;
 }

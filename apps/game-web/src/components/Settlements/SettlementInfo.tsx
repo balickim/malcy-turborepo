@@ -2,19 +2,23 @@ import {
   IonContent,
   IonIcon,
   IonLabel,
+  IonRow,
   IonSegment,
   IonSegmentButton,
 } from "@ionic/react";
-import { useQuery } from "@tanstack/react-query";
-import { homeSharp, add } from "ionicons/icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { add, arrowUpCircleOutline, homeSharp } from "ionicons/icons";
 import { memo, useState } from "react";
+import { ResourceTypeEnum } from "shared-types";
 
 import SettlementsApi from "~/api/settlements";
 import { ArmyInfo } from "~/components/ArmyInfo";
 import { ResourcesInfo } from "~/components/ResourcesInfo";
+import { CurrentUpgrade } from "~/components/Settlements/CurrentUpgrade.tsx";
 import { Recruitments } from "~/components/Settlements/Recruitments";
 import SettlementDetails from "~/components/Settlements/SettlementDetails";
 import BasicModalBodyWrapper from "~/components/ui/BasicModalBodyWrapper";
+import Button from "~/components/ui/Button.tsx";
 import Tile from "~/components/ui/Tile";
 import store from "~/store";
 
@@ -34,12 +38,32 @@ const SettlementInfo = memo(({ settlementId }: ISettlementInfo) => {
     refetchInterval: 5000,
   });
   const settlementData = data?.data;
+  const upgradeMutation = useMutation({
+    mutationFn: () =>
+      settlementsApi.upgradeSettlement({
+        settlementId: settlementData?.id ? settlementData?.id : "0",
+      }),
+  });
+  const { data: currentUpgrade, refetch: refetchUpgrade } = useQuery({
+    queryKey: ["currentUpgrade", settlementData?.id],
+    queryFn: () =>
+      settlementData
+        ? settlementsApi.getUnfinishedUpgradeBySettlementId(settlementData.id)
+        : undefined,
+    enabled: !!settlementData,
+    refetchInterval: 5000,
+  });
+
+  const startUpgrade = async () => {
+    await upgradeMutation.mutateAsync().finally(async () => {
+      await Promise.allSettled([refetchSettlement(), refetchUpgrade()]);
+    });
+  };
 
   if (!settlementData) return null;
   const resourcesCap =
     serverConfigStore.config?.SETTLEMENT[settlementData.type].RESOURCES_CAP;
   const isUserOwner = userStore.user.id === settlementData.user.id;
-
   return (
     <>
       <IonSegment
@@ -60,6 +84,16 @@ const SettlementInfo = memo(({ settlementId }: ISettlementInfo) => {
       <IonContent>
         {activeTab === "settlement" && (
           <BasicModalBodyWrapper>
+            {currentUpgrade?.data.length ? (
+              <Tile>
+                <CurrentUpgrade
+                  currentUpgrade={currentUpgrade}
+                  refetchUpgrade={refetchUpgrade}
+                  refetchSettlements={refetchSettlement}
+                />
+              </Tile>
+            ) : null}
+            {currentUpgrade?.data.length ? <div className={"my-2"} /> : null}
             <Tile>
               <SettlementDetails
                 additionalInfo={
@@ -77,6 +111,38 @@ const SettlementInfo = memo(({ settlementId }: ISettlementInfo) => {
                 }
                 settlementData={settlementData}
               />
+              {serverConfigStore.config?.SETTLEMENT[settlementData.type]
+                .NEXT_TYPE ? (
+                <IonRow className={"justify-center"}>
+                  <Button
+                    size={"small"}
+                    disabled={
+                      upgradeMutation.isPending || !!currentUpgrade?.data.length
+                    }
+                    onClick={startUpgrade}
+                  >
+                    Ulepsz{" "}
+                    <IonIcon icon={arrowUpCircleOutline} size={"large"} />
+                  </Button>
+                  <ResourcesInfo
+                    gold={
+                      serverConfigStore.config?.SETTLEMENT[settlementData.type]
+                        .UPGRADE.COST[ResourceTypeEnum.gold]
+                    }
+                    goldMax={settlementData.gold}
+                    iron={
+                      serverConfigStore.config?.SETTLEMENT[settlementData.type]
+                        .UPGRADE.COST[ResourceTypeEnum.iron]
+                    }
+                    ironMax={settlementData.iron}
+                    wood={
+                      serverConfigStore.config?.SETTLEMENT[settlementData.type]
+                        .UPGRADE.COST[ResourceTypeEnum.wood]
+                    }
+                    woodMax={settlementData.wood}
+                  />
+                </IonRow>
+              ) : null}
             </Tile>
           </BasicModalBodyWrapper>
         )}

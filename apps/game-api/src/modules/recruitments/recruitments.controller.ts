@@ -46,10 +46,9 @@ export class RecruitmentsController {
   @Delete(':settlementId/:jobId')
   @EnsureSettlementBelongsToUserDecorator('settlementId')
   async cancelRecruitment(
-    @Request() req: IExpressRequestWithUser<ISessionUser>,
     @Param('settlementId') settlementId: string,
     @Param('jobId') jobId: string,
   ) {
-    return this.recruitService.cancelRecruitment(settlementId, jobId, req.user);
+    return this.recruitService.cancelRecruitment(settlementId, jobId);
   }
 }

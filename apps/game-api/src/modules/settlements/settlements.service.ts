@@ -1,3 +1,4 @@
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import {
   BadRequestException,
   forwardRef,
@@ -7,11 +8,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Job, Queue, Worker } from 'bullmq';
+import Redis from 'ioredis';
 import {
   ActionType,
   ArmyEntity,
   CreateSettlementDto,
+  ResponseStartUpgradeDto,
   SettlementsEntity,
+  SettlementTypesEnum,
   TransferArmyDto,
 } from 'shared-nestjs';
 import {
@@ -22,7 +27,7 @@ import {
 } from 'shared-types';
 import { DataSource, Repository } from 'typeorm';
 
-import { include, includeAll } from '~/common/utils';
+import { include, includeAll, sleep } from '~/common/utils';
 import { convertGeoJSONToPoint } from '~/common/utils/postgis';
 import { ArmiesService } from '~/modules/armies/armies.service';
 import { ConfigService } from '~/modules/config/config.service';
@@ -35,11 +40,20 @@ import {
 import { UserLocationService } from '~/modules/user-location/user-location.service';
 import { ISessionUser } from '~/modules/users/dtos/users.dto';
 
+const bullSettlementUpgradeQueueName = (settlementId: string) =>
+  `upgrade:settlement_${settlementId}`;
+const settlementUpgradeProgressKey = (
+  settlementId: string,
+  nextType: SettlementTypesEnum,
+  jobId: number | string,
+) => `upgrade_progress:${settlementId}:${nextType}:${jobId}`;
+
 @Injectable()
 export class SettlementsService {
   private readonly logger = new Logger(SettlementsService.name);
 
   constructor(
+    @InjectRedis() private readonly redis: Redis,
     @InjectRepository(SettlementsEntity)
     private settlementsEntityRepository: Repository<SettlementsEntity>,
     @InjectRepository(ArmyEntity)
@@ -311,6 +325,19 @@ export class SettlementsService {
       gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
         .RESOURCES_CAP[ResourceTypeEnum.wood];
 
+    const maxIronMiningTown =
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.MINING_TOWN]
+        .RESOURCES_CAP[ResourceTypeEnum.iron];
+    const maxIronCastleTown =
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CASTLE_TOWN]
+        .RESOURCES_CAP[ResourceTypeEnum.iron];
+    const maxIronFortifiedSettlement =
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]
+        .RESOURCES_CAP[ResourceTypeEnum.iron];
+    const maxIronCapitolSettlement =
+      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
+        .RESOURCES_CAP[ResourceTypeEnum.iron];
+
     return this.armyEntityRepository
       .createQueryBuilder()
       .update(SettlementsEntity)
@@ -326,6 +353,12 @@ export class SettlementsService {
           WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodCastleTown})
           WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodFortifiedSettlement})
           WHEN "type" = '${SharedSettlementTypesEnum.CAPITOL_SETTLEMENT}' THEN LEAST("wood" + ${resourcesUsed[ResourceTypeEnum.wood]}, ${maxWoodCapitolSettlement})
+        END`,
+        iron: () => `CASE
+          WHEN "type" = '${SharedSettlementTypesEnum.MINING_TOWN}' THEN LEAST("iron" + ${resourcesUsed[ResourceTypeEnum.iron]}, ${maxIronMiningTown})
+          WHEN "type" = '${SharedSettlementTypesEnum.CASTLE_TOWN}' THEN LEAST("iron" + ${resourcesUsed[ResourceTypeEnum.iron]}, ${maxIronCastleTown})
+          WHEN "type" = '${SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT}' THEN LEAST("iron" + ${resourcesUsed[ResourceTypeEnum.iron]}, ${maxIronFortifiedSettlement})
+          WHEN "type" = '${SharedSettlementTypesEnum.CAPITOL_SETTLEMENT}' THEN LEAST("iron" + ${resourcesUsed[ResourceTypeEnum.iron]}, ${maxIronCapitolSettlement})
         END`,
       })
       .where('id = :id', { id: settlement.id })
@@ -409,84 +442,186 @@ export class SettlementsService {
     return this.settlementsEntityRepository.softDelete({ id: settlementId });
   }
 
-  // public async upgradeSettlementType(
-  //   startRecruitmentDto: StartRecruitmentDto,
-  //   settlement: PrivateSettlementDto,
-  // ) {
-  //   const gameConfig = await this.configService.gameConfig();
-  //
-  //   const settlementUpgradeTime =
-  //     gameConfig.SETTLEMENT[settlement.type].UPGRADE.TIME_MS;
-  //   const settlementUpgradeCost =
-  //     gameConfig.SETTLEMENT[settlement.type].UPGRADE.COST;
-  //
-  //   const goldCost =
-  //     settlementUpgradeCost[ResourceTypeEnum.gold] *
-  //     startRecruitmentDto.unitCount;
-  //   const woodCost =
-  //     settlementUpgradeCost[ResourceTypeEnum.wood] *
-  //     startRecruitmentDto.unitCount;
-  //   // const ironCost = // TODO implement iron
-  //   //   settlementUpgradeCost[ResourceTypeEnum.wood] *
-  //   //   startRecruitmentDto.unitCount;
-  //
-  //   if (settlement.gold < goldCost || settlement.wood < woodCost) {
-  //     throw new BadRequestException('You dont have enough resources');
-  //   }
-  //
-  //   const unfinishedJobs = await this.getUnfinishedRecruitmentsBySettlementId(
-  //     startRecruitmentDto.settlementId,
-  //   );
-  //   let totalDelayMs = 0;
-  //   for (const job of unfinishedJobs) {
-  //     const jobFinishTime = new Date(job.data.finishesOn).getTime();
-  //     const now = Date.now();
-  //     if (jobFinishTime > now) {
-  //       totalDelayMs += jobFinishTime - now;
-  //     }
-  //   }
-  //
-  //   const lockedResources = {
-  //     [ResourceTypeEnum.gold]: Math.max(-goldCost),
-  //     [ResourceTypeEnum.wood]: Math.max(-woodCost),
-  //     [ResourceTypeEnum.iron]: 0,
-  //   };
-  //   const finishesOn = new Date(
-  //     Date.now() +
-  //       startRecruitmentDto.unitCount * settlementUpgradeTime +
-  //       totalDelayMs,
-  //   );
-  //   const data: ResponseStartRecruitmentDto = {
-  //     ...startRecruitmentDto,
-  //     settlementUpgradeTime,
-  //     finishesOn,
-  //     lockedResources,
-  //   };
-  //
-  //   await this.settlementsService.changeResources(
-  //     startRecruitmentDto.settlementId,
-  //     lockedResources,
-  //   );
-  //
-  //   const queue = new Queue<ResponseStartRecruitmentDto>(
-  //     bullSettlementRecruitmentQueueName(startRecruitmentDto.settlementId),
-  //     { connection: this.redis },
-  //   );
-  //   new Worker(
-  //     bullSettlementRecruitmentQueueName(startRecruitmentDto.settlementId),
-  //     this.recruitProcessor,
-  //     { connection: this.redis },
-  //   );
-  //   const job: Job<ResponseStartRecruitmentDto> = await queue.add(
-  //     'recruit',
-  //     data,
-  //     {
-  //       delay: totalDelayMs,
-  //     },
-  //   );
-  //   this.logger.log(
-  //     `Job added to queue for settlement ${startRecruitmentDto.settlementId} with ID: ${job.id}`,
-  //   );
-  //   return job;
-  // }
+  private upgradeProcessor = async (job: Job<ResponseStartUpgradeDto>) => {
+    const settlementUpgradeTime = job.data.settlementUpgradeTime;
+    const startTime = Date.now();
+    const finishTime = startTime + settlementUpgradeTime;
+
+    while (Date.now() < finishTime) {
+      const currentProgress = await this.getUpgradeProgress(
+        job.data.settlementId,
+        job.data.nextSettlementType,
+        job.id,
+      );
+      if (currentProgress === 100) break;
+
+      const elapsedTime = Date.now() - startTime;
+      const progress = Math.min(
+        100,
+        (elapsedTime / settlementUpgradeTime) * 100,
+      );
+
+      await job.updateProgress(progress);
+
+      const remainingTime = finishTime - Date.now();
+      if (remainingTime > 0) {
+        await sleep(Math.min(1000, remainingTime));
+      }
+    }
+    await job.updateProgress(100);
+
+    await this.upgradeSettlementTypeToNext(
+      job.data.settlementId,
+      job.data.nextSettlementType,
+    );
+
+    return '';
+  };
+
+  private async upgradeSettlementTypeToNext(
+    settlementId: string,
+    nextSettlementType: SettlementTypesEnum,
+  ) {
+    await this.settlementsEntityRepository.update(settlementId, {
+      type: nextSettlementType,
+    });
+  }
+
+  public async upgradeSettlementType(settlement: PrivateSettlementDto) {
+    const gameConfig = await this.configService.gameConfig();
+    const upgradeToType = gameConfig.SETTLEMENT[settlement.type]
+      .NEXT_TYPE as unknown as SettlementTypesEnum;
+
+    if (!upgradeToType) {
+      throw new BadRequestException('Settlement cannot be upgraded further');
+    }
+
+    const existingJobs = await this.getUnfinishedUpgradeBySettlementId(
+      settlement.id,
+    );
+    if (existingJobs.length > 0) {
+      throw new BadRequestException(
+        'An upgrade is already in progress for this settlement',
+      );
+    }
+
+    const settlementUpgradeTime =
+      gameConfig.SETTLEMENT[settlement.type].UPGRADE.TIME_MS;
+    const settlementUpgradeCost =
+      gameConfig.SETTLEMENT[settlement.type].UPGRADE.COST;
+
+    const goldCost = settlementUpgradeCost[ResourceTypeEnum.gold];
+    const woodCost = settlementUpgradeCost[ResourceTypeEnum.wood];
+    const ironCost = settlementUpgradeCost[ResourceTypeEnum.iron];
+    if (
+      settlement.gold < goldCost ||
+      settlement.wood < woodCost ||
+      settlement.iron < ironCost
+    ) {
+      throw new BadRequestException('You dont have enough resources');
+    }
+
+    const lockedResources = {
+      [ResourceTypeEnum.gold]: Math.max(-goldCost),
+      [ResourceTypeEnum.wood]: Math.max(-woodCost),
+      [ResourceTypeEnum.iron]: Math.max(-ironCost),
+    };
+    const finishesOn = new Date(Date.now() + settlementUpgradeTime);
+    const data: ResponseStartUpgradeDto = {
+      settlementId: settlement.id,
+      nextSettlementType: upgradeToType,
+      settlementUpgradeTime,
+      finishesOn,
+      lockedResources,
+    };
+
+    await this.changeResources(settlement.id, lockedResources);
+
+    const queue = new Queue<ResponseStartUpgradeDto>(
+      bullSettlementUpgradeQueueName(settlement.id),
+      { connection: this.redis },
+    );
+    new Worker(
+      bullSettlementUpgradeQueueName(settlement.id),
+      this.upgradeProcessor,
+      { connection: this.redis },
+    );
+    const job: Job<ResponseStartUpgradeDto> = await queue.add('upgrade', data);
+    this.logger.log(
+      `Job added to queue for settlement ${settlement.id} with ID: ${job.id}`,
+    );
+    return job;
+  }
+
+  public async getUnfinishedUpgradeBySettlementId(settlementId: string) {
+    const queue = new Queue<ResponseStartUpgradeDto>(
+      bullSettlementUpgradeQueueName(settlementId),
+      { connection: this.redis },
+    );
+    let jobs = await queue.getJobs(['active', 'waiting', 'delayed']);
+
+    const results = await Promise.all(
+      jobs.map(async (job) => {
+        const progress = await this.getUpgradeProgress(
+          settlementId,
+          job.data.nextSettlementType,
+          job.id,
+        );
+        return progress;
+      }),
+    );
+    jobs = jobs.filter((_, index) => !results[index]);
+    if (!jobs) {
+      return [];
+    }
+
+    return jobs;
+  }
+
+  private async saveUpgradeProgress(
+    settlementId: string,
+    nextType: SettlementTypesEnum,
+    jobId: number | string,
+    progress: number,
+  ): Promise<void> {
+    const key = settlementUpgradeProgressKey(settlementId, nextType, jobId);
+    await this.redis.set(key, progress.toString(), 'EX', 60 * 60 * 24 * 7); // Expire after a week
+  }
+
+  private async getUpgradeProgress(
+    settlementId: string,
+    nextType: SettlementTypesEnum,
+    jobId: number | string,
+  ): Promise<number> {
+    const key = settlementUpgradeProgressKey(settlementId, nextType, jobId);
+    const progress = await this.redis.get(key);
+    return progress ? parseInt(progress, 10) : 0;
+  }
+
+  public async cancelUpgrade(settlementId: string, jobId: string) {
+    const queue = new Queue<ResponseStartUpgradeDto>(
+      bullSettlementUpgradeQueueName(settlementId),
+      { connection: this.redis },
+    );
+    const job: Job<ResponseStartUpgradeDto> = await queue.getJob(jobId);
+    await job.updateProgress(100);
+    await this.saveUpgradeProgress(
+      settlementId,
+      job.data.nextSettlementType,
+      jobId,
+      100,
+    );
+
+    const gold = Math.abs(job.data.lockedResources[ResourceTypeEnum.gold]);
+    const wood = Math.abs(job.data.lockedResources[ResourceTypeEnum.wood]);
+    const iron = Math.abs(job.data.lockedResources[ResourceTypeEnum.iron]);
+
+    await this.changeResources(settlementId, {
+      [ResourceTypeEnum.gold]: gold,
+      [ResourceTypeEnum.wood]: wood,
+      [ResourceTypeEnum.iron]: iron,
+    });
+
+    return 'success';
+  }
 }

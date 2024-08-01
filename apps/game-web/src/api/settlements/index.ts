@@ -1,11 +1,16 @@
-import { CreateSettlementDto, TransferArmyDto } from "shared-nestjs";
+import {
+  CreateSettlementDto,
+  ResponseStartUpgradeDto,
+  TransferArmyDto,
+  UpgradeSettlementDto,
+} from "shared-nestjs";
 
 import { fetchWrapper } from "~/api/fetch";
 import {
   IPrivateSettlementDto,
   ISettlementDetailsDto,
 } from "~/api/settlements/dtos";
-import { IApiResponse } from "~/types/common";
+import { IApiResponse, IJob } from "~/types/common";
 
 export default class SettlementsApi {
   private readonly basePath = `${import.meta.env.VITE_API_URL}/settlements`;
@@ -41,5 +46,32 @@ export default class SettlementsApi {
       body: JSON.stringify(body),
       method: "POST",
     });
+  };
+
+  upgradeSettlement = async (
+    body: UpgradeSettlementDto,
+  ): Promise<IApiResponse<ISettlementDetailsDto>> => {
+    return fetchWrapper(`${this.basePath}/upgrade`, {
+      body: JSON.stringify(body),
+      method: "PUT",
+    });
+  };
+
+  getUnfinishedUpgradeBySettlementId = async (
+    id: string,
+  ): Promise<IApiResponse<IJob<ResponseStartUpgradeDto>[]>> => {
+    return fetchWrapper(`${this.basePath}/upgrade/${id}`);
+  };
+
+  cancelRecruitment = async (params: {
+    settlementId: string;
+    jobId: number;
+  }): Promise<IApiResponse<string>> => {
+    return fetchWrapper(
+      `${this.basePath}/upgrade/${params.settlementId}/${params.jobId}`,
+      {
+        method: "DELETE",
+      },
+    );
   };
 }
