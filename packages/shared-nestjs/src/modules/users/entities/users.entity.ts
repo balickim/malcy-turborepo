@@ -49,6 +49,9 @@ export class UsersEntity extends AuditableBaseEntity {
   @Max(80_000)
   iron: number;
 
+  @Column({ select: false, nullable: true })
+  registrationToken: string;
+
   @OneToMany(() => SettlementsEntity, (settlement) => settlement.user)
   settlements: SettlementsEntity[];
 

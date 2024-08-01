@@ -28,3 +28,6 @@ yarn-error.log*
 
 # Optional eslint cache
 .eslintcache
+
+google-services.json
+GoogleService-Info.plist

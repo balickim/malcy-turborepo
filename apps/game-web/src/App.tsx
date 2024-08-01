@@ -1,4 +1,4 @@
-import { IonApp, setupIonicReact } from "@ionic/react";
+import { IonApp, isPlatform, setupIonicReact } from "@ionic/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ErrorBoundary } from "react-error-boundary";
@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 
 import AppVersion from "~/components/AppVersion";
 import MenuRouter from "~/components/MenuRouter";
+import PushNotification from "~/components/PushNotifications.tsx";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -44,6 +45,8 @@ const App = () => {
       <ErrorBoundary FallbackComponent={Fallback}>
         <QueryClientProvider client={queryClient}>
           <MenuRouter />
+
+          {isPlatform("capacitor") ? <PushNotification /> : null}
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </ErrorBoundary>

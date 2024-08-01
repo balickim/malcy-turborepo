@@ -10,6 +10,7 @@ import { CombatsModule } from '~/modules/combats/combats.module';
 import { ConfigModule } from '~/modules/config/config.module';
 import { EventLogModule } from '~/modules/event-log/event-log.module';
 import { FogOfWarModule } from '~/modules/fog-of-war/fog-of-war.module';
+import { PushNotificationsModule } from '~/modules/push-notifications/push-notifications.module';
 import { RecruitmentsModule } from '~/modules/recruitments/recruitments.module';
 import { ResourcesModule } from '~/modules/resources/resources.module';
 import { SettlementsModule } from '~/modules/settlements/settlements.module';
@@ -35,6 +36,7 @@ import { PostgresDatabaseProviderModule } from '~/providers/database/postgres/pr
     ChatModule,
     FogOfWarModule,
     CombatsModule,
+    PushNotificationsModule,
   ],
   controllers: [],
   providers: [],

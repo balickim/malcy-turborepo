@@ -1,5 +1,4 @@
 import { Capacitor } from "@capacitor/core";
-import { PushNotifications } from "@capacitor/push-notifications";
 import { isPlatform } from "@ionic/react";
 import L from "leaflet";
 import { useEffect, useRef } from "react";
@@ -38,12 +37,6 @@ const Map = () => {
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
       void startBackgroundGeolocation(store.userStore.user.id);
-
-      PushNotifications.checkPermissions().then((permStatus) => {
-        if (permStatus.receive !== "granted") {
-          void PushNotifications.requestPermissions();
-        }
-      });
     }
   }, []);
 

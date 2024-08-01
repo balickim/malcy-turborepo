@@ -6,7 +6,6 @@ import {
   Injectable,
   Logger,
   OnModuleInit,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job, Queue, Worker } from 'bullmq';
@@ -21,9 +20,9 @@ import { Repository } from 'typeorm';
 
 import { sleep } from '~/common/utils';
 import { ConfigService } from '~/modules/config/config.service';
+import { PushNotificationsService } from '~/modules/push-notifications/push-notifications.service';
 import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
-import { ISessionUser } from '~/modules/users/dtos/users.dto';
 
 const bullSettlementRecruitmentQueueName = (settlementId: string) =>
   `recruitment:settlement_${settlementId}`;
@@ -44,6 +43,7 @@ export class RecruitmentsService implements OnModuleInit {
     @Inject(forwardRef(() => SettlementsService))
     private settlementsService: SettlementsService,
     private configService: ConfigService,
+    private pushNotificationsService: PushNotificationsService,
   ) {}
 
   // Assigns processors to all active or waiting jobs after server restart
@@ -141,6 +141,7 @@ export class RecruitmentsService implements OnModuleInit {
     );
     const data: ResponseStartRecruitmentDto = {
       ...startRecruitmentDto,
+      userId: settlement.user.id,
       unitRecruitmentTime,
       finishesOn,
       lockedResources,
@@ -257,6 +258,10 @@ export class RecruitmentsService implements OnModuleInit {
         break;
       }
     }
+    void this.pushNotificationsService.sendNotificationToUser(job.data.userId, {
+      title: 'AAAAAAAAAAAAA',
+      body: 'O KURCZE',
+    });
     return '';
   };
 
