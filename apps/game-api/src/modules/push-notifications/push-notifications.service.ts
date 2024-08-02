@@ -4,7 +4,7 @@ import * as admin from 'firebase-admin';
 import { UsersEntity } from 'shared-nestjs';
 import { Repository } from 'typeorm';
 
-import * as serviceAccount from '../../../google-services.json';
+import { AppConfig } from '~/modules/config/appConfig';
 
 @Injectable()
 export class PushNotificationsService {
@@ -13,9 +13,16 @@ export class PushNotificationsService {
   constructor(
     @InjectRepository(UsersEntity)
     private usersRepository: Repository<UsersEntity>,
+    private appConfig: AppConfig,
   ) {
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+      credential: admin.credential.cert({
+        projectId: this.appConfig.get().GAME_FIREBASE_PROJECT_ID,
+        clientEmail: this.appConfig.get().GAME_FIREBASE_CLIENT_EMAIL,
+        privateKey: this.appConfig
+          .get()
+          .GAME_FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      }),
     });
   }
 

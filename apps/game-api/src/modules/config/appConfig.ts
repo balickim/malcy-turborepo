@@ -27,6 +27,10 @@ export class AppConfig {
     GAME_REDIS_HOST: str(),
     GAME_REDIS_PORT: num(),
     GAME_REDIS_PASSWORD: str({ default: 'password' }),
+
+    GAME_FIREBASE_PROJECT_ID: str(),
+    GAME_FIREBASE_CLIENT_EMAIL: str(),
+    GAME_FIREBASE_PRIVATE_KEY: str(),
   });
 
   public get() {
