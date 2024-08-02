@@ -88,6 +88,7 @@ export class RecruitmentsService implements OnModuleInit {
   public async startRecruitment(
     startRecruitmentDto: StartRecruitmentDto,
     settlement: PrivateSettlementDto,
+    userId: string,
   ) {
     const gameConfig = await this.configService.gameConfig();
 
@@ -141,7 +142,7 @@ export class RecruitmentsService implements OnModuleInit {
     );
     const data: ResponseStartRecruitmentDto = {
       ...startRecruitmentDto,
-      userId: settlement.user.id,
+      userId,
       unitRecruitmentTime,
       finishesOn,
       lockedResources,

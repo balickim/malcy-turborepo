@@ -12,10 +12,8 @@ import { StartRecruitmentDto } from 'shared-nestjs';
 
 import { EnsureSettlementBelongsToUserDecorator } from '~/common/decorators/ensure-settlement-belongs-to-user.decorator';
 import { EnsureUserIsWithinLocation } from '~/common/decorators/ensure-user-is-within-location.decorator';
-import { IExpressRequestWithUser } from '~/modules/auth/guards/session.guard';
 import { RecruitmentsService } from '~/modules/recruitments/recruitments.service';
 import { IExpressRequestWithUserAndSettlement } from '~/modules/user-location/guards/near-settlement-location.guard';
-import { ISessionUser } from '~/modules/users/dtos/users.dto';
 
 @ApiTags('recruitments')
 @Controller('recruitments')
@@ -32,6 +30,7 @@ export class RecruitmentsController {
     return this.recruitService.startRecruitment(
       startRecruitmentDto,
       req.settlement,
+      req.user.id,
     );
   }
 
