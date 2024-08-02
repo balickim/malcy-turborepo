@@ -260,8 +260,8 @@ export class RecruitmentsService implements OnModuleInit {
       }
     }
     void this.pushNotificationsService.sendNotificationToUser(job.data.userId, {
-      title: 'AAAAAAAAAAAAA',
-      body: 'O KURCZE',
+      title: 'Rekrutacja zakończona',
+      body: `Zakończono rekrutację ${job.data.unitCount} jednostki/tek ${job.data.unitType}`,
     });
     return '';
   };

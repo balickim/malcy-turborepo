@@ -22,7 +22,7 @@ export class AppConfig {
     GAME_DB_DATABASE: str(),
     GAME_DB_USERNAME: str(),
     GAME_DB_PASSWORD: str(),
-    GAME_DB_SYNCHRONIZE: bool({ default: false, devDefault: true }),
+    GAME_DB_SYNCHRONIZE: bool({ default: false }),
 
     GAME_REDIS_HOST: str(),
     GAME_REDIS_PORT: num(),

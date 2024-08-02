@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core";
 import {
   IonIcon,
   IonLabel,
@@ -22,6 +23,7 @@ import { Redirect } from "react-router";
 import { Route } from "react-router-dom";
 
 import AuthRedirector from "~/components/Auth/AuthRedirector";
+import PushNotification from "~/components/PushNotifications.tsx";
 import Account from "~/pages/Account";
 import Auth from "~/pages/Auth";
 import Map from "~/pages/Map";
@@ -139,6 +141,7 @@ export default observer(function MenuRouter() {
           </IonTabBar>
         </IonTabs>
         <AuthRedirector />
+        {Capacitor.isNativePlatform() ? <PushNotification /> : null}
       </IonReactRouter>
     </IonPage>
   );

@@ -32,6 +32,7 @@ export class PushNotificationsService {
   ): Promise<void> {
     try {
       const user = await this.usersRepository.findOne({
+        select: ['registrationToken'],
         where: { id: userId },
       });
       if (!user || !user.registrationToken) {
