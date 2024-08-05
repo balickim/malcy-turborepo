@@ -4,10 +4,26 @@ import {
   PushNotifications,
   Token,
 } from "@capacitor/push-notifications";
+import { useMutation } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { toast } from "react-hot-toast";
 
+import PushNotificationsApi from "~/api/push-notifications/routes.ts";
+
 const PushNotification: React.FC = () => {
+  const pushNotificationsApi = new PushNotificationsApi();
+  const mutation = useMutation({
+    mutationFn: pushNotificationsApi.updateToken,
+  });
+
+  const sendToken = async (token: string) => {
+    try {
+      await mutation.mutateAsync(token);
+    } catch (error) {
+      console.error("Error sending token to server:", error);
+    }
+  };
+
   useEffect(() => {
     console.log("Initializing PushNotification component");
 
@@ -32,7 +48,7 @@ const PushNotification: React.FC = () => {
     // On success, we should be able to receive notifications
     PushNotifications.addListener("registration", (token: Token) => {
       console.log("Push registration success, token:", token.value);
-      // Here, you might want to send the token to your server
+      void sendToken(token.value);
     });
 
     // Some issue with our setup and push will not work
