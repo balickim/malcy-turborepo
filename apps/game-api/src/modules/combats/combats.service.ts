@@ -298,16 +298,19 @@ export class CombatsService {
     let defenderPower = 0;
     const gameConfig = await this.configService.gameConfig();
 
-    for (const unitType in attackerArmy) {
-      const unitCount = attackerArmy[unitType as UnitType];
+    const sanitizedAttackerArmy = this.sanitizeArmy(attackerArmy);
+    const sanitizedDefenderArmy = this.sanitizeArmy(defenderArmy);
+
+    for (const unitType in sanitizedAttackerArmy) {
+      const unitCount = sanitizedAttackerArmy[unitType as UnitType];
       const unitStats =
         gameConfig.COMBAT.UNITS[unitType.toUpperCase() as UnitType];
       attackerPower +=
         unitCount * (unitStats.ATTACK + unitStats.DEFENSE + unitStats.HEALTH);
     }
 
-    for (const unitType in defenderArmy) {
-      const unitCount = defenderArmy[unitType as UnitType];
+    for (const unitType in sanitizedDefenderArmy) {
+      const unitCount = sanitizedDefenderArmy[unitType as UnitType];
       const unitStats =
         gameConfig.COMBAT.UNITS[unitType.toUpperCase() as UnitType];
       defenderPower +=
@@ -330,31 +333,45 @@ export class CombatsService {
       [UnitType.ARCHMAGE]: 0,
     };
 
-    if (attackerPower > defenderPower) {
+    if (attackerPower === 0 && defenderPower === 0) {
+      // If both sides have zero power, the defender wins by default
+      result = 'Defender wins';
+    } else if (attackerPower > defenderPower) {
       result = 'Attacker wins';
-      for (const unitType in attackerArmy) {
-        const unitCount = attackerArmy[unitType as UnitType];
+      for (const unitType in sanitizedAttackerArmy) {
+        const unitCount = sanitizedAttackerArmy[unitType as UnitType];
         remainingAttackerArmy[unitType as UnitType] = Math.floor(
-          unitCount * (1 - defenderPower / attackerPower),
+          unitCount * (1 - defenderPower / Math.max(attackerPower, 1)),
         );
       }
-      for (const unitType in defenderArmy) {
+      for (const unitType in sanitizedDefenderArmy) {
         remainingDefenderArmy[unitType as UnitType] = 0;
       }
     } else {
       result = 'Defender wins';
-      for (const unitType in defenderArmy) {
-        const unitCount = defenderArmy[unitType as UnitType];
+      for (const unitType in sanitizedDefenderArmy) {
+        const unitCount = sanitizedDefenderArmy[unitType as UnitType];
         remainingDefenderArmy[unitType as UnitType] = Math.floor(
-          unitCount * (1 - attackerPower / defenderPower),
+          unitCount * (1 - attackerPower / Math.max(defenderPower, 1)),
         );
       }
-      for (const unitType in attackerArmy) {
+      for (const unitType in sanitizedAttackerArmy) {
         remainingAttackerArmy[unitType as UnitType] = 0;
       }
     }
 
     return { result, remainingAttackerArmy, remainingDefenderArmy };
+  }
+
+  private sanitizeArmy(army: Record<UnitType, number>) {
+    const sanitizedArmy = {};
+    for (const unitType in army) {
+      sanitizedArmy[unitType as UnitType] = Math.max(
+        0,
+        army[unitType as UnitType],
+      );
+    }
+    return sanitizedArmy;
   }
 
   private async saveSiegeProgress(
