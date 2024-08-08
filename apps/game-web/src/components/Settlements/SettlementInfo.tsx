@@ -44,13 +44,15 @@ const SettlementInfo = memo(({ settlementId }: ISettlementInfo) => {
         settlementId: settlementData?.id ? settlementData?.id : "0",
       }),
   });
+  const isUserOwner = userStore.user?.id === settlementData?.user?.id;
+
   const { data: currentUpgrade, refetch: refetchUpgrade } = useQuery({
     queryKey: ["currentUpgrade", settlementData?.id],
     queryFn: () =>
       settlementData
         ? settlementsApi.getUnfinishedUpgradeBySettlementId(settlementData.id)
         : undefined,
-    enabled: !!settlementData,
+    enabled: !!settlementData && isUserOwner,
     refetchInterval: 5000,
   });
 
@@ -63,7 +65,6 @@ const SettlementInfo = memo(({ settlementId }: ISettlementInfo) => {
   if (!settlementData) return null;
   const resourcesCap =
     serverConfigStore.config?.SETTLEMENT[settlementData.type].RESOURCES_CAP;
-  const isUserOwner = userStore.user.id === settlementData.user.id;
   return (
     <>
       <IonSegment
@@ -112,7 +113,7 @@ const SettlementInfo = memo(({ settlementId }: ISettlementInfo) => {
                 settlementData={settlementData}
               />
               {serverConfigStore.config?.SETTLEMENT[settlementData.type]
-                .NEXT_TYPE ? (
+                .NEXT_TYPE && isUserOwner ? (
                 <IonRow className={"justify-center"}>
                   <Button
                     size={"small"}
