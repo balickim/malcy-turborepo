@@ -1,14 +1,29 @@
 import { faker } from '@faker-js/faker';
 import * as bcrypt from 'bcrypt';
-import { ArmyEntity, SettlementsEntity, UsersEntity } from 'shared-nestjs';
+import {
+  ArmyEntity,
+  SettlementsEntity,
+  SettlementTypesEnum,
+  UsersEntity,
+} from 'shared-nestjs';
 import { UnitType } from 'shared-types';
 import { DataSource, Repository } from 'typeorm';
 
 async function createUser(usersRepository: Repository<UsersEntity>) {
   const hashedPassword = await bcrypt.hash('password', 10);
+
+  let email, username, existingUser;
+  do {
+    email = faker.internet.email();
+    username = faker.internet.userName();
+    existingUser = await usersRepository.findOne({
+      where: [{ email }, { username }],
+    });
+  } while (existingUser);
+
   const user = new UsersEntity();
-  user.username = faker.internet.userName();
-  user.email = faker.internet.email();
+  user.username = username;
+  user.email = email;
   user.password = hashedPassword;
 
   return usersRepository.save(user);
@@ -36,10 +51,17 @@ async function createSettlement(
     type: 'Point',
     coordinates: [lng, lat],
   };
+  const types = [
+    SettlementTypesEnum.MINING_TOWN,
+    SettlementTypesEnum.CASTLE_TOWN,
+    SettlementTypesEnum.FORTIFIED_SETTLEMENT,
+    SettlementTypesEnum.CAPITOL_SETTLEMENT,
+  ];
   const newSettlement = settlementsEntityRepository.create({
     name: name,
     location,
     user,
+    type: SettlementTypesEnum[faker.helpers.arrayElement(types)],
   });
 
   return settlementsEntityRepository.save(newSettlement);
@@ -53,6 +75,9 @@ async function createArmy(
   const newArmy = armyEntityRepository.create({
     [UnitType.SWORDSMAN]: faker.number.int({ min: 0, max: 1000 }),
     [UnitType.ARCHER]: faker.number.int({ min: 0, max: 1000 }),
+    [UnitType.KNIGHT]: faker.number.int({ min: 0, max: 100 }),
+    [UnitType.LUCHADOR]: faker.number.int({ min: 0, max: 100 }),
+    [UnitType.ARCHMAGE]: faker.number.int({ min: 0, max: 100 }),
     settlement,
     user,
   });
@@ -66,7 +91,7 @@ export async function seedSettlements(dataSource: DataSource): Promise<void> {
   const usersEntityRepository = dataSource.getRepository(UsersEntity);
   const armyEntityRepository = dataSource.getRepository(ArmyEntity);
   const HOW_MANY_USERS = 100;
-  const HOW_MANY_SETTLEMENTS_FOR_EACH_USER = 5;
+  const HOW_MANY_SETTLEMENTS_FOR_EACH_USER = 50;
 
   const userPromises = Array.from({ length: HOW_MANY_USERS }, async (_, i) => {
     const user = await createUser(usersEntityRepository);
