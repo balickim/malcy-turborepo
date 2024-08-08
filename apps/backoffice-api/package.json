@@ -18,7 +18,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs",
-    "seed:dev": "ts-node -r tsconfig-paths/register ./src/database/seeders/index.ts"
+    "seed:dev": "PROCESS_ENV=seeding ts-node -r tsconfig-paths/register ./src/database/seeders/index.ts"
   },
   "dependencies": {
     "@liaoliaots/nestjs-redis": "^9.0.5",

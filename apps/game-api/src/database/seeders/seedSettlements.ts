@@ -11,7 +11,7 @@ async function createUser(usersRepository: Repository<UsersEntity>) {
   user.email = faker.internet.email();
   user.password = hashedPassword;
 
-  return await usersRepository.save(user);
+  return usersRepository.save(user);
 }
 
 // Szczecin
@@ -42,7 +42,7 @@ async function createSettlement(
     user,
   });
 
-  return await settlementsEntityRepository.save(newSettlement);
+  return settlementsEntityRepository.save(newSettlement);
 }
 
 async function createArmy(
@@ -61,27 +61,33 @@ async function createArmy(
 }
 
 export async function seedSettlements(dataSource: DataSource): Promise<void> {
-  process.env.PROCESS_ENV = 'seeding'; // turn off "afterInsert" in EventSubscribers
-
   const settlementsEntityRepository =
     dataSource.getRepository(SettlementsEntity);
   const usersEntityRepository = dataSource.getRepository(UsersEntity);
   const armyEntityRepository = dataSource.getRepository(ArmyEntity);
+  const HOW_MANY_USERS = 100;
+  const HOW_MANY_SETTLEMENTS_FOR_EACH_USER = 5;
 
-  for (let i = 0; i < 100; i++) {
+  const userPromises = Array.from({ length: HOW_MANY_USERS }, async (_, i) => {
     const user = await createUser(usersEntityRepository);
     await createArmy(armyEntityRepository, undefined, user);
     console.log(`created user ${i}`);
 
-    for (let j = 0; j < 5; j++) {
-      const settlement = await createSettlement(
-        cityBounds,
-        user,
-        settlementsEntityRepository,
-      );
+    const settlementPromises = Array.from(
+      { length: HOW_MANY_SETTLEMENTS_FOR_EACH_USER },
+      async (_, j) => {
+        const settlement = await createSettlement(
+          cityBounds,
+          user,
+          settlementsEntityRepository,
+        );
+        await createArmy(armyEntityRepository, settlement);
+        console.log(`created settlement and army ${j} for user ${i}`);
+      },
+    );
 
-      await createArmy(armyEntityRepository, settlement);
-      console.log(`created settlement and army ${j} for user ${i}`);
-    }
-  }
+    await Promise.all(settlementPromises);
+  });
+
+  await Promise.all(userPromises);
 }

@@ -58,20 +58,21 @@ async function createHabitableZone(
     type: HabitableZonesTypesEnum[faker.helpers.arrayElement(types)],
   });
 
-  return await habitableZonesEntityRepository.save(newHabitableZone);
+  return habitableZonesEntityRepository.save(newHabitableZone);
 }
 
 export async function seedHabitableZones(
   dataSource: DataSource,
 ): Promise<void> {
-  process.env.PROCESS_ENV = 'seeding'; // turn off "afterInsert" in EventSubscribers
   const HOW_MANY = 500;
-
   const habitableZonesEntityRepository =
     dataSource.getRepository(HabitableZonesEntity);
 
-  for (let i = 0; i < HOW_MANY; i++) {
-    await createHabitableZone(cityBounds, habitableZonesEntityRepository);
-    console.log(`created habitable zone ${i}`);
-  }
+  const promises = Array.from({ length: HOW_MANY }, (_, i) =>
+    createHabitableZone(cityBounds, habitableZonesEntityRepository).then(() =>
+      console.log(`created habitable zone ${i}`),
+    ),
+  );
+
+  await Promise.all(promises);
 }
