@@ -90,10 +90,10 @@ export class RecruitmentsService implements OnModuleInit {
     settlement: PrivateSettlementDto,
     userId: string,
   ) {
-    const gameConfig = await this.configService.gameConfig();
+    const worldConfig = await this.configService.worldConfig();
 
     const unitRecruitmentTime =
-      gameConfig.SETTLEMENT[settlement.type].RECRUITMENT[
+      worldConfig.SETTLEMENT[settlement.type].RECRUITMENT[
         startRecruitmentDto.unitType
       ].TIME_MS ?? undefined;
 
@@ -104,7 +104,7 @@ export class RecruitmentsService implements OnModuleInit {
     }
 
     const unitCost =
-      gameConfig.SETTLEMENT[settlement.type].RECRUITMENT[
+      worldConfig.SETTLEMENT[settlement.type].RECRUITMENT[
         startRecruitmentDto.unitType
       ].COST ?? undefined;
     const goldCost =

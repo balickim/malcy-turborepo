@@ -61,18 +61,18 @@ export class UserLocationService {
       Date.now().toString(),
     ); // change old location timestamp to new one
 
-    const gameConfig = await this.configService.gameConfig();
+    const worldConfig = await this.configService.worldConfig();
     const updateDiscoveredArea = this.fogOfWarService.updateDiscoveredArea(
       params.userId,
       params.location.lat,
       params.location.lng,
-      gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
+      worldConfig.MAX_RADIUS_TO_DISCOVER_METERS,
     );
     const updateVisibleArea = this.fogOfWarService.updateVisibleArea(
       params.userId,
       params.location.lat,
       params.location.lng,
-      gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
+      worldConfig.MAX_RADIUS_TO_DISCOVER_METERS,
     );
 
     return Promise.all([updateDiscoveredArea, updateVisibleArea]);
@@ -90,9 +90,9 @@ export class UserLocationService {
     location: LatLng;
     radiusMetres?: number;
   }): Promise<boolean> {
-    const gameConfig = await this.configService.gameConfig();
+    const worldConfig = await this.configService.worldConfig();
     const defaultMaxInRadiusDistanceToTakeActionMeters =
-      gameConfig.MAX_RADIUS_TO_TAKE_ACTION_METERS;
+      worldConfig.MAX_RADIUS_TO_TAKE_ACTION_METERS;
     const distance = await this.calculateDistance(params);
     return (
       distance !== null &&
@@ -112,9 +112,9 @@ export class UserLocationService {
       params.userId,
     );
     const timeElapsedSec = (Date.now() - Number(previousTimestamp)) / 1000;
-    const gameConfig = await this.configService.gameConfig();
+    const worldConfig = await this.configService.worldConfig();
 
-    const defaultMaxUserSpeed = gameConfig.MAX_USER_SPEED_METERS_PER_SECOND;
+    const defaultMaxUserSpeed = worldConfig.MAX_USER_SPEED_METERS_PER_SECOND;
     return (
       distance !== null &&
       distance / timeElapsedSec <=

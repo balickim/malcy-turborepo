@@ -144,10 +144,10 @@ export class CombatsService {
     try {
       let breakthroughChance = await this.getSiegeProgress(job);
       let success = false;
-      const gameConfig = await this.configService.gameConfig();
+      const worldConfig = await this.configService.worldConfig();
 
       while (!success) {
-        await sleep(gameConfig.COMBAT.SIEGE.TIME_TICK_MS);
+        await sleep(worldConfig.COMBAT.SIEGE.TIME_TICK_MS);
         breakthroughChance += this.getBreakthroughChance();
         if (breakthroughChance > 100) breakthroughChance = 100;
 
@@ -296,7 +296,7 @@ export class CombatsService {
   ): Promise<IBattleOutcome> {
     let attackerPower = 0;
     let defenderPower = 0;
-    const gameConfig = await this.configService.gameConfig();
+    const worldConfig = await this.configService.worldConfig();
 
     const sanitizedAttackerArmy = this.sanitizeArmy(attackerArmy);
     const sanitizedDefenderArmy = this.sanitizeArmy(defenderArmy);
@@ -304,7 +304,7 @@ export class CombatsService {
     for (const unitType in sanitizedAttackerArmy) {
       const unitCount = sanitizedAttackerArmy[unitType as UnitType];
       const unitStats =
-        gameConfig.COMBAT.UNITS[unitType.toUpperCase() as UnitType];
+        worldConfig.COMBAT.UNITS[unitType.toUpperCase() as UnitType];
       attackerPower +=
         unitCount * (unitStats.ATTACK + unitStats.DEFENSE + unitStats.HEALTH);
     }
@@ -312,7 +312,7 @@ export class CombatsService {
     for (const unitType in sanitizedDefenderArmy) {
       const unitCount = sanitizedDefenderArmy[unitType as UnitType];
       const unitStats =
-        gameConfig.COMBAT.UNITS[unitType.toUpperCase() as UnitType];
+        worldConfig.COMBAT.UNITS[unitType.toUpperCase() as UnitType];
       defenderPower +=
         unitCount * (unitStats.ATTACK + unitStats.DEFENSE + unitStats.HEALTH);
     }

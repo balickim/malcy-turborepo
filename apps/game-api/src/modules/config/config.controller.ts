@@ -10,6 +10,6 @@ export class ConfigController {
 
   @Get('/')
   async getConfig() {
-    return this.configService.gameConfig();
+    return this.configService.worldConfig();
   }
 }

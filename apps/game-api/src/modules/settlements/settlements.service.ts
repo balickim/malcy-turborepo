@@ -101,10 +101,10 @@ export class SettlementsService {
       throw new BadRequestException('You are too far');
     }
 
-    const gameConfig = await this.configService.gameConfig();
+    const worldConfig = await this.configService.worldConfig();
     const nearbySettlements = await this.findWithinRadius(
       locationGeoJSON,
-      gameConfig.MAX_RADIUS_TO_TAKE_ACTION_METERS,
+      worldConfig.MAX_RADIUS_TO_TAKE_ACTION_METERS,
     );
 
     if (nearbySettlements.length > 0) {
@@ -297,45 +297,45 @@ export class SettlementsService {
       },
     });
 
-    const gameConfig = await this.configService.gameConfig();
+    const worldConfig = await this.configService.worldConfig();
 
     const maxGoldMiningTown =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.MINING_TOWN]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.MINING_TOWN]
         .RESOURCES_CAP[ResourceTypeEnum.gold];
     const maxGoldCastleTown =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CASTLE_TOWN]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.CASTLE_TOWN]
         .RESOURCES_CAP[ResourceTypeEnum.gold];
     const maxGoldFortifiedSettlement =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]
         .RESOURCES_CAP[ResourceTypeEnum.gold];
     const maxGoldCapitolSettlement =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
         .RESOURCES_CAP[ResourceTypeEnum.gold];
 
     const maxWoodMiningTown =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.MINING_TOWN]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.MINING_TOWN]
         .RESOURCES_CAP[ResourceTypeEnum.wood];
     const maxWoodCastleTown =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CASTLE_TOWN]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.CASTLE_TOWN]
         .RESOURCES_CAP[ResourceTypeEnum.wood];
     const maxWoodFortifiedSettlement =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]
         .RESOURCES_CAP[ResourceTypeEnum.wood];
     const maxWoodCapitolSettlement =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
         .RESOURCES_CAP[ResourceTypeEnum.wood];
 
     const maxIronMiningTown =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.MINING_TOWN]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.MINING_TOWN]
         .RESOURCES_CAP[ResourceTypeEnum.iron];
     const maxIronCastleTown =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CASTLE_TOWN]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.CASTLE_TOWN]
         .RESOURCES_CAP[ResourceTypeEnum.iron];
     const maxIronFortifiedSettlement =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.FORTIFIED_SETTLEMENT]
         .RESOURCES_CAP[ResourceTypeEnum.iron];
     const maxIronCapitolSettlement =
-      gameConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
+      worldConfig.SETTLEMENT[SharedSettlementTypesEnum.CAPITOL_SETTLEMENT]
         .RESOURCES_CAP[ResourceTypeEnum.iron];
 
     return this.armyEntityRepository
@@ -488,8 +488,8 @@ export class SettlementsService {
   }
 
   public async upgradeSettlementType(settlement: PrivateSettlementDto) {
-    const gameConfig = await this.configService.gameConfig();
-    const upgradeToType = gameConfig.SETTLEMENT[settlement.type]
+    const worldConfig = await this.configService.worldConfig();
+    const upgradeToType = worldConfig.SETTLEMENT[settlement.type]
       .NEXT_TYPE as unknown as SettlementTypesEnum;
 
     if (!upgradeToType) {
@@ -506,9 +506,9 @@ export class SettlementsService {
     }
 
     const settlementUpgradeTime =
-      gameConfig.SETTLEMENT[settlement.type].UPGRADE.TIME_MS;
+      worldConfig.SETTLEMENT[settlement.type].UPGRADE.TIME_MS;
     const settlementUpgradeCost =
-      gameConfig.SETTLEMENT[settlement.type].UPGRADE.COST;
+      worldConfig.SETTLEMENT[settlement.type].UPGRADE.COST;
 
     const goldCost = settlementUpgradeCost[ResourceTypeEnum.gold];
     const woodCost = settlementUpgradeCost[ResourceTypeEnum.wood];

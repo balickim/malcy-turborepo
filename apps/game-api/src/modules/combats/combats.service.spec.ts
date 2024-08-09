@@ -24,7 +24,7 @@ describe('CombatsService', () => {
         {
           provide: ConfigService,
           useValue: {
-            gameConfig: jest.fn().mockResolvedValue({
+            worldConfig: jest.fn().mockResolvedValue({
               COMBAT: {
                 UNITS: {
                   SWORDSMAN: { ATTACK: 10, DEFENSE: 10, HEALTH: 10 },

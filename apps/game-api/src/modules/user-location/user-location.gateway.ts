@@ -141,21 +141,21 @@ export class UserLocationGateway
   }
 
   private async getNearbyUsers(payload: IUpdateLocationParams) {
-    const gameConfig = await this.configService.gameConfig();
+    const worldConfig = await this.configService.worldConfig();
     return this.userLocationService.getOnlineUsersInRadius(
       payload.location.lng,
       payload.location.lat,
-      gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
+      worldConfig.MAX_RADIUS_TO_DISCOVER_METERS,
       'm',
       [payload.userId],
     );
   }
 
   private async getNearbySettlements(payload: IUpdateLocationParams) {
-    const gameConfig = await this.configService.gameConfig();
+    const worldConfig = await this.configService.worldConfig();
     return this.settlementsService.findSettlementsInRadiusWithDeleted(
       payload.location,
-      gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
+      worldConfig.MAX_RADIUS_TO_DISCOVER_METERS,
     );
   }
 
@@ -166,10 +166,10 @@ export class UserLocationGateway
   }
 
   private async getNearbyHabitableZones(payload: IUpdateLocationParams) {
-    const gameConfig = await this.configService.gameConfig();
+    const worldConfig = await this.configService.worldConfig();
     return this.habitableZonesService.findHabitableZonesInRadius(
       payload.location,
-      gameConfig.MAX_RADIUS_TO_DISCOVER_METERS,
+      worldConfig.MAX_RADIUS_TO_DISCOVER_METERS,
     );
   }
 

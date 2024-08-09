@@ -24,12 +24,12 @@ export class ConfigService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    const gameConfig = await this.retrieveGameConfig();
-    await this.validateConfig(gameConfig);
-    await this.setConfig(gameConfig);
+    const worldConfig = await this.retrieveWorldConfig();
+    await this.validateConfig(worldConfig);
+    await this.setConfig(worldConfig);
   }
 
-  private async retrieveGameConfig(): Promise<WorldConfig> {
+  private async retrieveWorldConfig(): Promise<WorldConfig> {
     const apiKey = this.appConfig.get().BACKOFFICE_API_KEY;
     const response = await firstValueFrom(
       this.httpService.get<{ data: WorldConfig }>(
@@ -83,7 +83,7 @@ export class ConfigService implements OnModuleInit {
     return this.redis.set(this.WORLD_CONFIG_KEY, JSON.stringify(worldConfig));
   }
 
-  public async gameConfig(): Promise<WorldConfig> {
+  public async worldConfig(): Promise<WorldConfig> {
     return JSON.parse(await this.redis.get(this.WORLD_CONFIG_KEY));
   }
 }

@@ -33,7 +33,7 @@ export class ResourcesService {
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   async updateResources() {
-    const gameConfig = await this.configService.gameConfig();
+    const worldConfig = await this.configService.worldConfig();
 
     const resources = ['gold', 'wood', 'iron'];
     const settlementTypes = [
@@ -53,10 +53,10 @@ export class ResourcesService {
         resourceValues[resource][type] = this.getBaseValue(
           type,
           resource as ResourceTypeEnum,
-          gameConfig,
+          worldConfig,
         );
         maxResources[resource][type] =
-          gameConfig.SETTLEMENT[type].RESOURCES_CAP[resource];
+          worldConfig.SETTLEMENT[type].RESOURCES_CAP[resource];
       }
     }
 

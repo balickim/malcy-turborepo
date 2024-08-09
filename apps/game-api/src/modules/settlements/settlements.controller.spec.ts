@@ -42,7 +42,7 @@ const mockSettlementsService = {
 };
 
 const mockConfigService = {
-  gameConfig: jest.fn().mockResolvedValue({}),
+  worldConfig: jest.fn().mockResolvedValue({}),
 };
 
 const mockArmyRepository = {};
