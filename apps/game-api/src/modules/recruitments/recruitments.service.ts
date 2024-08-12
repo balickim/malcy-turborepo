@@ -12,6 +12,7 @@ import { Job, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
 import {
   ArmyEntity,
+  PrivateSettlementDto,
   ResponseStartRecruitmentDto,
   StartRecruitmentDto,
 } from 'shared-nestjs';
@@ -21,7 +22,6 @@ import { Repository } from 'typeorm';
 import { sleep } from '~/common/utils';
 import { ConfigService } from '~/modules/config/config.service';
 import { PushNotificationsService } from '~/modules/push-notifications/push-notifications.service';
-import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
 
 const bullSettlementRecruitmentQueueName = (settlementId: string) =>

@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { PrivateSettlementDto } from 'shared-nestjs';
 
 import { IExpressRequestWithUser } from '~/modules/auth/guards/session.guard';
-import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
 import { ISessionUser } from '~/modules/users/dtos/users.dto';
 

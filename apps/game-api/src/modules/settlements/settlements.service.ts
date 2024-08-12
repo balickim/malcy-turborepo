@@ -14,6 +14,8 @@ import {
   ActionType,
   ArmyEntity,
   CreateSettlementDto,
+  PrivateSettlementDto,
+  PublicSettlementDto,
   ResponseStartUpgradeDto,
   SettlementsEntity,
   SettlementTypesEnum,
@@ -33,10 +35,6 @@ import { ArmiesService } from '~/modules/armies/armies.service';
 import { ConfigService } from '~/modules/config/config.service';
 import { EventLogService } from '~/modules/event-log/event-log.service';
 import { HabitableZonesService } from '~/modules/habitable-zones/habitable-zones.service';
-import {
-  PrivateSettlementDto,
-  PublicSettlementDto,
-} from '~/modules/settlements/dtos/settlements.dto';
 import { UserLocationService } from '~/modules/user-location/user-location.service';
 import { ISessionUser } from '~/modules/users/dtos/users.dto';
 

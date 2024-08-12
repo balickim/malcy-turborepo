@@ -9,16 +9,14 @@ import {
 } from '@nestjs/common';
 import { Job, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
-import { StartSiegeDto } from 'shared-nestjs';
+import { ISiegeJob, PrivateSettlementDto, StartSiegeDto } from 'shared-nestjs';
 import { UnitType } from 'shared-types';
 
 import { IBattleOutcome } from '~/common/types/combats.types';
 import { sleep } from '~/common/utils';
 import { ArmyRepository } from '~/modules/armies/armies.repository';
 import { ArmiesService } from '~/modules/armies/armies.service';
-import { ISiegeJob } from '~/modules/combats/types';
 import { ConfigService } from '~/modules/config/config.service';
-import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
 
 const bullSettlementSiegeQueueName = (settlementId: string) =>

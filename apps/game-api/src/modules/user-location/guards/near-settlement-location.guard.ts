@@ -5,10 +5,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { PrivateSettlementDto } from 'shared-nestjs';
 
 import { convertGeoJSONToPoint } from '~/common/utils/postgis';
 import { IExpressRequestWithUser } from '~/modules/auth/guards/session.guard';
-import { PrivateSettlementDto } from '~/modules/settlements/dtos/settlements.dto';
 import { SettlementsService } from '~/modules/settlements/settlements.service';
 import { UserLocationService } from '~/modules/user-location/user-location.service';
 import { ISessionUser } from '~/modules/users/dtos/users.dto';

@@ -1,15 +1,5 @@
-import { ArmyEntity, SettlementTypesEnum } from 'shared-nestjs';
-import { GeoJSON } from 'typeorm';
-
-import { TBasicUser } from '~/modules/users/types/users.types';
-
-export class PublicSettlementDto {
-  id: string;
-  name: string;
-  location: GeoJSON;
-  type: SettlementTypesEnum;
-  user: TBasicUser;
-}
+import { SettlementTypesEnum } from 'shared-nestjs';
+import { TBasicUser } from 'shared-nestjs/dist/modules/users/types/users.types';
 
 export class PublicSettlementDtoWithConvertedLocation {
   id: string;
@@ -19,11 +9,4 @@ export class PublicSettlementDtoWithConvertedLocation {
   lat: number;
   lng: number;
   siege: unknown;
-}
-
-export class PrivateSettlementDto extends PublicSettlementDto {
-  gold: number;
-  wood: number;
-  iron: number;
-  army: ArmyEntity;
 }
