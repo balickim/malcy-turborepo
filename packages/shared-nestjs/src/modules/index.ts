@@ -8,3 +8,5 @@ export * from "./habitable-zones";
 export * from "./recruitments";
 export * from "./settlements";
 export * from "./users";
+export * from "./worlds-config";
+export * from "./backoffice-habitable-zones";

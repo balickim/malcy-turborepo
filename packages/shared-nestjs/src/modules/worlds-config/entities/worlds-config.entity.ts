@@ -1,8 +1,7 @@
-import { AuditableBaseEntity } from 'shared-nestjs';
 import { WorldConfig } from 'shared-types';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-
-import { HabitableZonesEntity } from '../../../modules/habitable-zones/entities/habitable-zones.entity';
+import { AuditableBaseEntity } from "../../event-log";
+import { BackofficeHabitableZonesEntity } from "../../backoffice-habitable-zones";
 
 @Entity({ name: 'worldsConfig' })
 export class WorldsConfigEntity extends AuditableBaseEntity {
@@ -19,8 +18,8 @@ export class WorldsConfigEntity extends AuditableBaseEntity {
   config: WorldConfig;
 
   @OneToMany(
-    () => HabitableZonesEntity,
+    () => BackofficeHabitableZonesEntity,
     (habitableZone) => habitableZone.worldConfig,
   )
-  habitableZones: HabitableZonesEntity[];
+  habitableZones: BackofficeHabitableZonesEntity[];
 }

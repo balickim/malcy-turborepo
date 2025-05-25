@@ -14,6 +14,16 @@
       "persistent": true,
       "dependsOn": ["shared-nestjs#build"]
     },
+    "dev:game": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["shared-nestjs#build"]
+    },
+    "dev:backoffice": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["shared-nestjs#build"]
+    },
     "shared-nestjs#build": {
       "outputs": ["dist/**"]
     }
