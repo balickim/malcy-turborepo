@@ -18,6 +18,10 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs",
+    "migration:run": "pnpm run typeorm migration:run -d ./src/database/config.ts",
+    "migration:generate": "pnpm run typeorm migration:generate -d ./src/database/config.ts ./src/database/migrations/${NAME:-migration}",
+    "migration:create": "pnpm run typeorm migration:create ./src/database/migrations/${NAME:-migration}",
+    "migration:revert": "pnpm run typeorm migration:revert -d ./src/database/config.ts",
     "seed:dev": "PROCESS_ENV=seeding ts-node -r tsconfig-paths/register ./src/database/seeders/index.ts"
   },
   "dependencies": {
@@ -80,6 +84,7 @@
     "ts-node": "^10.9.2",
     "tsconfig": "workspace:*",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.19.4",
     "typescript": "^5.5.3"
   },
   "jest": {

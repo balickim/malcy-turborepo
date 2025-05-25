@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { config } from 'dotenv';
-import { bool, cleanEnv, num, port, str } from 'envalid';
+import { cleanEnv, num, port, str } from 'envalid';
 
 config();
 
@@ -22,7 +22,6 @@ export class AppConfig {
     GAME_DB_DATABASE: str(),
     GAME_DB_USERNAME: str(),
     GAME_DB_PASSWORD: str(),
-    GAME_DB_SYNCHRONIZE: bool({ default: false }),
 
     GAME_REDIS_HOST: str(),
     GAME_REDIS_PORT: num(),

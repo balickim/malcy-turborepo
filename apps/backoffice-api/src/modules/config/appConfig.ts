@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { config } from 'dotenv';
-import { bool, cleanEnv, num, port, str } from 'envalid';
+import { cleanEnv, num, port, str } from 'envalid';
 
 config();
 
@@ -19,7 +19,6 @@ export class AppConfig {
     BACKOFFICE_DB_DATABASE: str(),
     BACKOFFICE_DB_USERNAME: str(),
     BACKOFFICE_DB_PASSWORD: str(),
-    BACKOFFICE_DB_SYNCHRONIZE: bool({ default: false, devDefault: true }),
   });
 
   public get() {

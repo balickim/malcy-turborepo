@@ -1,17 +1,18 @@
-import { Max, Min } from "class-validator";
-import { nanoid } from "nanoid";
 import {
   BeforeInsert,
   Column,
-  Entity, ManyToOne,
-  OneToMany,
+  Entity,
+  ManyToOne,
   PrimaryColumn
 } from "typeorm";
-import { DiscoveredHabitableZonesEntity, HabitableZonesEntity, HabitableZonesTypesEnum } from "../../habitable-zones";
+import { HabitableZonesTypesEnum } from "../../habitable-zones";
 import { WorldsConfigEntity } from "../../worlds-config";
+import { Max, Min } from "class-validator";
+import { nanoid } from "nanoid";
+import { AuditableBaseEntity } from "../../event-log";
 
 @Entity({ name: "habitableZones" })
-export class BackofficeHabitableZonesEntity extends HabitableZonesEntity {
+export class BackofficeHabitableZonesEntity extends AuditableBaseEntity {
   @PrimaryColumn()
   id: string;
 
@@ -40,9 +41,6 @@ export class BackofficeHabitableZonesEntity extends HabitableZonesEntity {
     (worldConfig) => worldConfig.habitableZones,
   )
   worldConfig: WorldsConfigEntity;
-
-  @OneToMany(() => DiscoveredHabitableZonesEntity, (ds) => ds.habitableZone)
-  discoveredByUsers: DiscoveredHabitableZonesEntity[];
 
   @BeforeInsert()
   generateId() {

@@ -22,13 +22,13 @@ const appConfig: AppConfig = new AppConfig();
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   logging: false,
-  synchronize: appConfig.get().GAME_DB_SYNCHRONIZE,
+  synchronize: false,
   host: appConfig.get().GAME_DB_HOST,
   port: appConfig.get().GAME_DB_PORT,
   username: appConfig.get().GAME_DB_USERNAME,
   password: appConfig.get().GAME_DB_PASSWORD,
   database: appConfig.get().GAME_DB_DATABASE,
-  migrations: ['dist/database/migrations/*.js'],
+  migrations: ['src/database/migrations/*{.ts,.js}'],
   migrationsTableName: 'typeorm_migrations',
   entities: [
     DiscoveredAreaEntity,
