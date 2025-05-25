@@ -9,8 +9,8 @@ import {
   GroupsMembersEntity,
   MessagesEntity,
   DiscoveredSettlementsEntity,
-  HabitableZonesEntity,
   DiscoveredHabitableZonesEntity,
+  BackofficeHabitableZonesEntity,
 } from 'shared-nestjs';
 import { DataSource, DataSourceOptions, Repository } from 'typeorm';
 
@@ -45,7 +45,7 @@ export class GameWorldBridgeService {
         GroupsMembersEntity,
         MessagesEntity,
         DiscoveredSettlementsEntity,
-        HabitableZonesEntity,
+        BackofficeHabitableZonesEntity,
         DiscoveredHabitableZonesEntity,
       ],
       cache: false,

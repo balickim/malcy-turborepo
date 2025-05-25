@@ -2,16 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Polygon } from 'geojson';
 import {
+  BackofficeHabitableZonesEntity,
+  HabitableZonesTypesEnum as InternalHabitableZonesTypesEnum,
+} from 'shared-nestjs';
+import {
   HabitableZonesTypesEnum,
   IDTOResponseFindHabitableZonesInBounds,
   IDtoHabitableZone,
 } from 'shared-types';
 import { DeepPartial, Repository } from 'typeorm';
-
-import {
-  HabitableZonesEntity,
-  HabitableZonesTypesEnum as InternalHabitableZonesTypesEnum,
-} from '~/modules/habitable-zones/entities/habitable-zones.entity';
 
 import { WorldsConfigService } from '../worlds-config/worlds-config.service';
 
@@ -20,8 +19,8 @@ export class HabitableZonesService {
   private readonly logger = new Logger(HabitableZonesService.name);
 
   constructor(
-    @InjectRepository(HabitableZonesEntity)
-    private habitableZonesEntityRepository: Repository<HabitableZonesEntity>,
+    @InjectRepository(BackofficeHabitableZonesEntity)
+    private habitableZonesEntityRepository: Repository<BackofficeHabitableZonesEntity>,
     private worldsConfigService: WorldsConfigService,
   ) {}
 

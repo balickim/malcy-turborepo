@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { WorldsConfigEntity } from 'shared-nestjs';
 import { IDTOResponseWorldsList } from 'shared-types';
 import { Repository } from 'typeorm';
-
-import { WorldsConfigEntity } from '~/modules/worlds-config/entities/worlds-config.entity';
 
 @Injectable()
 export class WorldsConfigService {

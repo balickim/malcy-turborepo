@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { WorldsConfigEntity } from 'shared-nestjs';
 
-import { WorldsConfigEntity } from '~/modules/worlds-config/entities/worlds-config.entity';
 import { WorldsConfigController } from '~/modules/worlds-config/worlds-config.controller';
 
 import { WorldsConfigService } from './worlds-config.service';

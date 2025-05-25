@@ -1,10 +1,9 @@
 import { faker } from '@faker-js/faker';
-import { DataSource, Repository } from 'typeorm';
-
 import {
-  HabitableZonesEntity,
+  BackofficeHabitableZonesEntity,
   HabitableZonesTypesEnum,
-} from '~/modules/habitable-zones/entities/habitable-zones.entity';
+} from 'shared-nestjs';
+import { DataSource, Repository } from 'typeorm';
 
 // Szczecin
 const cityBounds: [number, number][] = [
@@ -14,7 +13,7 @@ const cityBounds: [number, number][] = [
 
 async function createHabitableZone(
   cityBounds: [number, number][],
-  habitableZonesEntityRepository: Repository<HabitableZonesEntity>,
+  habitableZonesEntityRepository: Repository<BackofficeHabitableZonesEntity>,
 ) {
   const randomInRange = (min: number, max: number) =>
     Math.random() * (max - min) + min;
@@ -65,8 +64,9 @@ export async function seedHabitableZones(
   dataSource: DataSource,
 ): Promise<void> {
   const HOW_MANY = 500;
-  const habitableZonesEntityRepository =
-    dataSource.getRepository(HabitableZonesEntity);
+  const habitableZonesEntityRepository = dataSource.getRepository(
+    BackofficeHabitableZonesEntity,
+  );
 
   const promises = Array.from({ length: HOW_MANY }, (_, i) =>
     createHabitableZone(cityBounds, habitableZonesEntityRepository).then(() =>

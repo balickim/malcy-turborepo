@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.2",
+    "@types/geojson": "^7946.0.14",
     "@types/node": "^20.14.10",
     "eslint": "^7.32.0",
     "eslint-config-custom": "workspace:*",

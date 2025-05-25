@@ -21,7 +21,7 @@ export class BackofficeHabitableZonesEntity extends AuditableBaseEntity {
     spatialFeatureType: "Polygon",
     srid: 4326,
   })
-  area: string;
+  area: GeoJSON.Polygon;
 
   @Column({
     type: "enum",
@@ -41,6 +41,9 @@ export class BackofficeHabitableZonesEntity extends AuditableBaseEntity {
     (worldConfig) => worldConfig.habitableZones,
   )
   worldConfig: WorldsConfigEntity;
+
+  @Column()
+  worldConfigId: string;
 
   @BeforeInsert()
   generateId() {
