@@ -5,10 +5,10 @@ import { Pane, Polygon } from "react-leaflet";
 import { websocketUserLocation } from "~/store/websocketStore";
 
 interface IFogOfWar {
-  cityBounds: LatLngTuple[];
+  worldBounds: LatLngTuple[];
 }
 
-const FogOfWar = ({ cityBounds }: IFogOfWar) => {
+const FogOfWar = ({ worldBounds }: IFogOfWar) => {
   const [discoveredAreas, setDiscoveredAreas] = useState([]);
   const [visibleAreas, setVisibleAreas] = useState([]);
   useEffect(() => {
@@ -26,17 +26,17 @@ const FogOfWar = ({ cityBounds }: IFogOfWar) => {
 
   return (
     <>
-      <Pane name={"discoveredArea"}>
+      <Pane name={"discoveredAreas"}>
         <Polygon
-          positions={[cityBounds, discoveredAreas.map((area) => area)]}
+          positions={[worldBounds, ...discoveredAreas]}
           color="black"
           fillOpacity={0.2}
           weight={0}
         />
       </Pane>
-      <Pane name={"visibleArea"}>
+      <Pane name={"visibleAreas"}>
         <Polygon
-          positions={[cityBounds, visibleAreas.map((area) => area)]}
+          positions={[worldBounds, ...visibleAreas]}
           color="black"
           fillOpacity={0.5}
           weight={0}

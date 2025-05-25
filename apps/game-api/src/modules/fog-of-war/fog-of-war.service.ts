@@ -13,7 +13,7 @@ import {
   IDTOResponseFindHabitableZonesInBounds,
   UnitType,
 } from 'shared-types';
-import { Repository } from 'typeorm';
+import { GeoJSON, Repository } from 'typeorm';
 
 import { CombatsService } from '~/modules/combats/combats.service';
 import { PublicSettlementDtoWithConvertedLocation } from '~/modules/settlements/dtos/settlements.dto';
@@ -36,6 +36,21 @@ export class FogOfWarService {
     private combatsService: CombatsService,
   ) {}
 
+  private flattenRings(geoJson: GeoJSON): number[][][] {
+    if (geoJson.type === 'Polygon') {
+      return geoJson.coordinates.map((ring) =>
+        ring.map(([lng, lat]) => [lat, lng]),
+      );
+    } else if (geoJson.type === 'MultiPolygon') {
+      return geoJson.coordinates.flatMap((polygon) =>
+        polygon.map((ring) => ring.map(([lng, lat]) => [lat, lng])),
+      );
+    } else {
+      this.logger.warn('Unexpected GeoJSON type:', geoJson.type);
+      return [];
+    }
+  }
+
   public async findAllDiscoveredByUser(userId: string) {
     const areas = await this.discoveredAreaEntityRepository
       .createQueryBuilder()
@@ -43,18 +58,7 @@ export class FogOfWarService {
       .where('"userId" = :userId', { userId })
       .getRawMany();
 
-    const convertedAreas = areas.map((result) => {
-      const geoJson = result.area;
-
-      if (geoJson.type === 'Polygon') {
-        return geoJson.coordinates[0].map(([lng, lat]) => [lat, lng]);
-      } else {
-        console.warn('Unexpected GeoJSON type:', geoJson.type);
-        return [];
-      }
-    });
-
-    return convertedAreas;
+    return areas.flatMap((result) => this.flattenRings(result.area));
   }
 
   public async findAllVisibleByUser(userId: string) {
@@ -64,18 +68,7 @@ export class FogOfWarService {
       .where('"userId" = :userId', { userId })
       .getRawMany();
 
-    const convertedAreas = areas.map((result) => {
-      const geoJson = result.area;
-
-      if (geoJson.type === 'Polygon') {
-        return geoJson.coordinates[0].map(([lng, lat]) => [lat, lng]);
-      } else {
-        console.warn('Unexpected GeoJSON type:', geoJson.type);
-        return [];
-      }
-    });
-
-    return convertedAreas;
+    return areas.flatMap((result) => this.flattenRings(result.area));
   }
 
   public async updateDiscoveredArea(

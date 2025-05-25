@@ -54,7 +54,7 @@ const Map = () => {
     );
   }
 
-  const cityBounds = worldConfig.data!.data.WORLD_BOUNDS!;
+  const worldBounds = worldConfig.data!.data.WORLD_BOUNDS!;
   return (
     <PageContainer ionContentProps={{ scrollY: false }}>
       <DndProvider backend={isPlatform("mobile") ? TouchBackend : HTML5Backend}>
@@ -68,7 +68,7 @@ const Map = () => {
           zoom={18}
           minZoom={13}
           maxZoom={18}
-          maxBounds={cityBounds}
+          maxBounds={worldBounds}
           maxBoundsViscosity={1}
         >
           <TileLayer
@@ -81,7 +81,7 @@ const Map = () => {
           <ChatWindowOnMap />
           <MapLegend />
 
-          <FogOfWar cityBounds={cityBounds} />
+          <FogOfWar worldBounds={worldBounds} />
           <HabitableZones />
 
           <UserLocationMarker location={playerPosition} />

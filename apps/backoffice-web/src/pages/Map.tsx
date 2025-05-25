@@ -31,8 +31,8 @@ const Map = () => {
     );
   }
 
-  const cityBounds = worldConfig.data!.data.WORLD_BOUNDS!;
-  const bounds = L.latLngBounds(cityBounds);
+  const worldBounds = worldConfig.data!.data.WORLD_BOUNDS!;
+  const bounds = L.latLngBounds(worldBounds);
   const center = bounds.getCenter();
   return (
     <PageContainer ionContentProps={{ scrollY: false }}>
@@ -47,7 +47,7 @@ const Map = () => {
           minZoom={13}
           maxZoom={18}
           center={center}
-          maxBounds={cityBounds}
+          maxBounds={worldBounds}
           maxBoundsViscosity={1}
         >
           <TileLayer
