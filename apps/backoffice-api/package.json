@@ -84,7 +84,6 @@
     "ts-node": "^10.9.2",
     "tsconfig": "workspace:*",
     "tsconfig-paths": "^4.2.0",
-    "tsx": "^4.19.4",
     "typescript": "^5.5.3"
   },
   "jest": {
