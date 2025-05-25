@@ -19,6 +19,7 @@ import { AppConfig } from '../modules/config/appConfig';
 import { EventLogSubscriber } from '../modules/event-log/event-log.subscriber';
 
 const appConfig: AppConfig = new AppConfig();
+const isDev = appConfig.get().NODE_ENV === 'development';
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   logging: false,
@@ -28,7 +29,9 @@ export const dataSourceOptions: DataSourceOptions = {
   username: appConfig.get().GAME_DB_USERNAME,
   password: appConfig.get().GAME_DB_PASSWORD,
   database: appConfig.get().GAME_DB_DATABASE,
-  migrations: ['src/database/migrations/*{.ts,.js}'],
+  migrations: isDev
+    ? ['src/database/migrations/*{.ts,.js}']
+    : ['dist/database/migrations/*.js'],
   migrationsTableName: 'typeorm_migrations',
   entities: [
     DiscoveredAreaEntity,
