@@ -24,8 +24,12 @@ export class HabitableZonesService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    const habitableZones = await this.retrieveHabitableZones();
-    await this.saveDownloadedHabitableZones(habitableZones);
+    try {
+      const habitableZones = await this.retrieveHabitableZones();
+      await this.saveDownloadedHabitableZones(habitableZones);
+    } catch (err) {
+      this.logger.error('Failed to initialize habitable zones:', err);
+    }
   }
 
   private async saveDownloadedHabitableZones(habitableZones: any) {
