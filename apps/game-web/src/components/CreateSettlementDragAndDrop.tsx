@@ -7,7 +7,6 @@ import { useMap, useMapEvents, Marker } from "react-leaflet";
 import { IDTOResponseFindHabitableZonesInBounds } from "shared-types";
 
 import { ISettlementDto } from "~/api/settlements/dtos.ts";
-import store from "~/store";
 import { IApiResponse } from "~/types/common.ts";
 import useIsCoordinateInPolygons from "~/utils/useIsCoordinateInPolygons.ts";
 import useIsCoordinateInRadius from "~/utils/useIsCoordinateInRadius.ts";
@@ -23,7 +22,7 @@ interface IDropTargetProps {
 const CreateSettlementDragAndDrop: React.FC<IDropTargetProps> = ({
   onDrop,
 }) => {
-  const { serverConfigStore } = store;
+  // const { serverConfigStore } = store;
   const map = useMap();
   const queryClient = useQueryClient();
   const bounds = useMapBounds(map);
@@ -42,7 +41,7 @@ const CreateSettlementDragAndDrop: React.FC<IDropTargetProps> = ({
   const isCoordinateInRadius = useIsCoordinateInRadius(
     previewPosition,
     settlementsData?.data,
-    serverConfigStore.config?.MAX_RADIUS_TO_TAKE_ACTION_METERS,
+    5, // 5m - TODO create a config for it
   );
   const isSettlementAllowedToBePlaced =
     isCoordinateInPolygons && !isCoordinateInRadius;

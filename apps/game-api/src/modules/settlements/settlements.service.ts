@@ -99,10 +99,10 @@ export class SettlementsService {
       throw new BadRequestException('You are too far');
     }
 
-    const worldConfig = await this.configService.worldConfig();
+    // const worldConfig = await this.configService.worldConfig();
     const nearbySettlements = await this.findWithinRadius(
       locationGeoJSON,
-      worldConfig.MAX_RADIUS_TO_TAKE_ACTION_METERS,
+      5, // 5m - TODO create a config for it
     );
 
     if (nearbySettlements.length > 0) {
