@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { dataSourceOptions } from '~/database/config';
+import { databaseConfig } from '~/database/config';
 import { AppConfig } from '~/modules/config/appConfig';
 import { ConfigModule } from '~/modules/config/config.module';
 import { EventLogModule } from '~/modules/event-log/event-log.module';
@@ -12,7 +12,7 @@ import { EventLogModule } from '~/modules/event-log/event-log.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule, EventLogModule],
       inject: [AppConfig],
-      useFactory: async () => dataSourceOptions,
+      useFactory: async () => databaseConfig,
       dataSourceFactory: async (options) => {
         return await new DataSource(options).initialize();
       },

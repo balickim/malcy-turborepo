@@ -14,7 +14,7 @@ export class WorldsConfigEntity extends AuditableBaseEntity {
   @Column({ unique: true })
   baseUrl: string;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'json' })
   config: WorldConfig;
 
   @OneToMany(

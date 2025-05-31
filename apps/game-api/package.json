@@ -20,10 +20,10 @@
     "seed:dev": "PROCESS_ENV=seeding ts-node -r tsconfig-paths/register ./src/database/seeders/index.ts",
     "db:reset": "ts-node -r tsconfig-paths/register ./src/database/scripts/reset-database.ts",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:run": "pnpm run typeorm migration:run -d ./src/database/config.ts",
-    "migration:generate": "pnpm run typeorm migration:generate -d ./src/database/config.ts ./src/database/migrations/${NAME:-migration}",
-    "migration:create": "pnpm run typeorm migration:create ./src/database/migrations/${NAME:-migration}",
-    "migration:revert": "pnpm run typeorm migration:revert -d ./src/database/config.ts",
+    "migration:run": "pnpm --filter shared-nestjs build && pnpm run typeorm migration:run -d ./src/database/config-dev.ts",
+    "migration:generate": "pnpm --filter shared-nestjs build && pnpm run typeorm migration:generate -d ./src/database/config-dev.ts ./src/database/migrations/${NAME:-migration}",
+    "migration:create": "pnpm --filter shared-nestjs build && pnpm run typeorm migration:create ./src/database/migrations/${NAME:-migration}",
+    "migration:revert": "pnpm --filter shared-nestjs build && pnpm run typeorm migration:revert -d ./src/database/config-dev.ts",
     "schema:drop": "pnpm run typeorm schema:drop -d ./src/database/config.ts"
   },
   "dependencies": {
