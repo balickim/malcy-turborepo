@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Post,
   Put,
   Query,
@@ -10,12 +11,17 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { IDtoHabitableZone } from 'shared-types';
 
+import { GetFromOverpass } from '~/modules/habitable-zones/use-cases/get-from-overpass';
+
 import { HabitableZonesService } from './habitable-zones.service';
 
 @ApiTags('habitable-zones')
 @Controller('habitable-zones')
 export class HabitableZonesController {
-  constructor(private readonly habitableZonesService: HabitableZonesService) {}
+  constructor(
+    private readonly habitableZonesService: HabitableZonesService,
+    private readonly getFromOverpass: GetFromOverpass,
+  ) {}
 
   @Get('/habitable-zones-in-bounds')
   async findHabitableZonesInBounds(
@@ -57,5 +63,11 @@ export class HabitableZonesController {
   @Delete('/delete')
   async deleteHabitableZone(@Body() body: IDtoHabitableZone) {
     return this.habitableZonesService.deleteHabitableZone(body);
+  }
+
+  // TODO candidate for CLI command
+  @Get('/overpass-api/:worldName/get-and-set-overpass-zones')
+  async getOverpassZones(@Param('worldName') worldName: string) {
+    return this.getFromOverpass.execute(worldName);
   }
 }

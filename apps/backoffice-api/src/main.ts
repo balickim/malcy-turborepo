@@ -7,9 +7,6 @@ import { TransformInterceptor } from '~/common/interceptors/response.interceptor
 import { ApiKeyAuthGuard } from '~/modules/auth/guards/apiKey.guard';
 import { AppConfig } from '~/modules/config/appConfig';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const cors = require('cors');
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(AppConfig);
@@ -19,22 +16,21 @@ async function bootstrap() {
     'capacitor://localhost',
     'ionic://localhost',
     'http://localhost',
-    'http://localhost:5173',
-    'http://localhost:8090',
   ];
 
-  app.use(
-    cors({
-      origin: (origin, callback) => {
-        if (allowedOrigins.includes(origin) || !origin) {
-          callback(null, true);
-        } else {
-          callback(new Error('Origin not allowed by CORS'), false);
-        }
-      },
-      credentials: true,
-    }),
-  );
+  app.enableCors({
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Origin not allowed by CORS'), false);
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    exposedHeaders: ['Set-Cookie'],
+  });
 
   app.use(cookieParser());
   app.useGlobalGuards(new ApiKeyAuthGuard(app.get(Reflector)));
