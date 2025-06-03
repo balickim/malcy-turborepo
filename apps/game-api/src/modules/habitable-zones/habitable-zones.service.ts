@@ -32,9 +32,21 @@ export class HabitableZonesService implements OnModuleInit {
     }
   }
 
-  private async saveDownloadedHabitableZones(habitableZones: any) {
-    await this.habitableZonesEntityRepository.upsert(habitableZones, ['id']);
-    this.logger.log('loading habitable zones FINISHED');
+  private async saveDownloadedHabitableZones(habitableZones: any[]) {
+    this.logger.log('⏳ Loading habitable zones...');
+
+    const batchSize = 5000;
+    const total = habitableZones.length;
+    const numBatches = Math.ceil(total / batchSize);
+
+    for (let i = 0; i < total; i += batchSize) {
+      const batchNum = Math.floor(i / batchSize) + 1;
+      this.logger.log(`Processing batch ${batchNum} out of ${numBatches}...`);
+      const batch = habitableZones.slice(i, i + batchSize);
+      await this.habitableZonesEntityRepository.upsert(batch, ['id']);
+    }
+
+    this.logger.log('✅ Loading habitable zones FINISHED');
   }
 
   private async retrieveHabitableZones(): Promise<any> {
