@@ -1,5 +1,6 @@
 {
   "name": "malcy-turborepo",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "dev:docker": "node ./scripts/load-env-and-docker.js",

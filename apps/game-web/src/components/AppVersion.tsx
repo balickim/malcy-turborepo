@@ -1,6 +1,6 @@
 import { IonNote } from "@ionic/react";
 
-import { version } from "../../package.json";
+import { version } from "../../../../package.json";
 
 export default function AppVersion() {
   return (
